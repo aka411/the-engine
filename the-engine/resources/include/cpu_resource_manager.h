@@ -5,12 +5,13 @@
 #include <memory>
 #include <stack>
 
+
 namespace TheEngine::Resource
 {
 	
 
 
-	class ResourceManager
+	class CPUResourceManager
 	{
 
 	private:
