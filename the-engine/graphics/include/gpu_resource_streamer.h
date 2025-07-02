@@ -9,7 +9,7 @@
 namespace TheEngine::Graphics
 {
 
-	class GPUAssetOrchestrator // alternative cool name GPUResourceStreamer
+	class GPUResourceStreamer // alternative cool name GPUResourceStreamer
 	{
 	private:
 		IGPURenderDevice& m_renderDevice;
@@ -19,7 +19,7 @@ namespace TheEngine::Graphics
 
 	public:
 
-		GPUAssetOrchestrator(
+		GPUResourceStreamer(
 			TheEngine::Resource::ResourceManager& cpuResourceManager,
 			GPUResourceManager& gpuResourceManager,
 			IGPURenderDevice& renderDevice);
