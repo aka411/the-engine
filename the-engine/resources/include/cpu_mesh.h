@@ -4,18 +4,24 @@
 #include "../../graphics/include/core/vertex_input_layout.h"
 
 
+
 namespace TheEngine::Resource
 {
 
 	class CPUMesh : public CPUResource
 	{
-	public:
-		std::vector<std::vector<float>> vertexBuffer;
-		std::vector<std::vector<int>> indexBufferHandle;
-		VertexInputLayout vertexInputLayout;
+	private:
+
+		std::vector < std::vector<uint8_t>> m_vertexBufferList;
+		std::vector<uint8_t> m_indexBuffer;
+
+	 const TheEngine::Graphics::VertexInputLayout* const m_vertexInputLayout;
+
 		bool isIndexed;
 
 	public:
-		CPUResourceType getType() const override { return CPUResourceType::MESH; }
+		CPUMesh(const std::vector<std::vector<uint8_t>>&& vertexBufferList, const TheEngine::Graphics::VertexInputLayout* vertexInputLayout, bool isIndexed);
+		CPUResourceType getType() const override;
+
 	};
 }

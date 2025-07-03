@@ -2,6 +2,7 @@
 
 namespace TheEngine::Resource
 {
+
 enum class CPUResourceType
 {
 	UNDEFINED = 0,
@@ -15,8 +16,11 @@ enum class CPUResourceType
 
 class CPUResource
 {
+protected:
+	CPUResource() = default;
+
 public:
-	virtual CPUResourceType getType()const = 0;
+	virtual CPUResourceType getType() const = 0;
 
 	virtual ~CPUResource() = default;
 };

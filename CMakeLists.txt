@@ -9,7 +9,15 @@ set(CMAKE_CXX_EXTENSIONS OFF) # Prefer standard C++ over compiler extensions
 
 
 
-#add_subdirectory(the-engine)
+# IMPORTANT: Enable CTest for the entire project
+enable_testing()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+
+add_subdirectory(the-engine)
 
 # Add the tests directory.
 # This subdirectory will handle fetching Google Test and defining test executables.

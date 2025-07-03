@@ -1,8 +1,15 @@
+
 #include "../include/cpu_resource_manager.h"
 
 namespace TheEngine::Resource
 {
 
+
+
+
+	Resource::CPUResourceManager::CPUResourceManager()
+	{
+	}
 
 
 
@@ -23,18 +30,6 @@ namespace TheEngine::Resource
 
 		return handle;
 	}
-	template<typename DataType>
-	DataType* CPUResourceManager::getResource(const TheEngine::Core::ResourceHandle Handle)const
-	{
-
-		if (static_cast<size_t>(handle) < m_resources.size() && m_resources[handle])
-		{
-			CPUResource* baseResource = m_resources[handle].get();
-			DataType* desiredResource = dynamic_cast<DataType*>(baseResource);
-			return  desiredResource;
-		}
-		return nullptr;
-	}
 
 
 	void  CPUResourceManager::removeResource(const TheEngine::Core::ResourceHandle handle)
@@ -45,5 +40,8 @@ namespace TheEngine::Resource
 			m_freeIndex.push(handle);    // Add the freed index to the stack
 		}
 		// else: Handle invalid or already empty handle
+	}
+	Resource::CPUResourceManager::~CPUResourceManager()
+	{
 	}
 }
