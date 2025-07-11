@@ -29,6 +29,20 @@ namespace TheEngine::Graphics
 
 
 
+	IGPUResource* GPUResourceManager::getResource(const TheEngine::Core::ResourceHandle handle) const
+	{
+
+		auto it = m_gpuResourceMap.find(handle);
+		if (it != m_gpuResourceMap.end())
+		{
+			IGPUResource* baseResource = it->second.get();
+			if (baseResource == nullptr) return nullptr;//for safety
+	
+			return  baseResource; // Returns nullptr if the cast fails
+		}
+		return nullptr;
+	}
+
 	void GPUResourceManager::removeResource(const TheEngine::Core::ResourceHandle handle)
 	{
 		m_gpuResourceMap.erase(handle);

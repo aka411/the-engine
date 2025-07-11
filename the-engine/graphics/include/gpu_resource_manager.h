@@ -41,34 +41,14 @@ namespace TheEngine::Graphics
 	
 		void storeResource(const TheEngine::Core::ResourceHandle handle, std::unique_ptr<IGPUResource>&& resource);
 
-		// Generic Get Method (returns non-owning raw pointer for modification)
-		template<typename GPUResourceType>
-		GPUResourceType* getResource(const TheEngine::Core::ResourceHandle handle)const;
+
+		IGPUResource* getResource(const TheEngine::Core::ResourceHandle handle) const;
 
 		void removeResource(const TheEngine::Core::ResourceHandle handle);
 	
 
 	};
 
-
-
-
-
-	//for now templated method ,consider other design approach later
-	template<typename GPUResourceType>
-	GPUResourceType* TheEngine::Graphics::GPUResourceManager::getResource(const TheEngine::Core::ResourceHandle handle)const
-	{
-
-		auto it = m_gpuResourceMap.find(handle);
-		if (it != m_gpuResourceMap.end())
-		{
-			IGPUResource* baseResource = it->second.get();
-			if (baseResource == nullptr) return nullptr;//this is not needed ,but for now let it be there
-			GPUResourceType* desiredResource = dynamic_cast<GPUResourceType*>(baseResource);//this dynamic cast might be a bottleneck,its in a hot path
-			return desiredResource; // Returns nullptr if the cast fails
-		}
-		return nullptr;
-	}
 
 
 
