@@ -1,9 +1,10 @@
 #pragma once
-#include "cpu_resource.h"
+
 #include "../../core/include/types.h"
 #include <vector>
 #include <memory>
 #include <stack>
+#include "icpu_resource.h"
 
 
 namespace TheEngine::Resource
@@ -15,14 +16,14 @@ namespace TheEngine::Resource
 	{
 
 	private:
-		std::vector<std::unique_ptr<CPUResource>> m_resources;
+		std::vector<std::unique_ptr<ICPUResource>> m_resources;
 		std::stack<size_t> m_freeIndex;
 
 	public:
 
 		CPUResourceManager();
 
-		TheEngine::Core::ResourceHandle addResource( std::unique_ptr<CPUResource>&& resource);
+		TheEngine::Core::ResourceHandle addResource( std::unique_ptr<ICPUResource>&& resource);
 
 		template<typename DataType> 
 		DataType* getResource(const TheEngine::Core::ResourceHandle handle)const;
@@ -46,7 +47,7 @@ namespace TheEngine::Resource
 		//consider if caller asks for a resource that is not of type DataType 
 		if (static_cast<size_t>(handle) < m_resources.size() && m_resources[handle])
 		{
-			CPUResource* baseResource = m_resources[handle].get();
+			ICPUResource* baseResource = m_resources[handle].get();
 			DataType* desiredResource = dynamic_cast<DataType*>(baseResource);
 			return  desiredResource;
 		}

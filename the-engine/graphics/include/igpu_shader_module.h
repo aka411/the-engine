@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <string>
 
 //cleaned
 namespace TheEngine::Graphics

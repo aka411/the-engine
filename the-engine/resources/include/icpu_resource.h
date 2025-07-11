@@ -6,23 +6,25 @@ namespace TheEngine::Resource
 enum class CPUResourceType
 {
 	UNDEFINED = 0,
+
 	TEXTURE,
 	SHADER,
+
 	MATERIAL,
 	MESH
 
 };
 
 
-class CPUResource
+class ICPUResource
 {
 protected:
-	CPUResource() = default;
+	ICPUResource() = default;
 
 public:
 	virtual CPUResourceType getType() const = 0;
 
-	virtual ~CPUResource() = default;
+	virtual ~ICPUResource() = default;
 };
 
 

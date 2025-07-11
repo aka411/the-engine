@@ -1,13 +1,10 @@
 #pragma once
-
-#include "../../graphics/include/igpu_texture.h"
-#include "cpu_resource.h"
 #include <vector>
 
 
 namespace TheEngine::Resource
 {
-	class CPUTexture : public CPUResource
+	class CPUTexture : public ICPUResource
 	{
 	public:
 		const std::vector<uint8_t> m_data; // Raw bytes of pixel data (e.g., RGB, RGBA, compressed block data)

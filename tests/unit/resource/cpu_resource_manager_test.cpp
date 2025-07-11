@@ -10,7 +10,7 @@ using namespace TheEngine::Core;
 // --- Custom Test CPUResource Implementation ---
 // This is a simple concrete class derived from CPUResource for testing purposes.
 // It allows us to track construction and destruction.
-class TestCPUResource : public CPUResource
+class TestCPUResource : public ICPUResource
 {
 public:
     int id;
@@ -48,7 +48,7 @@ public:
 int TestCPUResource::s_instanceCount = 0;
 
 // --- Another Test CPUResource Type for Type Mismatch Tests ---
-class AnotherTestCPUResource : public CPUResource
+class AnotherTestCPUResource : public ICPUResource
 {
 public:
     int value;

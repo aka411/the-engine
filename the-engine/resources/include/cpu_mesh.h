@@ -1,14 +1,14 @@
 #pragma once
-#include "cpu_resource.h"
 #include <vector>
 #include "../../graphics/include/core/vertex_input_layout.h"
+#include "icpu_resource.h"
 
 
 
 namespace TheEngine::Resource
 {
 
-	class CPUMesh : public CPUResource
+	class CPUMesh : public ICPUResource
 	{
 	private:
 

@@ -32,8 +32,8 @@ namespace TheEngine::Graphics
         virtual std::unique_ptr<IGPUDescriptorSet> CreateDescriptorSet(const IGPUDescriptorSetLayout& descriptorSetLayout) override;
 
         virtual std::unique_ptr<IGPUPipelineLayout> CreatePipelineLayout(
-            const std::vector<IGPUDescriptorSetLayout>& setLayouts,//index is set index
-            const std::vector<PushConstantRange>& pushConstantRanges) override;//up to 256 bytes
+            const std::vector<IGPUDescriptorSetLayout>& setLayouts//index is set index
+            ) override;//up to 256 bytes
 
 
         virtual std::unique_ptr <IGPUPipelineState> CreateGraphicsPipelineState(const PipelineCreateInfo& createInfo) override;

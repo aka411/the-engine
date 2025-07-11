@@ -1,13 +1,13 @@
 #graphics
 
-add_library(TheEngine::Graphics STATIC
+add_library(TheEngine_Graphics SHARED
     #src/render_system.cpp
-   
+   src/gpu_resource_manager.cpp
  
 )
 
 
-target_include_directories(TheEngine::Graphics PUBLIC
+target_include_directories(TheEngine_Graphics PRIVATE
 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )

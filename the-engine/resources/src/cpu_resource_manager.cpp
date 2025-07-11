@@ -13,7 +13,7 @@ namespace TheEngine::Resource
 
 
 
-	TheEngine::Core::ResourceHandle CPUResourceManager::addResource(std::unique_ptr<CPUResource>&& resource)
+	TheEngine::Core::ResourceHandle CPUResourceManager::addResource(std::unique_ptr<ICPUResource>&& resource)
 	{
 		TheEngine::Core::ResourceHandle handle;
 		if (m_freeIndex.empty())

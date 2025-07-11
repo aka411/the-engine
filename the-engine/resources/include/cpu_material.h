@@ -1,5 +1,4 @@
 #pragma once
-#include "cpu_resource.h"
 #include <vector>
 
 #include "../../core/include/types.h"
@@ -7,7 +6,7 @@
 
 namespace TheEngine::Resource
 {
-	class CPUMaterial : public CPUResource
+	class CPUMaterial : public ICPUResource
 	{
 	private:
 		//Implicit binding points?

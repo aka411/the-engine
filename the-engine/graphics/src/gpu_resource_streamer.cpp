@@ -1,36 +1,31 @@
-#include "../include/gpu_asset_orchestrator.h"
-#include "../../resources/include/cpu_resource.h"
-#include "../../resources/include/cpu_mesh.h"
-#include "../../resources/include/cpu_texture.h"
-#include "../include/gpu_mesh.h"
+#include "../include/gpu_resource_streamer.h"
 
 
 namespace TheEngine::Graphics
 {
 
+
+
 	GPUResourceStreamer::GPUResourceStreamer(
-		TheEngine::Resource::ResourceManager& cpuResourceManager,
+		TheEngine::Resource::CPUResourceManager& cpuResourceManager,
 		GPUResourceManager& gpuResourceManager,
 		IGPURenderDevice& renderDevice)
-
 		: m_cpuResourceManager(cpuResourceManager),
 		m_gpuResourceManager(gpuResourceManager),
-		m_renderDevice(renderDevice)
+		m_renderDevice(renderDevice),
+		m_cpuGpuResourceConvertor(renderDevice)
+
 	{
-		// Constructor implementation
+
 	}
-
-
-
-
 
 	bool GPUResourceStreamer::requestGPUUpload(const TheEngine::Core::ResourceHandle resourceHandle)
 	{
 
+		//getting resource from cpu resource manager
+		TheEngine::Resource::ICPUResource* cpuResource = m_cpuResourceManager.getResource<TheEngine::Resource::ICPUResource>(resourceHandle);
 
 
-
-		TheEngine::Resource::CPUResource* cpuResource = m_cpuResourceManager.getResource<TheEngine::Resource::CPUResource>(resourceHandle);
 
 
 		if (cpuResource == nullptr)
@@ -38,45 +33,21 @@ namespace TheEngine::Graphics
 			return false; // Resource not found
 		}
 
-		switch (cpuResource->getType())
+
+
+		//convert and uplaod to gpu memory
+		std::unique_ptr<IGPUResource> igpuResource = m_cpuGpuResourceConvertor.convertToGPUResource(*cpuResource);
+
+
+		if (igpuResource == nullptr)
 		{
-		case TheEngine::Resource::CPUResourceType::MESH:
-		{
-			auto cpuMesh = static_cast<TheEngine::Resource::CPUMesh*>(cpuResource);
-
-
-			std::unique_ptr<TheEngine::Graphics::GPUMesh> gpuMesh = std::make_unique<TheEngine::Graphics::GPUMesh>();
-
-			gpuMesh->setVertexLayout(cpuMesh->vertexInputLayout);
-
-			for (int i = 0; i < cpuMesh->vertexBuffer.size(); ++i)
-			{
-				// Create a GPU buffer for each vertex buffer in the CPU mesh
-				auto gpuBuffer = m_renderDevice.createBuffer(
-					cpuMesh->vertexBuffer[i].data(),
-					cpuMesh->vertexBuffer[i].size() * sizeof(float),
-					TheEngine::Graphics::BufferUsage::VERTEX,
-					TheEngine::Graphics::BufferCPUAccess::NONE //dont hardcode this, use a flag in the CPUResource
-				);
-
-				gpuMesh->addVertexBuffer(std::move(gpuBuffer));
-			}
-
-			m_gpuResourceManager.storeResource<TheEngine::Graphics::GPUMesh>(resourceHandle, std::move(gpuMesh));
-
-			return true;
-
-
+			return false;
 		}
-		break;
-		}
-case TheEngine::Resource::CPUResourceType::TEXTURE:
-{
-	return false; // Texture upload not implemented yet
-	break;
-}
-default:
-	return false; // Unsupported resource type}
+
+		//store opaque gpu resource data in gpu resource manager
+		m_gpuResourceManager.storeResource(resourceHandle, std::move(igpuResource));
+
+		return true;
 
 
 

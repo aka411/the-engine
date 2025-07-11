@@ -4,10 +4,10 @@
 #include <vector>
 #include <memory>
 #include "igpu_resource.h"
-
+#include "igpu_pipeline_layout.h"
 #include "core/vertex_input_layout.h"
 #include "igpu_shader_module.h"
-
+#include "igpu_render_pass.h"
 
 
 //need more cleaning , clean during implementing time
@@ -98,9 +98,9 @@ namespace TheEngine::Graphics
 
 	struct RasterizationStateCreateInfo
     {
-        PolygonMode polygonMode = PolygonMode::Fill;
-        CullMode cullMode = CullMode::Back;
-        FrontFace frontFace = FrontFace::CounterClockwise; // Often default to CCW
+        PolygonMode polygonMode = PolygonMode::FILL;
+        CullMode cullMode = CullMode::BACK;
+        FrontFace frontFace = FrontFace::COUNTERCLOCKWISE; // Often default to CCW
         float lineWidth = 1.0f;
         bool depthClampEnable = false;
         bool rasterizerDiscardEnable = false;
@@ -167,11 +167,11 @@ namespace TheEngine::Graphics
         bool blendEnable = false;
         BlendFactor srcColorBlendFactor = BlendFactor::One;
         BlendFactor dstColorBlendFactor = BlendFactor::Zero;
-        BlendOp colorBlendOp = BlendOp::Add;
+        BlendOp colorBlendOp = BlendOp::ADD;
         BlendFactor srcAlphaBlendFactor = BlendFactor::One;
         BlendFactor dstAlphaBlendFactor = BlendFactor::Zero;
-        BlendOp alphaBlendOp = BlendOp::Add;
-        ColorWriteMask colorWriteMask = ColorWriteMask::All;
+        BlendOp alphaBlendOp = BlendOp::ADD;
+        ColorWriteMask colorWriteMask = ColorWriteMask::ALL;
     };
 
 

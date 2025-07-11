@@ -1,26 +1,31 @@
 #pragma once
 #include <memory>
-#include "../../resources/include/resource_manager.h"
-
 #include "gpu_resource_manager.h"
+#include "../../resources/include/cpu_resource_manager.h"
+#include "converter/cpu_gpu_resource_convertor.h"
 
 
 
 namespace TheEngine::Graphics
 {
 
-	class GPUResourceStreamer // alternative cool name GPUResourceStreamer
+	class GPUResourceStreamer 
 	{
+	
 	private:
-		IGPURenderDevice& m_renderDevice;
-	private:
-		TheEngine::Resource::ResourceManager& m_cpuResourceManager;
+
+		TheEngine::Resource::CPUResourceManager& m_cpuResourceManager;
+
 		GPUResourceManager& m_gpuResourceManager;
+		IGPURenderDevice& m_renderDevice;
+
+
+	    CPUGPUResourceConvertor  m_cpuGpuResourceConvertor;
 
 	public:
 
 		GPUResourceStreamer(
-			TheEngine::Resource::ResourceManager& cpuResourceManager,
+			TheEngine::Resource::CPUResourceManager& cpuResourceManager,
 			GPUResourceManager& gpuResourceManager,
 			IGPURenderDevice& renderDevice);
 
