@@ -2,7 +2,9 @@
 #include "../../../resources/include/icpu_resource.h"
 #include "../igpu_resource.h"
 #include <memory>
-#include "../backends/opengl/opengl_render_device.h"
+
+#include "../../igpu_resource.h"
+#include "../../igpu_render_device.h"
 
 namespace TheEngine::Graphics
 {

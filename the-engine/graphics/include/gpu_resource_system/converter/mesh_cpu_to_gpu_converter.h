@@ -9,6 +9,9 @@ namespace TheEngine::Graphics
 
 	class MeshCPUToGPUConverter : public ICPUToGPUConverter
 	{
+	private:
+
+		IGPURenderDevice& m_renderDevice;
 
 	public:
 		MeshCPUToGPUConverter(IGPURenderDevice& renderDevice);
