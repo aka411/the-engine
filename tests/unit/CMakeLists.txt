@@ -6,7 +6,7 @@
 # Defines an executable named 'SanityCheckTests' that will contain basic tests.
 add_executable(SanityCheckTests sanity_check.cpp)
 
-add_executable(CPUManagerResourceTests 
+add_executable(CPUResourceManagerTests 
     resource/cpu_resource_manager_test.cpp
 )
 # Links the test executable to Google Test's main library.
@@ -15,7 +15,7 @@ target_link_libraries(SanityCheckTests PRIVATE
     GTest::gtest_main
 )
 # Link it against GTest (which provides the main() function for tests)
-target_link_libraries(CPUManagerResourceTests PRIVATE
+target_link_libraries(CPUResourceManagerTests  PRIVATE
 GTest::gtest_main
 TheEngine_Resource
 )
@@ -28,17 +28,17 @@ include(GoogleTest)
 
 gtest_discover_tests(SanityCheckTests)
 
-gtest_discover_tests(CPUManagerResourceTests )
+gtest_discover_tests(CPUResourceManagerTests  )
 
 
-add_executable(GPUManagerResourceTests 
+add_executable(GPUResourceManagerTests
    graphics/gpu_resource_manager_test.cpp
 )
 
-target_link_options(
-    GPUManagerResourceTests PRIVATE
+target_link_libraries(
+    GPUResourceManagerTests PRIVATE
     GTest::gtest_main
     TheEngine_Graphics
 )
 
-gtest_discover_tests(GPUManagerResourceTests)
+gtest_discover_tests(GPUResourceManagerTests)

@@ -1,384 +1,196 @@
 // gpu_resource_manager_test.cpp
 #include "gtest/gtest.h"
+#include "gpu_resource_manager.h"
+#include <memory> 
 
-
-// --- Mock/Dummy Headers for Dependencies ---
-
-
+// Forward declarations or includes for IGPUResource and ResourceHandle
 
 namespace TheEngine::Core
 {
-  
+    // Mock ResourceHandle for testing
+    // In a real scenario, this would come from your core/include/types.h
     using ResourceHandle = unsigned int;
 }
 
 namespace TheEngine::Graphics
 {
-    // Base interface for all GPU resources
-    class IGPUResource
+
+
+    class MockGPUResource : public IGPUResource
     {
     public:
-        enum class GPUResourceType { UNDEFINED, TEXTURE, BUFFER, MESH, MATERIAL };
-        virtual ~IGPUResource() = default;
-        virtual GPUResourceType getType() const = 0;
+		virtual ResourceType getType() const override
+		{
+			return ResourceType::UNKNOWN; // Return a default type for testing
+		}
     };
 
-    // Derived interface for GPU Textures
-    class IGPUTexture : public IGPUResource
+   
+    class GPUResourceManagerTest : public ::testing::Test
     {
-    public:
-        GPUResourceType getType() const override { return GPUResourceType::TEXTURE; }
-        virtual void bind() = 0; ///dummy method
+    protected:
+        GPUResourceManager manager;
+
+       
+        void SetUp() override
+        {
+            // Code here will be run before each test
+        }
+
+        void TearDown() override
+        {
+            // Code here will be run after each test
+        }
     };
 
-    // Derived interface for GPU Buffers
-    class IGPUBuffer : public IGPUResource
+    // Test case for the constructor
+    TEST_F(GPUResourceManagerTest, ConstructorInitializesEmpty)
     {
-    public:
-        GPUResourceType getType() const override { return GPUResourceType::BUFFER; }
-        virtual void create() = 0; 
-  
-    };
-
-    // Mock Render Device
-    class IGPURenderDevice
-    {
-    public:
-        virtual ~IGPURenderDevice() = default;
-
-    };
-
-    // Mock GPU Resource Streamer
-    class GPUResourceStreamer
-    {
-    public:
-		GPUResourceStreamer() = default;
-         ~GPUResourceStreamer() = default;
-        
-    };
-}
-
-// --- Using directives for convenience within the test file ---
-using namespace TheEngine::Graphics;
-using namespace TheEngine::Core;
-#include "gpu_resource_manager.h" 
-// --- Custom Test GPUResource Implementation ---
-// This is a simple concrete class derived from IGPUResource for testing purposes.
-
-class TestGPUResource : public IGPUResource
-{
-public:
-    int id;
-    // Static counter to track how many TestGPUResource objects are currently alive
-    static int s_instanceCount;
-    // Flag to indicate if this specific instance was destroyed
-    bool m_wasDestroyed = false;
-
-    GPUResourceType getType() const override
-    {
-        return GPUResourceType::UNDEFINED; // Return a default type for testing
+    
+       
+        TheEngine::Core::ResourceHandle handle = 1;
+        ASSERT_EQ(nullptr, manager.getResource(handle));
     }
 
-    TestGPUResource(int _id) : id(_id)
+    // Test case for storeResource and getResource - basic functionality
+    TEST_F(GPUResourceManagerTest, StoreAndGetResource)
     {
-        s_instanceCount++;
-        // std::cout << "TestGPUResource " << id << " constructed. Count: " << s_instanceCount << std::endl;
+        TheEngine::Core::ResourceHandle handle = 100;
+        std::unique_ptr<IGPUResource> resource = std::make_unique<MockGPUResource>();
+        IGPUResource* expectedPtr = resource.get(); 
+
+        manager.storeResource(handle, std::move(resource));
+
+        IGPUResource* retrievedResource = manager.getResource(handle);
+        ASSERT_NE(nullptr, retrievedResource); 
+        ASSERT_EQ(expectedPtr, retrievedResource); 
     }
 
-    ~TestGPUResource() override
+    // Test case for storeResource - storing a null resource
+    TEST_F(GPUResourceManagerTest, StoreNullResourceDoesNothing)
     {
-        s_instanceCount--;
-        m_wasDestroyed = true;
-        // std::cout << "TestGPUResource " << id << " destroyed. Count: " << s_instanceCount << std::endl;
+        TheEngine::Core::ResourceHandle handle = 200;
+        std::unique_ptr<IGPUResource> nullResource = nullptr;
+
+        manager.storeResource(handle, std::move(nullResource));
+
+        // Attempt to retrieve, should still be nullptr as nothing was stored
+        ASSERT_EQ(nullptr, manager.getResource(handle));
     }
 
-    // Prevent copy construction and assignment for unique_ptr compatibility
-    TestGPUResource(const TestGPUResource&) = delete;
-    TestGPUResource& operator=(const TestGPUResource&) = delete;
-};
-
-// Initialize the static member
-int TestGPUResource::s_instanceCount = 0;
-
-// --- Another Test GPUResource Type for Type Mismatch Tests ---
-class AnotherTestGPUResource : public IGPUResource
-{
-public:
-    int value;
-    AnotherTestGPUResource(int val) : value(val) {}
-
-    GPUResourceType getType() const override
+    // Test case for storeResource - storing a duplicate resource
+    TEST_F(GPUResourceManagerTest, StoreDuplicateResourceDoesNothing)
     {
-        return GPUResourceType::UNDEFINED; // Return a default type for testing
+        TheEngine::Core::ResourceHandle handle = 300;
+        std::unique_ptr<IGPUResource> resource1 = std::make_unique<MockGPUResource>();
+        IGPUResource* expectedPtr = resource1.get();
+
+        manager.storeResource(handle, std::move(resource1));
+
+        // Try to store another resource with the same handle
+        std::unique_ptr<IGPUResource> resource2 = std::make_unique<MockGPUResource>();
+        manager.storeResource(handle, std::move(resource2)); // This should do nothing
+
+        // Verify that the original resource is still there
+        IGPUResource* retrievedResource = manager.getResource(handle);
+        ASSERT_NE(nullptr, retrievedResource);
+        ASSERT_EQ(expectedPtr, retrievedResource); // Should still be the first resource
     }
-};
 
-// --- Test GPUTexture Implementation ---
-class TestGPUTexture : public IGPUTexture
-{
-public:
-    int textureId;
-    TestGPUTexture(int id) : textureId(id) {}
-    void bind() override {} // Dummy implementation
-};
-
-// --- Test GPUBuffer Implementation ---
-class TestGPUBuffer : public IGPUBuffer
-{
-public:
-    int bufferId;
-    TestGPUBuffer(int id) : bufferId(id) {}
-    void create() override {} // Dummy implementation
-};
-
-
-// --- GPUResourceManager Test Suite ---
-
-TEST(GPUResourceManagerTest, ConstructorInitializesEmpty)
-{
-    MockGPURenderDevice renderDevice;
-    std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-    GPUResourceManager mgr(renderDevice, std::move(streamer));
-
-    // Verify that the internal resource map is empty
-    EXPECT_EQ(mgr.getResource<TestGPUResource>(0), nullptr); // Attempting to get anything should fail
-}
-
-TEST(GPUResourceManagerTest, StoreResource_FirstResource)
-{
-    MockGPURenderDevice renderDevice;
-    std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-    GPUResourceManager mgr(renderDevice, std::move(streamer));
-
-    ResourceHandle handle1 = 100;
-    std::unique_ptr<TestGPUResource> res1 = std::make_unique<TestGPUResource>(101);
-    TestGPUResource* rawRes1 = res1.get(); // Keep raw pointer to verify content later
-
-    mgr.storeResource(handle1, std::move(res1));
-
-    // Retrieve and verify the resource
-    TestGPUResource* retrievedRes = mgr.getResource<TestGPUResource>(handle1);
-    ASSERT_NE(retrievedRes, nullptr); // Should not be null
-    EXPECT_EQ(retrievedRes->id, 101); // Check content
-    EXPECT_EQ(retrievedRes, rawRes1); // Ensure it's the same object
-}
-
-TEST(GPUResourceManagerTest, StoreResource_MultipleSequential)
-{
-    MockGPURenderDevice renderDevice;
-    std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-    GPUResourceManager mgr(renderDevice, std::move(streamer));
-
-    ResourceHandle h0 = 0;
-    ResourceHandle h1 = 1;
-    ResourceHandle h2 = 2;
-
-    mgr.storeResource(h0, std::make_unique<TestGPUResource>(0));
-    mgr.storeResource(h1, std::make_unique<TestGPUResource>(1));
-    mgr.storeResource(h2, std::make_unique<TestGPUResource>(2));
-
-    EXPECT_NE(mgr.getResource<TestGPUResource>(h0), nullptr);
-    EXPECT_NE(mgr.getResource<TestGPUResource>(h1), nullptr);
-    EXPECT_NE(mgr.getResource<TestGPUResource>(h2), nullptr);
-
-    EXPECT_EQ(mgr.getResource<TestGPUResource>(h1)->id, 1);
-}
-
-TEST(GPUResourceManagerTest, StoreResource_DuplicateHandleDoesNotOverwrite)
-{
-    MockGPURenderDevice renderDevice;
-    std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-    GPUResourceManager mgr(renderDevice, std::move(streamer));
-
-    ResourceHandle handle = 50;
-    std::unique_ptr<TestGPUResource> originalRes = std::make_unique<TestGPUResource>(100);
-    TestGPUResource* rawOriginalRes = originalRes.get();
-    mgr.storeResource(handle, std::move(originalRes));
-
-    // Try to store another resource with the same handle
-    std::unique_ptr<TestGPUResource> newRes = std::make_unique<TestGPUResource>(200);
-    mgr.storeResource(handle, std::move(newRes)); // This call should be ignored by implementation
-
-    // Verify that the original resource is still there
-    TestGPUResource* retrieved = mgr.getResource<TestGPUResource>(handle);
-    ASSERT_NE(retrieved, nullptr);
-    EXPECT_EQ(retrieved->id, 100); // Should still be the original resource
-    EXPECT_EQ(retrieved, rawOriginalRes);
-}
-
-TEST(GPUResourceManagerTest, GetResource_ValidHandleCorrectType)
-{
-    MockGPURenderDevice renderDevice;
-    std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-    GPUResourceManager mgr(renderDevice, std::move(streamer));
-
-    ResourceHandle handle = 77;
-    std::unique_ptr<TestGPUResource> res = std::make_unique<TestGPUResource>(55);
-    mgr.storeResource(handle, std::move(res));
-
-    TestGPUResource* retrieved = mgr.getResource<TestGPUResource>(handle);
-    ASSERT_NE(retrieved, nullptr);
-    EXPECT_EQ(retrieved->id, 55);
-}
-
-TEST(GPUResourceManagerTest, GetResource_ValidHandleSpecificDerivedType)
-{
-    MockGPURenderDevice renderDevice;
-    std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-    GPUResourceManager mgr(renderDevice, std::move(streamer));
-
-    ResourceHandle textureHandle = 1;
-    ResourceHandle bufferHandle = 2;
-
-    mgr.storeResource(textureHandle, std::make_unique<TestGPUTexture>(101));
-    mgr.storeResource(bufferHandle, std::make_unique<TestGPUBuffer>(202));
-
-    TestGPUTexture* retrievedTexture = mgr.getResource<TestGPUTexture>(textureHandle);
-    ASSERT_NE(retrievedTexture, nullptr);
-    EXPECT_EQ(retrievedTexture->textureId, 101);
-    EXPECT_EQ(retrievedTexture->getType(), IGPUResource::GPUResourceType::TEXTURE);
-
-    TestGPUBuffer* retrievedBuffer = mgr.getResource<TestGPUBuffer>(bufferHandle);
-    ASSERT_NE(retrievedBuffer, nullptr);
-    EXPECT_EQ(retrievedBuffer->bufferId, 202);
-    EXPECT_EQ(retrievedBuffer->getType(), IGPUResource::GPUResourceType::BUFFER);
-}
-
-
-TEST(GPUResourceManagerTest, GetResource_InvalidHandle)
-{
-    MockGPURenderDevice renderDevice;
-    std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-    GPUResourceManager mgr(renderDevice, std::move(streamer));
-
-    mgr.storeResource(10, std::make_unique<TestGPUResource>(1)); // Add one resource
-
-    // Test non-existent handles
-    EXPECT_EQ(mgr.getResource<TestGPUResource>(999), nullptr); // Non-existent handle
-    EXPECT_EQ(mgr.getResource<TestGPUResource>(11), nullptr);  // Another non-existent handle
-}
-
-TEST(GPUResourceManagerTest, GetResource_RemovedResource)
-{
-    MockGPURenderDevice renderDevice;
-    std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-    GPUResourceManager mgr(renderDevice, std::move(streamer));
-
-    ResourceHandle handle = 20;
-    mgr.storeResource(handle, std::make_unique<TestGPUResource>(1));
-    mgr.removeResource(handle); // Remove it
-
-    EXPECT_EQ(mgr.getResource<TestGPUResource>(handle), nullptr); // Should now be null
-}
-
-TEST(GPUResourceManagerTest, GetResource_WrongType)
-{
-    MockGPURenderDevice renderDevice;
-    std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-    GPUResourceManager mgr(renderDevice, std::move(streamer));
-
-    ResourceHandle handle = 30;
-    mgr.storeResource(handle, std::make_unique<TestGPUResource>(123));
-
-    // Try to retrieve a TestGPUResource as an AnotherTestGPUResource
-    AnotherTestGPUResource* wrongTypeRes = mgr.getResource<AnotherTestGPUResource>(handle);
-    EXPECT_EQ(wrongTypeRes, nullptr); // dynamic_cast should return nullptr
-
-    // Try to retrieve a TestGPUResource as a TestGPUTexture
-    TestGPUTexture* wrongDerivedTypeRes = mgr.getResource<TestGPUTexture>(handle);
-    EXPECT_EQ(wrongDerivedTypeRes, nullptr); // dynamic_cast should return nullptr
-}
-
-TEST(GPUResourceManagerTest, RemoveResource_ValidHandle)
-{
-    MockGPURenderDevice renderDevice;
-    std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-    GPUResourceManager mgr(renderDevice, std::move(streamer));
-
-    ResourceHandle handle = 40;
-    std::unique_ptr<TestGPUResource> res = std::make_unique<TestGPUResource>(10);
-    TestGPUResource* rawRes = res.get(); // Get raw pointer before moving
-    mgr.storeResource(handle, std::move(res));
-
-    EXPECT_EQ(TestGPUResource::s_instanceCount, 1); // One instance alive
-
-    mgr.removeResource(handle);
-
-    EXPECT_EQ(mgr.getResource<TestGPUResource>(handle), nullptr); // Should be null now
-    EXPECT_EQ(TestGPUResource::s_instanceCount, 0); // Resource should be destroyed
-    EXPECT_TRUE(rawRes->m_wasDestroyed); // Verify specific instance destruction
-}
-
-TEST(GPUResourceManagerTest, RemoveResource_InvalidHandle)
-{
-    MockGPURenderDevice renderDevice;
-    std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-    GPUResourceManager mgr(renderDevice, std::move(streamer));
-
-    ResourceHandle handle1 = 50;
-    mgr.storeResource(handle1, std::make_unique<TestGPUResource>(1)); // Add one resource
-
-    // Attempt to remove invalid handles
-    mgr.removeResource(999); // Non-existent
-    mgr.removeResource(1000); // Another non-existent
-
-    // Verify no crash and the existing resource is still there
-    EXPECT_NE(mgr.getResource<TestGPUResource>(handle1), nullptr); // Original resource still there
-    EXPECT_EQ(TestGPUResource::s_instanceCount, 1); // No instances should have been destroyed
-}
-
-TEST(GPUResourceManagerTest, Destructor_CleansUpResources)
-{
-    // This test uses a scope to ensure the GPUResourceManager's destructor is called.
-    // The static s_instanceCount will verify all TestGPUResource instances are destroyed.
-    EXPECT_EQ(TestGPUResource::s_instanceCount, 0); // Should be 0 before test
-
+    // Test case for getResource - non-existent resource
+    TEST_F(GPUResourceManagerTest, GetNonExistentResourceReturnsNullptr)
     {
-        MockGPURenderDevice renderDevice;
-        std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-        GPUResourceManager mgr(renderDevice, std::move(streamer));
+        TheEngine::Core::ResourceHandle handle = 400;
+        ASSERT_EQ(nullptr, manager.getResource(handle));
+    }
 
-        mgr.storeResource(1, std::make_unique<TestGPUResource>(1));
-        mgr.storeResource(2, std::make_unique<TestGPUResource>(2));
-        mgr.storeResource(3, std::make_unique<TestGPUResource>(3));
-        mgr.storeResource(4, std::make_unique<TestGPUTexture>(4)); // Also test derived types
-        mgr.storeResource(5, std::make_unique<TestGPUBuffer>(5));   // And another derived type
-
-        EXPECT_EQ(TestGPUResource::s_instanceCount, 3); // Only TestGPUResource instances counted by s_instanceCount
-        // TestGPUTexture and TestGPUBuffer are separate types.
-        // If we wanted to count all IGPUResource, we'd need a different static counter.
-    } // mgr goes out of scope here, triggering its destructor
-
-    EXPECT_EQ(TestGPUResource::s_instanceCount, 0); // All TestGPUResource instances should be destroyed
-}
-
-TEST(GPUResourceManagerTest, Destructor_WithRemovedResources)
-{
-    EXPECT_EQ(TestGPUResource::s_instanceCount, 0);
-
+    // Test case for removeResource - removing an existing resource
+    TEST_F(GPUResourceManagerTest, RemoveExistingResource)
     {
-        MockGPURenderDevice renderDevice;
-        std::unique_ptr<GPUResourceStreamer> streamer = std::make_unique<GPUResourceStreamer>();
-        GPUResourceManager mgr(renderDevice, std::move(streamer));
+        TheEngine::Core::ResourceHandle handle = 500;
+        std::unique_ptr<IGPUResource> resource = std::make_unique<MockGPUResource>();
+        manager.storeResource(handle, std::move(resource));
 
-        ResourceHandle h1 = 10;
-        ResourceHandle h2 = 20;
-        ResourceHandle h3 = 30;
+        ASSERT_NE(nullptr, manager.getResource(handle)); // Verify it's there first
 
-        mgr.storeResource(h1, std::make_unique<TestGPUResource>(1));
-        mgr.storeResource(h2, std::make_unique<TestGPUResource>(2));
-        mgr.storeResource(h3, std::make_unique<TestGPUResource>(3));
+        manager.removeResource(handle);
 
-        EXPECT_EQ(TestGPUResource::s_instanceCount, 3);
+        ASSERT_EQ(nullptr, manager.getResource(handle)); // Should be gone after removal
+    }
 
-        mgr.removeResource(h1); // Remove one resource
-        EXPECT_EQ(TestGPUResource::s_instanceCount, 2); // One should be destroyed
+    // Test case for removeResource - removing a non-existent resource
+    TEST_F(GPUResourceManagerTest, RemoveNonExistentResourceDoesNotCrash)
+    {
+        TheEngine::Core::ResourceHandle handle = 600;
+        // Attempt to remove a resource that was never stored
+        ASSERT_NO_FATAL_FAILURE(manager.removeResource(handle)); // Should not crash
+        ASSERT_EQ(nullptr, manager.getResource(handle)); // Still non-existent
+    }
 
-        mgr.removeResource(h3); // Remove another
-        EXPECT_EQ(TestGPUResource::s_instanceCount, 1); // Another should be destroyed
+    // Test case for storing multiple resources
+    TEST_F(GPUResourceManagerTest, StoreMultipleResources)
+    {
+        TheEngine::Core::ResourceHandle handle1 = 701;
+        TheEngine::Core::ResourceHandle handle2 = 702;
+        TheEngine::Core::ResourceHandle handle3 = 703;
 
-        // h2 is still active
-    } // mgr goes out of scope, h2 should be destroyed
+        std::unique_ptr<IGPUResource> res1 = std::make_unique<MockGPUResource>();
+        std::unique_ptr<IGPUResource> res2 = std::make_unique<MockGPUResource>();
+        std::unique_ptr<IGPUResource> res3 = std::make_unique<MockGPUResource>();
 
-    EXPECT_EQ(TestGPUResource::s_instanceCount, 0); // All instances should be destroyed
+        IGPUResource* ptr1 = res1.get();
+        IGPUResource* ptr2 = res2.get();
+        IGPUResource* ptr3 = res3.get();
+
+        manager.storeResource(handle1, std::move(res1));
+        manager.storeResource(handle2, std::move(res2));
+        manager.storeResource(handle3, std::move(res3));
+
+        ASSERT_EQ(ptr1, manager.getResource(handle1));
+        ASSERT_EQ(ptr2, manager.getResource(handle2));
+        ASSERT_EQ(ptr3, manager.getResource(handle3));
+    }
+
+    // Test case for removing some resources while others remain
+    TEST_F(GPUResourceManagerTest, RemoveSomeResources)
+    {
+        TheEngine::Core::ResourceHandle handle1 = 801;
+        TheEngine::Core::ResourceHandle handle2 = 802;
+        TheEngine::Core::ResourceHandle handle3 = 803;
+
+        std::unique_ptr<IGPUResource> res1 = std::make_unique<MockGPUResource>();
+        std::unique_ptr<IGPUResource> res2 = std::make_unique<MockGPUResource>();
+        std::unique_ptr<IGPUResource> res3 = std::make_unique<MockGPUResource>();
+
+        IGPUResource* ptr1 = res1.get();
+        IGPUResource* ptr3 = res3.get();
+
+        manager.storeResource(handle1, std::move(res1));
+        manager.storeResource(handle2, std::move(res2));
+        manager.storeResource(handle3, std::move(res3));
+
+        manager.removeResource(handle2); // Remove the middle one
+
+        ASSERT_EQ(ptr1, manager.getResource(handle1));      // Should still be there
+        ASSERT_EQ(nullptr, manager.getResource(handle2));   // Should be gone
+        ASSERT_EQ(ptr3, manager.getResource(handle3));      // Should still be there
+    }
+
+    // Test case for getting resource after it's been removed and then re-added
+    TEST_F(GPUResourceManagerTest, ReAddResourceAfterRemoval)
+    {
+        TheEngine::Core::ResourceHandle handle = 900;
+        std::unique_ptr<IGPUResource> resource1 = std::make_unique<MockGPUResource>();
+        manager.storeResource(handle, std::move(resource1));
+
+        manager.removeResource(handle);
+        ASSERT_EQ(nullptr, manager.getResource(handle));
+
+        std::unique_ptr<IGPUResource> resource2 = std::make_unique<MockGPUResource>();
+        IGPUResource* expectedPtr = resource2.get();
+        manager.storeResource(handle, std::move(resource2));
+
+        ASSERT_EQ(expectedPtr, manager.getResource(handle));
+    }
+
 }

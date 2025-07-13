@@ -1,14 +1,15 @@
+#include "gpu_resource_manager.h"
 
-#include "../include/gpu_resource_manager.h"
 
 namespace TheEngine::Graphics
 {
 
-	GPUResourceManager::GPUResourceManager(IGPURenderDevice& renderDevice,std::unique_ptr<GPUResourceStreamer>&& gpuResourceStreamer)
-		: m_renderDevice(renderDevice), m_GPUResourceStreamer(std::move(gpuResourceStreamer))
+	
+
+	GPUResourceManager::GPUResourceManager()
 	{
 	}
-	
+
 
 	void TheEngine::Graphics::GPUResourceManager::storeResource(const TheEngine::Core::ResourceHandle handle, std::unique_ptr<IGPUResource>&& resource)
 	{
@@ -45,6 +46,7 @@ namespace TheEngine::Graphics
 
 	void GPUResourceManager::removeResource(const TheEngine::Core::ResourceHandle handle)
 	{
+		//add code to check if it was already removed
 		m_gpuResourceMap.erase(handle);
 	}
 }
