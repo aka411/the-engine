@@ -1,21 +1,27 @@
 #pragma once
-#include "cpu_resource.h"
 #include <vector>
 #include "../../graphics/include/core/vertex_input_layout.h"
+#include "icpu_resource.h"
+
 
 
 namespace TheEngine::Resource
 {
 
-	class CPUMesh : public CPUResource
+	class CPUMesh : public ICPUResource
 	{
-	public:
-		std::vector<std::vector<float>> vertexBuffer;
-		std::vector<std::vector<int>> indexBufferHandle;
-		VertexInputLayout vertexInputLayout;
+	private:
+
+		std::vector < std::vector<uint8_t>> m_vertexBufferList;
+		std::vector<uint8_t> m_indexBuffer;
+
+	 const TheEngine::Graphics::VertexInputLayout* const m_vertexInputLayout;
+
 		bool isIndexed;
 
 	public:
-		CPUResourceType getType() const override { return CPUResourceType::MESH; }
+		CPUMesh(const std::vector<std::vector<uint8_t>>&& vertexBufferList, const TheEngine::Graphics::VertexInputLayout* vertexInputLayout, bool isIndexed);
+		CPUResourceType getType() const override;
+
 	};
 }

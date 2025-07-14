@@ -2,7 +2,9 @@
 
 #include "igpu_pipeline_state.h"
 #include "igpu_pipeline_layout.h"
-
+#include"igpu_render_pass.h"
+#include "igpu_framebuffer.h"
+#include "igpu_descriptor_set.h"
 
 //Need to address Index buffer 
 //cleanup complete

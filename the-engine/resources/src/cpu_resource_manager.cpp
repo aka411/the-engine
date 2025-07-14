@@ -1,3 +1,4 @@
+
 #include "../include/cpu_resource_manager.h"
 
 namespace TheEngine::Resource
@@ -6,7 +7,13 @@ namespace TheEngine::Resource
 
 
 
-	TheEngine::Core::ResourceHandle CPUResourceManager::addResource(std::unique_ptr<CPUResource>&& resource)
+	Resource::CPUResourceManager::CPUResourceManager()
+	{
+	}
+
+
+
+	TheEngine::Core::ResourceHandle CPUResourceManager::addResource(std::unique_ptr<ICPUResource>&& resource)
 	{
 		TheEngine::Core::ResourceHandle handle;
 		if (m_freeIndex.empty())
@@ -23,17 +30,19 @@ namespace TheEngine::Resource
 
 		return handle;
 	}
-	template<typename DataType>
-	DataType* CPUResourceManager::getResource(const TheEngine::Core::ResourceHandle Handle)const
+
+	ICPUResource* Resource::CPUResourceManager::getCPUResource(const TheEngine::Core::ResourceHandle handle) const
 	{
 
+		//consider if caller asks for a resource that is not of type DataType 
 		if (static_cast<size_t>(handle) < m_resources.size() && m_resources[handle])
 		{
-			CPUResource* baseResource = m_resources[handle].get();
-			DataType* desiredResource = dynamic_cast<DataType*>(baseResource);
-			return  desiredResource;
+			ICPUResource* baseResource = m_resources[handle].get();
+			
+			return baseResource;
 		}
 		return nullptr;
+	
 	}
 
 
@@ -45,5 +54,8 @@ namespace TheEngine::Resource
 			m_freeIndex.push(handle);    // Add the freed index to the stack
 		}
 		// else: Handle invalid or already empty handle
+	}
+	Resource::CPUResourceManager::~CPUResourceManager()
+	{
 	}
 }

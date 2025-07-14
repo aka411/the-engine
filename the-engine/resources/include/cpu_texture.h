@@ -1,22 +1,17 @@
 #pragma once
+#include <vector>
 
-#include "../../graphics/include/igpu_texture.h"
-#include "cpu_resource.h"
 
 namespace TheEngine::Resource
 {
-	class CPUTexture : public CPUResource
+	class CPUTexture : public ICPUResource
 	{
 	public:
-		std::vector<char> data; // Raw bytes of pixel data (e.g., RGB, RGBA, compressed block data)
-		int width;              // Width of the texture (at mip level 0)
-		int height;             // Height of the texture (at mip level 0)
-		int depth;              // Depth of the texture (for 3D textures, 1 for 2D)
-		TheEngine::Graphics::TextureFormat format; // Pixel format (e.g., RGBA8_UNORM, DXT1)
-		TheEngine::Graphics::TextureType type;     // Type of texture (e.g., TEXTURE_2D, TEXTURE_CUBE, TEXTURE_3D)
-		uint32_t mipLevels;     // Number of mipmap levels present in 'data'
-		uint32_t arrayLayers;   // Number of array layers (for texture arrays or cubemaps)
+		const std::vector<uint8_t> m_data; // Raw bytes of pixel data (e.g., RGB, RGBA, compressed block data)
+		const  TheEngine::Graphics::TextureCreateInfo m_textureCreateInfo; // Metadata about the texture (format, dimensions, etc.)
+		
 	public:
-		CPUResourceType getType() const override { return CPUResourceType::TEXTURE; }
+		CPUTexture(const std::vector<uint8_t>& data,const TheEngine::Graphics::TextureCreateInfo& textureCreateInfo);
+		CPUResourceType getType() const override;
 	};
 }

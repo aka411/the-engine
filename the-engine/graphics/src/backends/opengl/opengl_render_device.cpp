@@ -301,7 +301,7 @@ namespace TheEngine::Graphics
 		return std::unique_ptr<OpenGLDescriptorSet>(static_cast<OpenGLDescriptorSetLayout>(descriptorSetLayout));
 	}
 
-	std::unique_ptr<IGPUPipelineLayout> OpenGLRenderDevice::CreatePipelineLayout(const std::vector<IGPUDescriptorSetLayout>& setLayouts, const std::vector<PushConstantRange>& pushConstantRanges)
+	std::unique_ptr<IGPUPipelineLayout> OpenGLRenderDevice::CreatePipelineLayout(const std::vector<IGPUDescriptorSetLayout>& setLayouts)
 	{
 
 

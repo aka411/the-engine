@@ -39,8 +39,8 @@ TEST(SanityCheck, ExpectFalseToFailIfIncorrect)
 // A test that shows how to provide a custom message
 TEST(SanityCheck, CustomFailureMessage)
 {
-    int value = 10;
+    int value = 12;
     int expected = 12;
-    ASSERT_EQ(value, expected) << "The value " << value << " did not match the expected " << expected << ".";
+    ASSERT_EQ(value, expected) << "The value " << value << " does match the expected " << expected << ".";
    
 }

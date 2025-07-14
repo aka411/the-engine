@@ -8,7 +8,7 @@ namespace TheEngine::Core
     // Identifier for components attached to entities
     using ComponentId = unsigned int;
 
-    using ResourceHandle = unsigned int; // used by resource manager//alternate names EngineResourceID, AssetID
+    using ResourceHandle = unsigned int; 
 
     // we can add other fundamental type aliases here in the future
     // For example:
