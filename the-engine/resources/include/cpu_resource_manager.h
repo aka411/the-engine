@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <stack>
+#include "icpu_resource_manager.h"
 #include "icpu_resource.h"
 
 
@@ -12,7 +13,7 @@ namespace TheEngine::Resource
 	
 
 
-	class CPUResourceManager
+	class CPUResourceManager : ICPUResourceManager
 	{
 
 	private:
@@ -25,8 +26,7 @@ namespace TheEngine::Resource
 
 		TheEngine::Core::ResourceHandle addResource( std::unique_ptr<ICPUResource>&& resource);
 
-		template<typename DataType> 
-		DataType* getResource(const TheEngine::Core::ResourceHandle handle)const;
+		virtual ICPUResource* getCPUResource(const TheEngine::Core::ResourceHandle handle) const override;
 
 		void removeResource(const TheEngine::Core::ResourceHandle handle);
 
@@ -40,19 +40,6 @@ namespace TheEngine::Resource
 		~CPUResourceManager();
 	};
 
-
-	template<typename DataType>
-	DataType* CPUResourceManager::getResource(const TheEngine::Core::ResourceHandle handle)const
-	{
-		//consider if caller asks for a resource that is not of type DataType 
-		if (static_cast<size_t>(handle) < m_resources.size() && m_resources[handle])
-		{
-			ICPUResource* baseResource = m_resources[handle].get();
-			DataType* desiredResource = dynamic_cast<DataType*>(baseResource);
-			return  desiredResource;
-		}
-		return nullptr;
-	}
 
 
 }

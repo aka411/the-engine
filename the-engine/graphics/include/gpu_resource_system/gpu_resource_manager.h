@@ -1,25 +1,17 @@
 #pragma once
-
-
-#include "../../core/include/types.h"
 #include <unordered_map>
-#include "igpu_resource.h"
-
+#include "../igpu_resource.h"
 #include <memory>
+#include "../../../core/include/types.h"
+#include "igpu_resource_manager.h"
 
-#include "gpu_resource_streamer.h"//consider using interfaces to help unit
-//testing by avoiding direct dependence on concrete class like gpu streamer.
 
 namespace TheEngine::Graphics
 {
 	
 
-	class GPUResourceManager
+	class GPUResourceManager : public IGPUResourceManager
 	{
-	private:
-		IGPURenderDevice& m_renderDevice;
-	private:
-		std::unique_ptr<GPUResourceStreamer>  m_GPUResourceStreamer;
 
 	private:
 
@@ -29,20 +21,15 @@ namespace TheEngine::Graphics
 
 	public:
 
-		GPUResourceManager(IGPURenderDevice& renderDevice, std::unique_ptr<GPUResourceStreamer>&& gpuResourceStreamer);
+		GPUResourceManager();
 			
 	
 		~GPUResourceManager() = default;
-
-
-
-	public:
-
 	
-		void storeResource(const TheEngine::Core::ResourceHandle handle, std::unique_ptr<IGPUResource>&& resource);
+		virtual void storeResource(const TheEngine::Core::ResourceHandle handle, std::unique_ptr<IGPUResource>&& resource) override;
 
-
-		IGPUResource* getResource(const TheEngine::Core::ResourceHandle handle) const;
+		
+		virtual IGPUResource* getResource(const TheEngine::Core::ResourceHandle handle) const override;
 
 		void removeResource(const TheEngine::Core::ResourceHandle handle);
 	

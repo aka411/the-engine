@@ -31,6 +31,20 @@ namespace TheEngine::Resource
 		return handle;
 	}
 
+	ICPUResource* Resource::CPUResourceManager::getCPUResource(const TheEngine::Core::ResourceHandle handle) const
+	{
+
+		//consider if caller asks for a resource that is not of type DataType 
+		if (static_cast<size_t>(handle) < m_resources.size() && m_resources[handle])
+		{
+			ICPUResource* baseResource = m_resources[handle].get();
+			
+			return baseResource;
+		}
+		return nullptr;
+	
+	}
+
 
 	void  CPUResourceManager::removeResource(const TheEngine::Core::ResourceHandle handle)
 	{

@@ -5,7 +5,7 @@ namespace TheEngine::Graphics
 
 
 
-	MeshCPUToGPUConverter::MeshCPUToGPUConverter(IGPURenderDevice& renderDevice) : ICPUToGPUConverter(renderDevice)
+	MeshCPUToGPUConverter::MeshCPUToGPUConverter(IGPURenderDevice& renderDevice) : m_renderDevice(renderDevice)
 	{
 	}
 
@@ -14,6 +14,7 @@ namespace TheEngine::Graphics
 	{
 		//use render device here
 		//conversion from cpumesh to gpumesh
+
 
 
 		return ;

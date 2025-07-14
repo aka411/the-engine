@@ -88,7 +88,7 @@ TEST(CPUResourceManagerTest, AddResource_FirstResource)
     EXPECT_TRUE(mgr.isFreeIndexStackEmpty()); // No free indices yet
 
     // Retrieve and verify the resource
-    TestCPUResource* retrievedRes = mgr.getResource<TestCPUResource>(handle1);
+    TestCPUResource* retrievedRes = static_cast<TestCPUResource*>(mgr.getCPUResource(handle1));
     ASSERT_NE(retrievedRes, nullptr); // Should not be null
     EXPECT_EQ(retrievedRes->id, 101); // Check content
     EXPECT_EQ(retrievedRes, rawRes1); // Ensure it's the same object
@@ -107,7 +107,7 @@ TEST(CPUResourceManagerTest, AddResource_MultipleSequential)
     EXPECT_EQ(mgr.getResourceCount(), 3);
     EXPECT_TRUE(mgr.isFreeIndexStackEmpty());
 
-    EXPECT_EQ(mgr.getResource<TestCPUResource>(h1)->id, 1);
+    EXPECT_EQ(static_cast<TestCPUResource*>(mgr.getCPUResource(h1))->id, 1);
 }
 
 TEST(CPUResourceManagerTest, AddResource_ReuseFreeIndex)
@@ -130,51 +130,43 @@ TEST(CPUResourceManagerTest, AddResource_ReuseFreeIndex)
     EXPECT_EQ(mgr.getResourceCount(), 3); // Size remains the same
     EXPECT_TRUE(mgr.isFreeIndexStackEmpty()); // Free stack should now be empty
 
-    TestCPUResource* retrievedNew = mgr.getResource<TestCPUResource>(newHandle);
+    TestCPUResource* retrievedNew = static_cast<TestCPUResource*>(mgr.getCPUResource(newHandle));
     ASSERT_NE(retrievedNew, nullptr);
     EXPECT_EQ(retrievedNew->id, 99);
     EXPECT_EQ(retrievedNew, rawNewRes); // Ensure it's the same object
 }
 
-TEST(CPUResourceManagerTest, GetResource_ValidHandleCorrectType)
+TEST(CPUResourceManagerTest, getCPUResource_ValidHandleCorrectType)
 {
     CPUResourceManager mgr;
     std::unique_ptr<TestCPUResource> res = std::make_unique<TestCPUResource>(55);
     ResourceHandle handle = mgr.addResource(std::move(res));
 
-    TestCPUResource* retrieved = mgr.getResource<TestCPUResource>(handle);
+    TestCPUResource* retrieved = static_cast<TestCPUResource*>(mgr.getCPUResource(handle));
     ASSERT_NE(retrieved, nullptr);
     EXPECT_EQ(retrieved->id, 55);
 }
 
-TEST(CPUResourceManagerTest, GetResource_InvalidHandle)
+TEST(CPUResourceManagerTest, getCPUResource_InvalidHandle)
 {
     CPUResourceManager mgr;
     mgr.addResource(std::make_unique<TestCPUResource>(1)); // Add one resource
 
     // Test out-of-bounds handles
-    EXPECT_EQ(mgr.getResource<TestCPUResource>(999), nullptr); // Too large
-    EXPECT_EQ(mgr.getResource<TestCPUResource>(-1), nullptr);  // Negative
+    EXPECT_EQ(static_cast<TestCPUResource*>(mgr.getCPUResource(999)), nullptr); // Too large
+    EXPECT_EQ(static_cast<TestCPUResource*>(mgr.getCPUResource(-1)), nullptr);  // Negative
 }
 
-TEST(CPUResourceManagerTest, GetResource_RemovedResource)
+TEST(CPUResourceManagerTest, getCPUResource_RemovedResource)
 {
     CPUResourceManager mgr;
     ResourceHandle handle = mgr.addResource(std::make_unique<TestCPUResource>(1));
     mgr.removeResource(handle); // Remove it
 
-    EXPECT_EQ(mgr.getResource<TestCPUResource>(handle), nullptr); // Should now be null
+    EXPECT_EQ(static_cast<TestCPUResource*>(mgr.getCPUResource(handle)), nullptr); // Should now be null
 }
 
-TEST(CPUResourceManagerTest, GetResource_WrongType)
-{
-    CPUResourceManager mgr;
-    ResourceHandle handle = mgr.addResource(std::make_unique<TestCPUResource>(123));
 
-    // Try to retrieve a TestCPUResource as an AnotherTestCPUResource
-    AnotherTestCPUResource* wrongTypeRes = mgr.getResource<AnotherTestCPUResource>(handle);
-    EXPECT_EQ(wrongTypeRes, nullptr); // dynamic_cast should return nullptr
-}
 
 TEST(CPUResourceManagerTest, RemoveResource_ValidHandle)
 {
@@ -187,7 +179,7 @@ TEST(CPUResourceManagerTest, RemoveResource_ValidHandle)
 
     mgr.removeResource(handle);
 
-    EXPECT_EQ(mgr.getResource<TestCPUResource>(handle), nullptr); // Should be null now
+    EXPECT_EQ(static_cast<AnotherTestCPUResource*>(mgr.getCPUResource(handle)), nullptr); // Should be null now
     EXPECT_EQ(TestCPUResource::s_instanceCount, 0); // Resource should be destroyed
     EXPECT_TRUE(rawRes->m_wasDestroyed); // Verify specific instance destruction
     EXPECT_FALSE(mgr.isFreeIndexStackEmpty()); // Free index should have the handle
@@ -205,7 +197,7 @@ TEST(CPUResourceManagerTest, RemoveResource_InvalidHandle)
 
     // Verify no crash and state remains unchanged
     EXPECT_EQ(mgr.getResourceCount(), 1);
-    EXPECT_NE(mgr.getResource<TestCPUResource>(0), nullptr); // Original resource still there
+    EXPECT_NE(static_cast<TestCPUResource*>(mgr.getCPUResource(0)), nullptr); // Original resource still there
     EXPECT_TRUE(mgr.isFreeIndexStackEmpty()); // No handles should have been freed
 }
 
