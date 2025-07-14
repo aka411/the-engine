@@ -10,7 +10,7 @@ namespace TheEngine::Graphics
 
 	public:
 		virtual ~IGPUResourceSystem() = default;
-		virtual IGPUResource* getGPUResource(const TheEngine::Core::ResourceHandle handle) const = 0;
+		virtual IGPUResource* getGPUResource(const TheEngine::Core::ResourceHandle handle)  = 0;
 
 	};
 }

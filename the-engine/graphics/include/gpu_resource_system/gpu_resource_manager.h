@@ -26,9 +26,9 @@ namespace TheEngine::Graphics
 	
 		~GPUResourceManager() = default;
 	
-		void storeResource(const TheEngine::Core::ResourceHandle handle, std::unique_ptr<IGPUResource>&& resource);
+		virtual void storeResource(const TheEngine::Core::ResourceHandle handle, std::unique_ptr<IGPUResource>&& resource) override;
 
-
+		
 		virtual IGPUResource* getResource(const TheEngine::Core::ResourceHandle handle) const override;
 
 		void removeResource(const TheEngine::Core::ResourceHandle handle);
