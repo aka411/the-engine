@@ -7,7 +7,7 @@ namespace TheEngine::ECS
 struct TransformComponent
 {
 
-   
+   //align for gpu
 
 }
 
