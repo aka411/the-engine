@@ -27,7 +27,7 @@ public:
     virtual ~IGPURenderDevice() = default;
 
 
-    //consider removing this
+
     // --- Device Lifetime and Frame Management ---
     virtual bool Initialize(uint32_t width, uint32_t height, const std::string& windowTitle) = 0;
     virtual void Shutdown() = 0;
@@ -91,30 +91,6 @@ public:
 
     // Method to create a render pass object.
     virtual std::unique_ptr <IGPURenderPass> CreateRenderPass(const RenderPassInfo& createInfo) = 0;//consider naming it RenderPassCreateInfo
-
-
-    //--- Resource Destruction ---
-    
-    virtual void destroyBuffer(IGPUBuffer& buffer) = 0;
-	virtual void destroyTexture(IGPUTexture& texture) = 0;
-	virtual void destroySampler(IGPUSampler& sampler) = 0;
-    virtual void DestroyShaderModule(IGPUShaderModule* shaderModule) = 0;
-
-	
-	virtual void destroyPipeline(IGPUPipelineState& pipeline) = 0;
-
-
-
-	virtual void destroyRenderPass(IGPURenderPass& renderPass) = 0;
-	virtual void destroyFramebuffer(IGPUFramebuffer& framebuffer) = 0;
-
-    virtual void destroyCommandBuffer(IGPUCommandBuffer& commandBuffer) = 0;
-
-    // Optional: Getters for unique native device context (for internal use by specific implementations)
-    // For Vulkan: VkDevice
-    // For OpenGL: No direct equivalent, but might return a context identifier or itself.
-    // virtual void* GetNativeDeviceHandle() const = 0;
-
 
 
 

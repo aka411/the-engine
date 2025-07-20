@@ -22,7 +22,7 @@ struct MeshComponent
     // Default constructor
     MeshComponent() : indexBufferID(0) {} // Initialize AssetIDs to a default/invalid value
 
-    // You might add helper methods to set/get streams if needed
+
     // For example, finding a stream by semantic type:
     const VertexAttributeDescriptor* getStream(TheEngine::Core::MeshStreamType type) const
     {

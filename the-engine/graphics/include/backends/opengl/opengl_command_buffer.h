@@ -17,12 +17,18 @@ namespace TheEngine::Graphics
        OpenGLRenderPass* m_currentRenderPass = nullptr;
        OpenGLFramebuffer* m_currentFramebuffer = nullptr;
 
+	   size_t m_currentSubpassIndex = 0;
+
     public:
   
-         ~OpenGLCommandBuffer();
+         ~OpenGLCommandBuffer() = default;
 
+		 OpenGLCommandBuffer() = default;
 
-
+         // --- Render Pass Management ---
+         virtual void BeginRenderPass(IGPURenderPass* renderPass, IGPUFramebuffer* framebuffer) ;//also consider clear values
+         virtual void NextSubpass() ;
+         virtual void EndRenderPass();
 
 
 
