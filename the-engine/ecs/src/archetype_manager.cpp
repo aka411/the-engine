@@ -9,6 +9,13 @@ namespace TheEngine::ECS
 
 	bool ArchetypeManager::checkFit(const size_t numOfEntities, const size_t chunkRawSize, const size_t archetypeHeaderSize, std::vector<ComponentLayout>& componentLayouts)
 	{
+		//This function checks if the given number of entities can fit in the chunk of the given size with the given component layouts
+		//It will return true if it can fit, else false
+			//Potential edge cases to consider :
+		//1. If the componentLayouts vector is empty, then it should return true if numOfEntities is 0, else false
+
+		//i should not be modifying the componentLayouts vector its a bad design need to redesign
+
 
 		size_t currOffset = archetypeHeaderSize;//header size
 
@@ -45,18 +52,36 @@ namespace TheEngine::ECS
 
 
 
-	ArchetypeChunk* getNewChunk(const ArchetypeSignature& signature)
+	ArchetypeChunk* getNewChunk(const ArchetypeDefinition* archetypeDefinition)
 	{
-		//if last chunk is full then we need to create new chunk
+		//This function is used to create a new chunk of the given archetypeDefinition
+		//It will allocate memory from the custom chunk pool allocator and return a new ArchetypeChunk pointer
+
+		//potential edge cases to consider
+			//1.what if memory allocation fails? --> log it and return nullptr and let caller hadle it(not implemented)
+		   
+
+		if (archetypeDefinition == nullptr)
+		{
+			//log error and return nullptr
+			return nullptr;
+		}
+
+
 		void* newChunk = m_chunkPoolAllocator.allocate(CHUNK_RAW_SIZE, alignof(ArchetypeChunk));
+
+
+		if (newChunk == nullptr)
+		{
+			//log error allocation failed for new chunk
+			return nullptr; //or halt?
+		}
 
 		ArchetypeChunk* archetypeChunk = new(newChunk) ArchetypeChunk();
 
-		//assuming m_archetypeDefinitions[signature] is there
-		archetypeChunk->archetypeDefinition = m_archetypeDefinitions[signature].get();
-
+		archetypeChunk->archetypeDefinition = archetypeDefinition;
 		archetypeChunk->chunkRawSize = CHUNK_RAW_SIZE;
-		archetypeChunk->chunkEntityCapacity = archetypeChunk->archetypeDefinition.chunkEntityCapacity;
+		archetypeChunk->chunkEntityCapacity = archetypeDefinition->chunkEntityCapacity;
 
 		archetypeChunk->chunkEntityUsed = 0;
 
@@ -216,10 +241,12 @@ namespace TheEngine::ECS
 
 
 
-	void ArchetypeManager::CategorizeChunks(ChunkList& chunkList ) // temp method name , rename it to something better
+	void ArchetypeManager::CategorizeChunks(ChunkList& chunkList) // temp method name , rename it to something better
 	{
 
-	
+		//This function will categorize the chunks in the chunkList into available and full chunks based on their usage
+		 //Potential edge cases to consider :
+		
 
 		std::vector<ArchetypeChunk*> newAvailableChunkList;
 		std::vector<ArchetypeChunk*> newFullChunkList;
@@ -228,7 +255,7 @@ namespace TheEngine::ECS
 
 		for (ArchetypeChunk* chunk : chunkList.availableChunks)
 		{
-			if (chunk  != nullptr)
+			if (chunk != nullptr)
 			{
 				if (chunk->chunkEntityUsed >= chunk->chunkEntityCapacity)
 				{
@@ -277,61 +304,78 @@ namespace TheEngine::ECS
 
 	ArchetypeChunk* ArchetypeManager::GetOrCreateChunk(const ArchetypeSignature& signature)
 	{
+		//Give out a available chunk if available, else create a new chunk of the given signature
+
+		//Potential edge cases to consider
+		// 1. If the signature is not found in m_archetypeDefinitions, then we need to create a new archetype definition first?
+
+
 		auto it = m_chunkLists.find(signature);
 
-
-
-
-
-
-
-	E
-		if (it != m_chunkLists.end())
+		if (it != m_chunkLists.end()) // signature exsists in chunk lists
 		{
-			if (!it->second.availableChunks.empty())
+			const ArchetypeDefinition* const archetypeDefinition = m_archetypeDefinitions[signature].get();
+			ChunkList* const chunkList = &it->second; //get the chunk list for the given signature
+
+			if (archetypeDefinition == nullptr)
 			{
+				//log archetype definition not found for the given signature
+				//then exit? or return nullptr?
 
-				if (it->second.availableChunks.back().chunkEntityUsed < it->second.availableChunks.back().chunkEntityCapacity)
+			}
+			if (chunkList == nullptr)
+			{
+				//log chunk list not found for the given signature
+				//then exit? or return nullptr?
+			}
+
+			CategorizeChunks(chunkList);//update chunk lists to categorize available and full chunks
+
+
+			//now check for avaiable chunks
+
+			if (!chunkList.availableChunks.empty())
+			{
+				//if available chunks are present then return the last available chunk
+				return chunkList.availableChunks.back(); //return last available chunk
+			}
+			else
+			{
+				//1.create new chunk 
+				//2.place it in available chunks
+				//3.return new chunk pointer
+
+				ArchetypeChunk* newChunk = getNewChunk(signature);
+
+				if (newChunk != nullptr)
 				{
-					//take chunk from available chunks
-					ArchetypeChunk* chunk = it->second.availableChunks.back();
-
-					return chunk;
+					chunkList.availableChunks.push_back(newChunk);
+					return newChunk;
 				}
 				else
 				{
-					//check available list for any free chunks
-					for (size_t i = it->second.availableChunks.size() - 1; i >= 0; --i)
-					{
-						//move chunk from available to full chunks
-						ArchetypeChunk* chunk = it->second.availableChunks[i];//no bounds checking
-						it->second.availableChunks.pop_back();
-
-						it->second.fullChunks.push_back(chunk);
-
-
-					}
-
-
-
-
-
+					//log memory allocation failed for new chunk
+					return nullptr; //or halt?
 
 				}
 			}
 
 
+		}
+		else
+		{
+			//signature not found in chunk lists, 
+			//need to design a way to handle this case
+
+
+
+
 
 		}
 
-		//if not found then create new chunk with new archetype definition
+
+
+
 
 
 	}
-
-
-
-
-
-
-}
