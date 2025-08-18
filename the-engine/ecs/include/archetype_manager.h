@@ -2,13 +2,14 @@
 #include <unordered_map>
 #include <memory>
 #include <bitset>
+#include "chunk_pool_allocator.h"
 
 
 namespace TheEngine::ECS
 {
 
 	constexpr size_t CHUNK_RAW_SIZE = 16 * 1024; 
-
+	constexpr size_t MAX_COMPONENTS = 10;
 	using ComponentId = int16_t;
 
 	using ComponentFilter = std::bitset<MAX_COMPONENTS>;
@@ -95,8 +96,9 @@ namespace TheEngine::ECS
 
 		ArchetypeManager() = default;
 		~ArchetypeManager() = default;
-		ArchetypeDefinition* GetOrCreateArchetypeDefinition(const ArchetypeSignature& signature);
 
+
+		ArchetypeDefinition* GetOrCreateArchetypeDefinition(const ArchetypeSignature& signature);
 		ArchetypeChunk* GetOrCreateChunk(const ArchetypeSignature& signature);
 
 
