@@ -107,15 +107,13 @@ namespace TheEngine::ECS
 		
 		void CategorizeChunks(ChunkList& chunkList);
 
-		bool checkFit(const size_t numOfEntities, const size_t chunkRawSize,
-			const size_t archetypeHeaderSize, std::vector<ComponentLayout>& componentLayouts);
+
 
 	public:
 
 		ArchetypeManager() = default;
 		~ArchetypeManager() = default;
 
-		void addComponentToEntity(EntityRecord& entityRecord, );
 
 
 		template<typename ComponentType>
