@@ -125,7 +125,7 @@ namespace TheEngine::ECS
 
 
 
-		ArchetypeDefinition* GetOrCreateArchetypeDefinition(const ArchetypeSignature& signature);
+		ArchetypeDefinition* getOrCreateArchetypeDefinition(const ArchetypeSignature& signature);
 		ArchetypeChunk* GetOrCreateChunk(const ArchetypeSignature& signature);
 
 

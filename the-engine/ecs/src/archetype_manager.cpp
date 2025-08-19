@@ -93,7 +93,7 @@ namespace TheEngine::ECS
 
 
 
-	ArchetypeDefinition* ArchetypeManager::GetOrCreateArchetypeDefinition(const ArchetypeSignature& signature)
+	ArchetypeDefinition* ArchetypeManager::getOrCreateArchetypeDefinition(const ArchetypeSignature& signature)
 	{
 		auto it = m_archetypeDefinitions.find(signature);
 		if (it != m_archetypeDefinitions.end())
