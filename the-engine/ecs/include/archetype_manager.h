@@ -52,10 +52,20 @@ namespace TheEngine::ECS
 	};
 
 
+
+	//maps offset to entity id
+	struct ArchetypeRecordChunk
+	{
+		EntityId id = INVALID_ENTITY_ID;
+	};
+
+
+
 	struct ArchetypeChunk
 	{
-		ArchetypeDefinition* archetypeDefinition = nullptr;
+		ArchetypeDefinition* archetypeDefinition = nullptr;//not the owner
 
+		ArchetypeRecordChunk* archetypeRecord = nullptr;//owner
 
 		//The below data could be put inside ArchetypeDefinition
 		size_t chunkRawSize = 0; //size of the chunk in bytes
@@ -67,11 +77,6 @@ namespace TheEngine::ECS
 
 	};
 
-	//maps offset to entity id
-	struct ArchetypeRecordChunk
-	{
-		EntityId id = INVALID_ENTITY_ID;
-	};
 
 
 
