@@ -118,6 +118,8 @@ namespace TheEngine::ECS
 		void addComponentToEntity(EntityRecord& entityRecord, );
 
 
+		template<typename ComponentType>
+		void addComponentToEntity(EntityRecord& entityRecord, const ComponentType& component);
 
 
 
@@ -133,5 +135,24 @@ namespace TheEngine::ECS
 
 
 	};
+
+
+
+	template<typename ComponentType>
+	void addComponentToEntity(EntityRecord& entityRecord, const ComponentType& component)//called by entity manager
+	{
+		//ToDo : Add logic to add component to Entity
+			//1)Get component id
+			//2)Get current Archetype  and compare if already there
+				//2.a) if already there then replace the component only
+				// 
+				//2.b)if not there already need to move to new archetypechunk and update records
+
+		//Also handle other cases.
+		
+
+	};
+
+
 
 }
