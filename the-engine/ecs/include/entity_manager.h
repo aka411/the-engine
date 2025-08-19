@@ -8,7 +8,12 @@ namespace TheEngine::ECS
 {
 
 	struct EntityId
-	{
+	{/*
+	 Note :
+
+	 id == 0 and generation == 0 are used 
+	 to represent invalid entity.
+	 */
 		
 		size_t id = 0; // unique identifier for the entity
 		uint16_t generation = 0; // generation number to handle entity reuse
@@ -23,6 +28,14 @@ namespace TheEngine::ECS
 		size_t chunkIndex = -1; // index of entities component in the specific chunk in the archetype
 		//currently using size_t evaluate if I need negative ones
 	};
+
+
+
+
+	const EntityId INVALID_ENTITY_ID = {};
+
+
+
 
 
 

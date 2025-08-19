@@ -67,6 +67,16 @@ namespace TheEngine::ECS
 
 	};
 
+	//maps offset to entity id
+	struct ArchetypeRecordChunk
+	{
+		EntityId id = INVALID_ENTITY_ID;
+	};
+
+
+
+
+
 	struct ChunkList
 	{
 		//owner of memory region is allocator
@@ -99,6 +109,15 @@ namespace TheEngine::ECS
 
 		ArchetypeManager() = default;
 		~ArchetypeManager() = default;
+
+		void addComponentToEntity(EntityRecord& entityRecord, );
+
+
+
+
+
+
+
 
 
 		ArchetypeDefinition* GetOrCreateArchetypeDefinition(const ArchetypeSignature& signature);
