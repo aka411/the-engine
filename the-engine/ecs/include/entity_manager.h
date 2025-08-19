@@ -52,7 +52,8 @@ namespace TheEngine::ECS
 		void AddComponent(EntityId entityId, const DataType& component);
 		void RemoveComponent(EntityId entityId, ComponentId componentTypeId);
 
-		void RemoveComponent(int entityId, int componentTypeId);
+		//template<typename DataType>
+		//ComponentId  getComponentId ( const DataType& component) // just putting here if i ever need this
 
 
 	};
