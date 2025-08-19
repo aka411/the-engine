@@ -92,6 +92,9 @@ namespace TheEngine::ECS
 		
 		void CategorizeChunks(ChunkList& chunkList);
 
+		bool checkFit(const size_t numOfEntities, const size_t chunkRawSize,
+			const size_t archetypeHeaderSize, std::vector<ComponentLayout>& componentLayouts);
+
 	public:
 
 		ArchetypeManager() = default;
@@ -102,6 +105,7 @@ namespace TheEngine::ECS
 		ArchetypeChunk* GetOrCreateChunk(const ArchetypeSignature& signature);
 
 
+	
 
 
 	};
