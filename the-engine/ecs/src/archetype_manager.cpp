@@ -111,13 +111,16 @@ namespace TheEngine::ECS
 
 
 		std::vector<ComponentLayout> componentLayouts;
-		for (size_t i = 0; i < signature.size(); ++i)
+		for (ComponentId  i = 0; i < signature.size(); ++i)
 		{
 
 			if (signature[i] == 1)
 			{
 
 				ComponentTypeInfo* componentTypeInfo = m_componentRegistry.getComponentTypeinfo(i); //get component type info
+
+				if (componentTypeInfo == nullptr) break; //ToDo : comeup with better handler
+
 				ComponentLayout componentLayout;
 
 				componentLayout.componentId = i;
