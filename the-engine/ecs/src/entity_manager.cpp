@@ -1,11 +1,33 @@
-#include "entity_manager.h"
+//#include "entity_manager.h"
+#include "../include/entity_manager.h"
 
 
 namespace TheEngine::ECS
 {
-	void TheEngine::ECS::EntityManager::CreateEntity()
+	EntityId* TheEngine::ECS::EntityManager::createEntity()
 	{
 
+
+
+		return nullptr;
+	}
+
+	void EntityManager::destroyEntity(EntityId& entityId)
+	{
+
+
+
+	}
+
+
+
+
+	EntityRecord* EntityManager::getEntityRecord(const EntityId& entityId)
+	{
+
+
+
+		return nullptr;
 	}
 
 

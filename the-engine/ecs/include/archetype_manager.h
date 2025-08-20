@@ -5,6 +5,9 @@
 #include "chunk_pool_allocator.h"
 
 
+class EntityRecord;
+
+
 namespace TheEngine::ECS
 {
 
@@ -54,9 +57,10 @@ namespace TheEngine::ECS
 
 
 	//maps offset to entity id
+	//ArchetypeChunk is the sole owner of this
 	struct ArchetypeRecordChunk
 	{
-		EntityId id = INVALID_ENTITY_ID;
+		EntityId id ;
 	};
 
 
@@ -105,8 +109,11 @@ namespace TheEngine::ECS
 
 		bool checkFit(const size_t numOfEntities, const size_t chunkRawSize, const size_t archetypeHeaderSize, std::vector<ComponentLayout>& componentLayouts);
 		
-		void CategorizeChunks(ChunkList& chunkList);
+		void categorizeChunks(ChunkList& chunkList);
 
+
+		ArchetypeDefinition* getOrCreateArchetypeDefinition(const ArchetypeSignature& signature);
+		ArchetypeChunk* getOrCreateFreeArchetypeChunk(const ArchetypeSignature& signature);
 
 
 	public:
@@ -119,14 +126,14 @@ namespace TheEngine::ECS
 		template<typename ComponentType>
 		void addComponentToEntity(EntityRecord& entityRecord, const ComponentType& component);
 
+		void moveBetweenArchetypes(ArchetypeChunk* const srcArchetypeChunk, ArchetypeChunk* const destArchetypeChunk, );
+		//ToDo : check const correctness
+		//       complete method signature as required
 
 
 
 
 
-
-		ArchetypeDefinition* getOrCreateArchetypeDefinition(const ArchetypeSignature& signature);
-		ArchetypeChunk* GetOrCreateChunk(const ArchetypeSignature& signature);
 
 
 	
@@ -137,17 +144,49 @@ namespace TheEngine::ECS
 
 
 	template<typename ComponentType>
-	void addComponentToEntity(EntityRecord& entityRecord, const ComponentType& component)//called by entity manager
+	inline void addComponentToEntity(EntityRecord& entityRecord, const ComponentType& component)//called by ECS manager
 	{
+		//ToDo : Decide whether to replace reference with pointer and adding nullptr check
+
+
 		//ToDo : Add logic to add component to Entity
 			//1)Get component id
 			//2)Get current Archetype  and compare if already there
+			// 
+			// 
 				//2.a) if already there then replace the component only
 				// 
 				//2.b)if not there already need to move to new archetypechunk and update records
 
 		//Also handle other cases.
 		
+
+
+
+		//get CompoentId
+		ComponentId componentId = m_componentRegistry.getComponentId(std::type_index(typeid(ComponentType)));
+
+
+		//check id
+		if (!entityRecord.archetypeSignature.test(componentId))
+		{
+			/*move between archetypes*/
+
+
+
+
+		}
+		else
+		{
+			/*replacing component*/
+
+
+
+
+		}
+
+
+
 
 	};
 

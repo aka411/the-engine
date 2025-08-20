@@ -35,6 +35,7 @@ namespace TheEngine::ECS
 		ComponentId m_nextComponentId = 0;
 
 		std::unordered_map<std::type_index, ComponentId> m_typeToId;
+
 		std::unordered_map<ComponentId, ComponentTypeinfo> m_IdToInfo;
 
 	public:

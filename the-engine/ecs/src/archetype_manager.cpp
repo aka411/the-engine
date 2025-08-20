@@ -244,12 +244,17 @@ namespace TheEngine::ECS
 
 
 
-	void ArchetypeManager::CategorizeChunks(ChunkList& chunkList) // temp method name , rename it to something better
+
+	void ArchetypeManager::updateChunkStatus(const ArchetypeSignature& signature) 
 	{
 
 		//This function will categorize the chunks in the chunkList into available and full chunks based on their usage
 		 //Potential edge cases to consider :
 		
+
+
+		//ToDo : get chunklist using archetype signature
+
 
 		std::vector<ArchetypeChunk*> newAvailableChunkList;
 		std::vector<ArchetypeChunk*> newFullChunkList;
@@ -305,7 +310,7 @@ namespace TheEngine::ECS
 
 
 
-	ArchetypeChunk* ArchetypeManager::GetOrCreateChunk(const ArchetypeSignature& signature)
+	ArchetypeChunk* ArchetypeManager::getOrCreateFreeArchetypeChunk(const ArchetypeSignature& signature)
 	{
 		//Give out a available chunk if available, else create a new chunk of the given signature
 
@@ -332,7 +337,7 @@ namespace TheEngine::ECS
 				//then exit? or return nullptr?
 			}
 
-			CategorizeChunks(chunkList);//update chunk lists to categorize available and full chunks
+			//CategorizeChunks(chunkList);//update chunk lists to categorize available and full chunks
 
 
 			//now check for avaiable chunks
