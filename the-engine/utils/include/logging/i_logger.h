@@ -1,4 +1,5 @@
 #pragma once
+#include <source_location>
 
 //uses c++ 20 feature std::source_location location
 
@@ -21,7 +22,7 @@ enum class LogSource
     PHYSICS,
     ECS
 
-}
+};
 
 class ILogger {
     
@@ -37,3 +38,4 @@ public:
 
 
 }
+
