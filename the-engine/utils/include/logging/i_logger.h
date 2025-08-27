@@ -1,29 +1,12 @@
 #pragma once
 #include <string>
 #include <source_location>
-
+#include <logger_utils.h>
 //uses c++ 20 feature std::source_location location
 
 namespace TheEngine::Utils
 {
 
-enum class LogLevel {
-    TRACE,
-    DEBUG,
-    INFO,
-    WARN,
-    ERROR,
-    FATAL
-};
-
-
-enum class LogSource
-{
-    RENDERER,
-    PHYSICS,
-    ECS
-
-};
 
 class ILogger {
     
