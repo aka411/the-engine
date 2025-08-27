@@ -11,7 +11,7 @@ enum class LogLevel {
     INFO,
     WARN,
     ERROR,
-    FATEL
+    FATAL
 };
 
 
@@ -29,10 +29,11 @@ public:
     virtual ~ILogger() = default;
 
     // Core logging method
-    virtual void Log(const LogLevel level,LogSource logSource , const std::string& message,
+    virtual void Log(const LogLevel level,const LogSource logSource , const std::string& message,
                      const std::source_location location = std::source_location::current()) = 0;
 
 
 };
+
 
 }
