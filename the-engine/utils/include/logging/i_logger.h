@@ -15,13 +15,21 @@ enum class LogLevel {
 };
 
 
+enum class LogSource
+{
+    RENDERER,
+    PHYSICS,
+    ECS
+
+}
+
 class ILogger {
     
 public:
     virtual ~ILogger() = default;
 
     // Core logging method
-    virtual void Log(LogLevel level, const std::string& message,
+    virtual void Log(const LogLevel level,LogSource logSource , const std::string& message,
                      const std::source_location location = std::source_location::current()) = 0;
 
 
