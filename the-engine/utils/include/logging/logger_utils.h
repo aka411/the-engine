@@ -2,39 +2,32 @@ namespace TheEngine::Utils
 {
 
 
-enum class LogLevel {
-    TRACE,
-    DEBUG,
-    INFO,
-    WARN,
-    ERROR,
-    FATAL
-};
+
 
 
 enum class LogSource
 {
     RENDERER,
     PHYSICS,
-    ECS
+    ECS,
+    INPUT
 
 };
 
 
 
 
-std::string getLogLevelString(const LogLevel level) const
+std::string getLogSourceString(const LogSource logSource) const
 {
-	switch (level)
+	switch (logSource)
 	{
-	case LogLevel::TRACE :  return "TRACE";
-	case LogLevel::DEBUG :  return "DEBUG";
-	case LogLevel::INFO  :  return "INFO";
-	case LogLevel::WARN  :  return "WARN";
-    case LogLevel::ERROR :  return "ERROR";
-    case LogLevel::FATAL :  return "FATAL";
+	case LogSource::RENDERER :  return "RENDERER";
+	case LogSource::PHYSICS  :  return "PHYSICS";
+	case LogSource::ECS      :  return "ECS";
+	case LogSource::INPUT    :  return "INPUT";
 	default  :              return "UNKNOWN";
 	}
 }
     
+
 }
