@@ -25,7 +25,7 @@ std::string getLogSourceString(const LogSource logSource) const
 	case LogSource::PHYSICS  :  return "PHYSICS";
 	case LogSource::ECS      :  return "ECS";
 	case LogSource::INPUT    :  return "INPUT";
-	default  :              return "UNKNOWN";
+	default  :                  return "UNKNOWN";
 	}
 }
     
