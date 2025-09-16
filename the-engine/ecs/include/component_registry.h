@@ -8,7 +8,7 @@ namespace TheEngine::ECS
 {
 	//ComponentRegistry owner and creator of this
 
-	struct ComponentTypeinfo
+	struct ComponentTypeInfo
 	{
 		std::type_index typeId;
 
@@ -36,7 +36,7 @@ namespace TheEngine::ECS
 
 		std::unordered_map<std::type_index, ComponentId> m_typeToId;
 
-		std::unordered_map<ComponentId, ComponentTypeinfo> m_IdToInfo;
+		std::unordered_map<ComponentId, ComponentTypeInfo> m_IdToInfo;
 
 	public:
 		~ComponentRegistry() = default;
@@ -45,7 +45,7 @@ namespace TheEngine::ECS
 		template<typename DataType>
 		ComponentId RegisterComponent(DataType component);
 
-		ComponentTypeinfo* getComponentTypeinfo(ComponentId componentId) const;
+		ComponentTypeInfo* getComponentTypeinfo(ComponentId componentId) const;
 
 		ComponentId getComponentId(std::type_index typeIndex) const;
 
@@ -63,6 +63,7 @@ namespace TheEngine::ECS
 	{
 		std::type_index typeIdx = typeid(DataType);
 
+		//ToDo: add check to see if the component is already registered??
 
 		auto& it = m_typeToId.find(typeIdx);
 		if (it != m_typeToId.end())
@@ -74,7 +75,7 @@ namespace TheEngine::ECS
 		m_typeToId[typeIdx] = componentId;
 
 
-		ComponentTypeinfo typeInfo;
+		ComponentTypeInfo typeInfo;
 		typeInfo.typeId = typeIdx;
 		typeInfo.size = sizeof(DataType);
 		typeInfo.alignment = alignof(DataType);

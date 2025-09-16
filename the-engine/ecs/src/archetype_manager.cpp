@@ -59,11 +59,11 @@ namespace TheEngine::ECS
 
 		//potential edge cases to consider
 			//1.what if memory allocation fails? --> log it and return nullptr and let caller hadle it(not implemented)
-		   
+
 
 		if (archetypeDefinition == nullptr)
 		{
-			//log error and return nullptr
+			//ToDo: log error and return nullptr
 			return nullptr;
 		}
 
@@ -111,7 +111,7 @@ namespace TheEngine::ECS
 
 
 		std::vector<ComponentLayout> componentLayouts;
-		for (ComponentId  i = 0; i < signature.size(); ++i)
+		for (ComponentId i = 0; i < signature.size(); ++i)
 		{
 
 			if (signature[i] == 1)
@@ -245,12 +245,24 @@ namespace TheEngine::ECS
 
 
 
-	void ArchetypeManager::updateChunkStatus(const ArchetypeSignature& signature) 
+
+
+
+
+
+
+
+
+
+
+
+
+	void ArchetypeManager::updateChunkStatus(const ArchetypeSignature& signature)
 	{
 
 		//This function will categorize the chunks in the chunkList into available and full chunks based on their usage
 		 //Potential edge cases to consider :
-		
+
 
 
 		//ToDo : get chunklist using archetype signature
@@ -387,3 +399,142 @@ namespace TheEngine::ECS
 
 
 	}
+
+	void ArchetypeManager::moveUpBetweenArchetypes(ArchetypeChunk* const srcArchetypeChunk, ArchetypeChunk* const destArchetypeChunk, const ComponentTypeInfo& componentTypeInfo, void* const component, EntityRecord& entityRecord)
+	{
+
+
+
+
+		//ToDo :  srcArchetypeChunk and destArchetypeChunk should be quired inside here so change the method signature
+		//update entity record to reflect the new chunk here it self
+		
+		//ToDo : this is unsafe add nullptr checks
+		std::vector<ComponentLayout> srcComponentLayout = srcArchetypeChunk->archetypeDefinition->componentLayouts;
+		std::vector<ComponentLayout> destComponentLayout = destArchetypeChunk->archetypeDefinition->componentLayouts;
+	
+		
+		std::vector<ComponentLayout&> srcSortedComponentLayout(srcComponentLayout.size());//consider making this vector pointer or reference
+
+
+		for (size_t srcIndex = 0; srcIndex < srcComponentLayout.size(); ++srcIndex)
+		{
+			for (size_t destIndex = 0; destIndex < destComponentLayout.size(); ++destIndex)
+			{
+				if (srcComponentLayout[srcIndex].componentLayouts.id == destComponentLayout[destIndex].componentLayouts.id)
+				{
+					destSortedAccordingToSrcComponentLayout[srcIndex] = destComponentLayout[destIndex];//copying // consider pointer copying
+				}
+			}
+		}
+
+
+
+
+
+		//loop and move or copy,
+		const size_t srcChunkBaseAddress = reinterpret_cast<size_t>();
+		const size_t destChunkBaseAddress = reinterpret_cast<size_t>();
+
+		const size_t destIndex = destArchetypeChunk->chunkEntityUsed;
+		const size_t srcIndex = entityRecord.chunkIndex;
+
+
+		for (size_t index = 0; index < destSortedAccordingToSrcComponentLayout.size(); ++index)
+		{
+			
+			//move or copy
+			const ComponentLayout& destsortedComponentLayout = destSortedAccordingToSrcComponentLayout[index]
+			const size_t destBaseComponentOffset = destComponentLayout.offsetInChunk;
+			const size_t srcBaseComponentOffset = srcComponentLayout[index].offsetInChunk;//check if index under size of the vector
+
+			const size_t sizeOfcomponent = destsortedComponentLayout.size;
+
+			//pointers to source and destination component location
+			void* srcPtr = reinterpret_cast<void*>(srcChunkBaseAddress+ srcBaseComponentOffset+(sizeOfcomponent * srcIndex));
+			void* destPtr = reinterpret_cast<void*>(destChunkBaseAddress+destBaseComponentOffset+(sizeOfcomponent * destIndex));
+
+			//call method from type info
+			const ComponentTypeInfo* destComponentTypeInfo = destsortedComponentLayout.componentTypeInfo;
+			
+			//check if nullptr
+
+			destComponentTypeInfo.move(destPtr, srcPtr);//or do copy
+
+
+		}
+
+		for (size_t index = 0; index < destComponentLayout.size(); ++index)
+		{
+			if (destComponentLayout[index].componentTypeInfo.typeId == componentTypeInfo.typeId)
+			{
+				const ComponentLayout& destComponentLayout = destComponentLayout[index];
+				const size_t destBaseComponentOffset = destComponentLayout.offsetInChunk;
+				const size_t sizeOfcomponent = destComponentLayout.size;
+				const void* destPtr = destChunkBaseAddress + destBaseComponentOffset + (destIndex* sizeOfcomponent);
+
+				destComponentLayout[index].componentTypeInfo.move(destPtr, component);
+			}
+		}
+
+
+
+
+
+		//src will have hole
+		for (size_t index = 0; index < SrcComponentLayout.size(); ++index)
+		{
+
+			//move or copy
+			const ComponentLayout& componentLayout = SrcComponentLayout[index]
+			const size_t baseComponentOffset = componentLayout.offsetInChunk;
+	
+
+			const size_t sizeOfcomponent = componentLayout.size;
+
+			//ToDo : correct it here
+			void* srcPtr = reinterpret_cast<void*>(srcChunkBaseAddress + baseComponentOffset + (sizeOfcomponent * srcIndex));
+			void* destPtr = reinterpret_cast<void*>(srcChunkBaseAddress + baseComponentOffset + (sizeOfcomponent * destIndex));
+
+			//call method from type info
+			const ComponentTypeInfo* destComponentTypeInfo = destsortedComponentLayout.componentTypeInfo;
+
+			//check if nullptr
+
+			destComponentTypeInfo.move(destPtr, srcPtr);//or do copy
+
+
+		}
+
+
+		//also update records and archetypes
+
+
+
+
+		/*increase and decrease index here*/
+		
+
+
+
+
+
+
+
+
+		//ToDo : 
+		//srcChunk will have a hole and that needs to be filled
+		//and it will emmit back an id to be updated
+
+		/*Fill the hole*/
+			//Take last entity in source and fill in the hole and update the records
+			
+
+
+
+		//this requires more thought what if i store a pointer to the record instead
+		//give out entity id to be updated(i am leaning towards pointer more )
+
+
+	}
+}

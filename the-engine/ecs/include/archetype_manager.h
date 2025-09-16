@@ -41,7 +41,7 @@ namespace TheEngine::ECS
 	{
 		ArchetypeSignature archetypeSignature;
 
-		//should be ordered by alignment then size
+		//should be sorted by alignment then size
 		std::vector<ComponentLayout> componentLayouts;
 
 
@@ -109,11 +109,25 @@ namespace TheEngine::ECS
 
 		bool checkFit(const size_t numOfEntities, const size_t chunkRawSize, const size_t archetypeHeaderSize, std::vector<ComponentLayout>& componentLayouts);
 		
-		void categorizeChunks(ChunkList& chunkList);
+		void updateChunkStatus(const ArchetypeSignature& signature);
 
 
 		ArchetypeDefinition* getOrCreateArchetypeDefinition(const ArchetypeSignature& signature);
 		ArchetypeChunk* getOrCreateFreeArchetypeChunk(const ArchetypeSignature& signature);
+
+
+
+
+
+		void moveUpBetweenArchetypes(ArchetypeChunk* const srcArchetypeChunk, ArchetypeChunk* const destArchetypeChunk, const ComponentTypeInfo& componentTypeInfo, void* const component, EntityRecord& entityRecord);
+		//ToDo : check const correctness
+		//       check if enough of data is available to facilitate move
+		//this move adds components
+
+
+
+
+
 
 
 	public:
@@ -125,10 +139,6 @@ namespace TheEngine::ECS
 
 		template<typename ComponentType>
 		void addComponentToEntity(EntityRecord& entityRecord, const ComponentType& component);
-
-		void moveBetweenArchetypes(ArchetypeChunk* const srcArchetypeChunk, ArchetypeChunk* const destArchetypeChunk, );
-		//ToDo : check const correctness
-		//       complete method signature as required
 
 
 

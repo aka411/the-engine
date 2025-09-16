@@ -28,3 +28,7 @@ then we can request sub iterator from main iterator for each compoenent
 look into chunked iteration where we cast a chunk as the compoenent type and use [];
 
 maybe the sub iterator can use this under its implementation.
+
+
+
+
