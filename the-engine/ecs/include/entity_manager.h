@@ -1,23 +1,74 @@
-#pragma once
-
-#include <vector>
+#pragma once  
+#include "../../core/include/types.h"
+#include "archetype_manager.h"
 #include <stack>
-#include <the-engine/core/types.h>
-class EntityManager
+#include "component_registry.h"
+
+namespace TheEngine::ECS
 {
-private:
-	std::vector<bool> m_entities;//entity status list
-	std::stack<int> m_availableEntityIds;//stack of available entities Id
+	/*Invalid EntityId will be signaled by nullptr*/
+	struct EntityId
+	{
 
-public:
+		size_t id = 0; // unique identifier for the entity
+		uint16_t generation = 0; // generation number to handle entity reuse
+	};
+
+	/*Invalid Entity record will be signaled by nullptr*/
+	struct EntityRecord
+	{
+		ArchetypeSignature& archetypeSignature;
+		uint16_t generation = 0;
+		ArchetypeChunk* chunk = nullptr; // pointer to the chunk where the entity is located
+		size_t chunkIndex = 0; // index of entities component in the specific chunk in the archetype
+		
+	};
 
 
-	TheEngine::EntityId createEntity();
-	void destroyEntity(TheEngine::EntityId entityId);
-	bool isAlive(TheEngine::EntityId entityId)const;
 
 
 
 
-};
 
+
+
+
+	class EntityManager
+	{
+
+	private:
+
+		ArchetypeManager& m_archetypeManager;
+		ComponentRegistry& m_componentRegistry;
+
+		std::vector<EntityRecord> m_entityRegistry;
+
+		std::stack<EntityId> m_freeEntityIds;//need better name 
+
+
+	public:
+
+		EntityManager() = default;
+		~EntityManager() = default;
+
+		EntityId* createEntity();
+		void destroyEntity(EntityId& entityId);
+
+
+		EntityRecord* getEntityRecord(const EntityId& entityId);//the caller has power to edit record
+		//this is necesary to faciltate record update without having coupling with the archetype manager
+
+		
+
+
+	};
+
+
+
+
+
+
+
+
+
+}

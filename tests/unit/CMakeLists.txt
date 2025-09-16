@@ -52,7 +52,7 @@ target_link_libraries(
 
 
 # Automatically discovers all TEST() and TEST_F() macros within SanityCheckTests
-# and registers them with CTest, allowing you to run them with `ctest`.
+# and registers them with CTest, allowing us to run them with `ctest`.
 
 gtest_discover_tests(SanityCheckTests)
 
