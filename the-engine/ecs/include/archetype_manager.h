@@ -5,19 +5,30 @@
 #include <memory>
 #include "../../utils/include/logging/i_logger.h"
 #include "component_registry.h"
+#include "common_data_types.h"
 
 namespace TheEngine::ECS
 {
 
-
+	//chunk raw size might not be needed if we go with max entities per chunk approach
 	constexpr size_t CHUNK_RAW_SIZE = 16 * 1024;
-	constexpr size_t MAX_COMPONENTS = 10;
-	using ComponentId = int16_t;
-
-	using ComponentFilter = std::bitset<MAX_COMPONENTS>;
-	using ArchetypeSignature = std::bitset<MAX_COMPONENTS>;
+	
 
 
+
+	struct ComponentLayout
+	{
+		ComponentId componentId = 0;
+
+		uint32_t size = 0; //redundant already in ComponentTypeinfo
+		uint32_t alignment = 0;//redundant already in ComponentTypeinfo
+
+		size_t offsetInChunk = 0; //offset in chunk memory region
+
+		ComponentTypeInfo* componentTypeInfo;
+
+
+	};
 
 
 
@@ -29,10 +40,9 @@ namespace TheEngine::ECS
 		std::vector<ComponentLayout> componentLayouts;
 
 
-		size_t chunkRawSize = 0; //size of the chunk in bytes
-		//including header and if  padding present also
+		size_t chunkRawSize = 0;//total size of ArchetypeChunk the data is stored in for which the offsets are calculated
 
-		size_t chunkEntityCapacity = 0; //how many entities can be stored for this chunkRawSize
+		size_t chunkMaxEntityCapacity = 0; //how many entities can be stored for this chunkRawSize
 
 
 
@@ -43,9 +53,20 @@ namespace TheEngine::ECS
 	{
 		//ToDo : need to hashout the alignment requirements here when storing in chunk
 		size_t maxCount = 0; //max entities ids that can be stored in this chunk
+		//this maxCount should actually be in Archetype header but since we cannot use only id[] FAM we need here to avoid zero size array
 		EntityId id[];
 		
 
+	};
+
+
+	struct ArchetypeChunk
+	{
+
+		//uint8_t data[1]; //raw data block ,hacky way to define a flexible array member in C++
+		//Gonna use empty struct cause flexible array member is not allowed in C++
+	
+		
 	};
 
 
@@ -78,7 +99,13 @@ namespace TheEngine::ECS
 
 	private:
 
+
 		TheEngine::Utils::ILogger& m_logger;
+
+
+
+		static const size_t MAX_NUM_OF_ENTITIES_PER_CHUNK = 256; // adjust based on performance testing
+
 
 		std::unordered_map<ArchetypeSignature, std::unique_ptr<ArchetypeDefinition>> m_archetypeDefinitions;
 		std::unordered_map<ArchetypeSignature, ChunkList> m_archetypeChunksMap;
@@ -90,6 +117,7 @@ namespace TheEngine::ECS
 		{
 			ComponentId componentId = 0;
 
+			//consider removing these after checking if its used anywhere
 			uint32_t size = 0; //redundant already in ComponentTypeinfo
 			uint32_t alignment = 0;//redundant already in ComponentTypeinfo
 
@@ -102,14 +130,20 @@ namespace TheEngine::ECS
 		*/
 
 		//Methods:
+		bool moveArchetypeChunkHeaderToAvailableList(ArchetypeChunkHeader* archetypeChunkHeader);
+		bool moveArchetypeChunkHeaderToFullList(ArchetypeChunkHeader* archetypeChunkHeader);
 
-		bool moveEntityData(ArchetypeChunkHeader* srcArchetypeChunkHeader, ArchetypeChunkHeader* destArchetypeChunkHeader, EntityRecord* entityRecord, EntityRecordUpdate& entityRecordUpdate);
+
+
+		bool moveEntityData(ArchetypeChunkHeader* srcArchetypeChunkHeader, ArchetypeChunkHeader* destArchetypeChunkHeader, EntityRecord* entityRecord, std::vector<EntityRecordUpdate>& entityRecordUpdateList);
 
 
 		std::vector<EntityRecordUpdate>  transferEntityBetweenArchetype(ArchetypeChunkHeader* srcArchetypeChunkHeader, ArchetypeChunkHeader* destArchetypeChunkHeader, EntityAddInfo entityAddInfo);
 
 		EntityRecordUpdate addComponentDataToArchetypeChunk(ArchetypeChunkHeader* archetypeChunkHeader,EntityAddInfo entityAddInfo);
 
+
+		ArchetypeDefinition* createNewArchetypeDefinition(const ArchetypeSignature& archetypeSignature);
 
 		ArchetypeChunkHeader* createArchetypeChunkHeader(ArchetypeDefinition* archetypeDefinition);
 
@@ -184,7 +218,7 @@ namespace TheEngine::ECS
 
 
 
-		//std::vector<EntityRecordUpdate> removeComponentToEntity(EntityRemoveInfo entityAddInfo);//ToDo : Need more thought here
+		//std::vector<EntityRecordUpdate> removeComponentFromEntity(EntityRemoveInfo entityAddInfo);//ToDo : Need more thought here
 		//For MVP we are not gonna implement this
 
 
