@@ -441,7 +441,7 @@ namespace TheEngine::ECS
 
 		
 		ArachetypeChunk* archetypeChunk = archetypeChunkHeader->archetypeChunk;
-		if (archetypeChunk != nullptr)
+		if (archetypeChunk == nullptr)
 		{
 			assert(archetypeChunk != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeChunk is nullptr in addComponentDataToArchetypeChunk")
@@ -453,7 +453,7 @@ namespace TheEngine::ECS
 
 
 		ArchetypeRecordChunk* archetypeRecordChunk = archetypeChunkHeader->archetypeRecordChunk;
-		if (archetypeRecordChunk != nullptr)
+		if (archetypeRecordChunk == nullptr)
 		{
 			assert(archetypeRecordChunk != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeRecordChunk is nullptr in addComponentDataToArchetypeChunk")
@@ -465,7 +465,7 @@ namespace TheEngine::ECS
 
 
 		const ArchetypeDefinition* archetypeDefinition = archetypeChunkHeader->archetypeDefinition;
-		if (archetypeDefinition != nullptr)
+		if (archetypeDefinition == nullptr)
 		{
 			assert(archetypeDefinition != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeDefinition is nullptr in addComponentDataToArchetypeChunk")
@@ -503,7 +503,7 @@ namespace TheEngine::ECS
 
 					if ((archetypeChunkEndAddress) < (destComponentAddress + destComponentLayout.componentTypeInfo.size)) // safety check
 					{
-						assert((archetypeChunkEndAddress) < (destComponentAddress + destComponentLayout.componentTypeInfo.size));
+						assert((archetypeChunkEndAddress) > (destComponentAddress + destComponentLayout.componentTypeInfo.size));
 						LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeChunk OVERFLOW detected during component data addition. ")
 							//TODO : Call engine shutdown and error handling here as this is a serious error
 							//CODE EXECUTION STOPS HERE
