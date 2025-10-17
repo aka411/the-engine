@@ -17,7 +17,7 @@ enum class LogSource
 
 
 
-std::string getLogSourceString(const LogSource logSource) const
+std::string getLogSourceString(const LogSource logSource) 
 {
 	switch (logSource)
 	{

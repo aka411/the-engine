@@ -1,6 +1,6 @@
 
 #pragma once
-
+#include "logger_utils.h"
 
 
 #ifdef NDEBUG

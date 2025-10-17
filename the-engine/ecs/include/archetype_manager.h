@@ -130,17 +130,29 @@ namespace TheEngine::ECS
 		*/
 
 		//Methods:
+		bool moveArchetypeHeaderChunkToCorrectList(std::vector<ArchetypeChunkHeader*>& destChunkList, std::vector<ArchetypeChunkHeader*>& srcChunkList, ArchetypeChunkHeader* archetypeChunkHeader);
+		
+
 		bool moveArchetypeChunkHeaderToAvailableList(ArchetypeChunkHeader* archetypeChunkHeader);
 		bool moveArchetypeChunkHeaderToFullList(ArchetypeChunkHeader* archetypeChunkHeader);
 
 
 
-		bool moveEntityData(ArchetypeChunkHeader* srcArchetypeChunkHeader, ArchetypeChunkHeader* destArchetypeChunkHeader, EntityRecord* entityRecord, std::vector<EntityRecordUpdate>& entityRecordUpdateList);
+		struct MoveResult
+		{
+			bool moveResult = false;
+			EntityRecordUpdate movedEntityRecordUpdate;
+
+			bool entityMovedToFillGap = false;
+			EntityRecordUpdate entityMovedToFillGapRecordUpdate;
+		};
+
+		MoveResult moveEntityData(ArchetypeChunkHeader* destArchetypeChunkHeader, ArchetypeChunkHeader* srcArchetypeChunkHeader, EntityRecord* entityToBeMovedRecord);
 
 
-		std::vector<EntityRecordUpdate>  transferEntityBetweenArchetype(ArchetypeChunkHeader* srcArchetypeChunkHeader, ArchetypeChunkHeader* destArchetypeChunkHeader, EntityAddInfo entityAddInfo);
+		std::vector<EntityRecordUpdate>  transferAndAddEntityDataToArchetypeChunk(ArchetypeChunkHeader* destArchetypeChunkHeader, ArchetypeChunkHeader* srcArchetypeChunkHeader, EntityAddInfo entityAddInfo);
 
-		EntityRecordUpdate addComponentDataToArchetypeChunk(ArchetypeChunkHeader* archetypeChunkHeader,EntityAddInfo entityAddInfo);
+		EntityRecordUpdate addInitialComponentDataToArchetypeChunk(ArchetypeChunkHeader* archetypeChunkHeader,EntityAddInfo entityAddInfo);
 
 
 		ArchetypeDefinition* createNewArchetypeDefinition(const ArchetypeSignature& archetypeSignature);
@@ -152,69 +164,12 @@ namespace TheEngine::ECS
 
 
 	public:
-		ArchetypeManager();
+		ArchetypeManager(ILogger& logger, ComponentRegistry& componentRegistry);
 		~ArchetypeManager();
 
 
-		//ToDo : Implement ArchetypeManager
-
-		// Public Methods:
-		//	 3 Public Methods: addComponentToEntity(), deleteEntityData(), getArchetypeChunks()
-
-		// 1 public Method(New): removeComponentFromEntity() // for MVP we are not gonna implement this
-
-
-
-		/*
-		struct ComponentData
-		{
-
-		ComponentId componentId;
-
-		void* data; //pointer to component data in contiguous memory block
-
-		}
-		*/
-
-		/*
-		struct EntityRecord
-		{
-
-		EntityId id;
-
-		ArchetypeSignature& archetypeSignature;
-		ArchetypeChunk* archetypeChunk; //pointer to the chunk where entity data is stored
-		uint32_t index; //index of the entity within the chunk
-
-
-
-		}
-		
-		*/
-
-
-
-
-
-		/*
-		struct EntityAddInfo
-		{
-
-		EntityRecord entityRecord;
-		std::vector<ComponentData> componentDataList;
-
-		}
-		*/
-
 		std::vector<EntityRecordUpdate> addComponentToEntity(EntityAddInfo entityAddInfo);
-		/*
-		struct EntityRecordUpdate
-		{
-		EntityId id;
-		ArchetypeChunk* archetypeChunk;
-		uint32_t offset;
-		}
-		*/
+
 
 
 
@@ -222,7 +177,7 @@ namespace TheEngine::ECS
 		//For MVP we are not gonna implement this
 
 
-		std::vector<EntityRecordUpdate> deleteEntityData(EntityRecord* entityRecord);//Entity record null check will be performed by the orchastrator
+		//std::vector<EntityRecordUpdate> deleteEntityData(EntityRecord* entityRecord);//Entity record null check will be performed by the orchastrator
 
 
 
