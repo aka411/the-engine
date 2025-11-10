@@ -6,15 +6,13 @@
 #include "../../utils/include/logging/logger_macro.h"
 #include <algorithm>
 #include <cstdlib>
-
+#include <iostream>
 
 namespace TheEngine::ECS
 {
 	using namespace TheEngine::Utils;
-	//Aim to write less code and more readable code with proper error handling and performance in mind
 
-
-
+	//Futre work : clean up
 	//Error Handling : We are gonna do strict error handling in this class as any error here can cause silent data corruption,
 	//                 any unexpected beahavior should be handled by shutting down the engine and logging the error
 
@@ -23,16 +21,16 @@ namespace TheEngine::ECS
 	bool ArchetypeManager::moveArchetypeHeaderChunkToCorrectList(std::vector<ArchetypeChunkHeader*>& destChunkList, std::vector<ArchetypeChunkHeader*>& srcChunkList, ArchetypeChunkHeader* archetypeChunkHeader)
 	{
 		//REVIEW : DONE
-		
-		
+
+
 		if (archetypeChunkHeader == nullptr)
 		{
 			assert(archetypeChunkHeader != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeChunkHeader is nullptr in moveArchetypeHeaderChunkToCorrectList");
 
-				//TODO : Call engine shutdown and error handling here as this is a serious error
+			//TODO : Call engine shutdown and error handling here as this is a serious error
 
-				return false;//code excecution should never reach here
+			return false;//code excecution should never reach here
 
 		}
 
@@ -71,9 +69,9 @@ namespace TheEngine::ECS
 			assert(archetypeChunkHeader != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeChunkHeader is nullptr in moveArchetypeChunkHeaderToAvailableList");
 
-				//TODO : Call engine shutdown and error handling here as this is a serious error
+			//TODO : Call engine shutdown and error handling here as this is a serious error
 
-				return false;//code excecution should never reach here
+			return false;//code excecution should never reach here
 		}
 
 
@@ -85,9 +83,9 @@ namespace TheEngine::ECS
 			assert(archetypeDefinition != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeDefinition is nullptr in moveArchetypeChunkHeaderToAvailableList");
 
-				//TODO : Call engine shutdown and error handling here as this is a serious error
+			//TODO : Call engine shutdown and error handling here as this is a serious error
 
-				return false;//code excecution should never reach here
+			return false;//code excecution should never reach here
 
 		}
 
@@ -117,9 +115,9 @@ namespace TheEngine::ECS
 				assert(moveResult);
 				LOG_ERROR(m_logger, LogSource::ECS, "Failed to move ArchetypeChunkHeader To AvailableList");
 
-					//TODO : Call engine shutdown and error handling here as this is a serious error
+				//TODO : Call engine shutdown and error handling here as this is a serious error
 
-					return false;//code excecution should never reach here
+				return false;//code excecution should never reach here
 
 			}
 
@@ -133,9 +131,9 @@ namespace TheEngine::ECS
 			assert(it != m_archetypeChunksMap.end());
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeSignature not found in moveArchetypeChunkHeaderToAvailableList");
 
-				//TODO : Call engine shutdown and error handling here as this is a serious error
+			//TODO : Call engine shutdown and error handling here as this is a serious error
 
-				return false;//code excecution should never reach here
+			return false;//code excecution should never reach here
 		}
 
 		//If we reach here, something went wrong
@@ -155,9 +153,9 @@ namespace TheEngine::ECS
 			//ToDo : Write better message
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeChunkHeader is nullptr in moveArchetypeChunkHeaderToFullList");
 
-				//TODO : Call engine shutdown and error handling here as this is a serious error
+			//TODO : Call engine shutdown and error handling here as this is a serious error
 
-				return false;//code excecution should never reach here
+			return false;//code excecution should never reach here
 		}
 
 		//TODO : add null check on ArchetypeDefinition
@@ -169,9 +167,9 @@ namespace TheEngine::ECS
 			assert(archetypeDefinition != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeDefinition is nullptr in moveArchetypeChunkHeaderToFullList");
 
-				//TODO : Call engine shutdown and error handling here as this is a serious error
+			//TODO : Call engine shutdown and error handling here as this is a serious error
 
-				return false;//code excecution should never reach here
+			return false;//code excecution should never reach here
 
 		}
 
@@ -196,9 +194,9 @@ namespace TheEngine::ECS
 				assert(moveResult);
 				LOG_ERROR(m_logger, LogSource::ECS, "Failed to move ArchetypeChunkHeader To FullList");
 
-					//TODO : Call engine shutdown and error handling here as this is a serious error
+				//TODO : Call engine shutdown and error handling here as this is a serious error
 
-					return false;//code excecution should never reach here
+				return false;//code excecution should never reach here
 			}
 
 
@@ -210,8 +208,8 @@ namespace TheEngine::ECS
 			assert(it != m_archetypeChunksMap.end());
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeSignature not found in moveArchetypeChunkHeaderToAvailableList");
 
-				//TODO : Call engine shutdown and error handling here as this is a serious error
-				return false;//ToDo : change to proper error handling as this is gonna cause a silent corruption
+			//TODO : Call engine shutdown and error handling here as this is a serious error
+			return false;//ToDo : change to proper error handling as this is gonna cause a silent corruption
 		}
 
 		//If we reach here, something went wrong
@@ -235,45 +233,45 @@ namespace TheEngine::ECS
 
 		MoveResult moveResult;
 		moveResult.moveResult = false;
-		
-
-			if (srcArchetypeChunkHeader == nullptr)
-			{
-				assert(srcArchetypeChunkHeader != nullptr);
-				LOG_ERROR(m_logger, LogSource::ECS, "Source ArchetypeChunkHeader is nullptr in moveEntityData");
-					//TODO : Call engine shutdown and error handling here as this is a serious error
-					return moveResult;
-			}
-
-			if (destArchetypeChunkHeader == nullptr)
-			{
-				assert(destArchetypeChunkHeader != nullptr);
-				LOG_ERROR(m_logger, LogSource::ECS, "Destination ArchetypeChunkHeader is nullptr in moveEntityData");
-					//TODO : Call engine shutdown and error handling here as this is a serious error
-					return moveResult;
-			}
-
-			if (entityToBeMovedRecord == nullptr)
-			{
-				assert(entityToBeMovedRecord != nullptr);
-				LOG_ERROR(m_logger, LogSource::ECS, "EntityRecord is nullptr in moveEntityData");
-					//TODO : Call engine shutdown and error handling here as this is a serious error
-					return moveResult;
-
-			}
 
 
+		if (srcArchetypeChunkHeader == nullptr)
+		{
+			assert(srcArchetypeChunkHeader != nullptr);
+			LOG_ERROR(m_logger, LogSource::ECS, "Source ArchetypeChunkHeader is nullptr in moveEntityData");
+			//TODO : Call engine shutdown and error handling here as this is a serious error
+			return moveResult;
+		}
 
-			if (srcArchetypeChunkHeader->chunkEntityUsed == 0)//means there is no entity in source 
-			{
-				assert(srcArchetypeChunkHeader->chunkEntityUsed != 0);
-				LOG_ERROR(m_logger, LogSource::ECS, "Corruption in srcArchetypeChunkHeader detected,chunkEntityUsed in srcArchetypeChunkHeader cannot be zero");
-					//TODO : Call engine shutdown and error handling here as this is a serious error
+		if (destArchetypeChunkHeader == nullptr)
+		{
+			assert(destArchetypeChunkHeader != nullptr);
+			LOG_ERROR(m_logger, LogSource::ECS, "Destination ArchetypeChunkHeader is nullptr in moveEntityData");
+			//TODO : Call engine shutdown and error handling here as this is a serious error
+			return moveResult;
+		}
 
-					return moveResult;//move is false but move actually happened
+		if (entityToBeMovedRecord == nullptr)
+		{
+			assert(entityToBeMovedRecord != nullptr);
+			LOG_ERROR(m_logger, LogSource::ECS, "EntityRecord is nullptr in moveEntityData");
+			//TODO : Call engine shutdown and error handling here as this is a serious error
+			return moveResult;
 
-			}
-		
+		}
+
+
+
+		if (srcArchetypeChunkHeader->chunkEntityUsed == 0)//means there is no entity in source 
+		{
+			assert(srcArchetypeChunkHeader->chunkEntityUsed != 0);
+			LOG_ERROR(m_logger, LogSource::ECS, "Corruption in srcArchetypeChunkHeader detected,chunkEntityUsed in srcArchetypeChunkHeader cannot be zero");
+			//TODO : Call engine shutdown and error handling here as this is a serious error
+
+			return moveResult;//move is false but move actually happened
+
+		}
+
 
 
 		//ToDo : Review and  move logic and gap filling logic
@@ -286,7 +284,7 @@ namespace TheEngine::ECS
 		//Notes : After this method call Entity Record is invalid and should not be used anymore untill updated by entity manager which will only happen after external call to entity manager with the returned EntityRecordUpdate
 
 		const ArchetypeDefinition* srcArchetypeDefinition = srcArchetypeChunkHeader->archetypeDefinition;
-		
+
 
 		const ArchetypeDefinition* destArchetypeDefinition = destArchetypeChunkHeader->archetypeDefinition;
 
@@ -327,7 +325,7 @@ namespace TheEngine::ECS
 				if (srcComponentLayout.componentId == destComponentLayout.componentId)
 				{
 
-					//TODO : WATCH OUT FOR ONE OF ERROR
+					//TODO : WATCH OUT FOR ONE OFF ERROR
 					std::uintptr_t srcComponentAddress = srcArchetypeChunkBaseAddress + srcComponentLayout.offsetInChunk + (srcToBeMovedEntityIndex * srcComponentLayout.componentTypeInfo->size);//null check?
 					std::uintptr_t destComponentAddress = destArchetypeChunkBaseAddress + destComponentLayout.offsetInChunk + (destFreeEntitySlotIndex * destComponentLayout.componentTypeInfo->size);//null check?
 
@@ -353,7 +351,7 @@ namespace TheEngine::ECS
 
 
 			std::uintptr_t srcComponentAddress = srcArchetypeChunkBaseAddress + srcComponentLayout.offsetInChunk + (srcToBeMovedEntityIndex * srcComponentLayout.componentTypeInfo->size);
-			
+
 			void* srcComponentPtr = reinterpret_cast<void*> (srcComponentAddress);
 
 			//destruct
@@ -365,17 +363,17 @@ namespace TheEngine::ECS
 
 		/******CODE TO FILL LEFT GAP IN SOURCE ARCHETYPECHUNK*******/
 		//This code is doing work only on srcArchetypeChunk
-	
-			
-			
-			const size_t srcLastEntityIndex = srcArchetypeChunkHeader->chunkEntityUsed-1;//minus one cause if dont it is the next free slot
-			const size_t srcGapEntityIndex = entityToBeMovedRecord->index;
 
-			
-		if (srcLastEntityIndex != 0) //  what we moved was not the last and there is atleast one more entity in this ArchetypeChunk
+
+
+		const size_t srcLastEntityIndex = srcArchetypeChunkHeader->chunkEntityUsed - 1;//minus one cause if dont it is the next free slot
+		const size_t srcGapEntityIndex = entityToBeMovedRecord->index;
+
+
+		if (srcLastEntityIndex != 0 && srcGapEntityIndex != srcLastEntityIndex) //  what we moved was not the last and there is atleast one more entity in this ArchetypeChunk
 		{
-			
-			
+
+
 
 
 			for (auto& srcComponentLayout : srcComponentLayouts)
@@ -407,11 +405,11 @@ namespace TheEngine::ECS
 			lastEntityRecordUpdate.id = srcArchetypeRecordChunk->id[srcLastEntityIndex];
 			lastEntityRecordUpdate.newArchetypeChunkHeader = srcArchetypeChunkHeader;// TODO : fix needed ,we have to move ArchetypeHeader to common data type 
 			lastEntityRecordUpdate.newIndex = srcGapEntityIndex;
-			
+
 			moveResult.entityMovedToFillGap = true;
 
 			moveResult.entityMovedToFillGapRecordUpdate = lastEntityRecordUpdate;
-			
+
 		}
 
 
@@ -435,9 +433,9 @@ namespace TheEngine::ECS
 
 			assert(isMoved);
 			LOG_ERROR(m_logger, LogSource::ECS, "Failed to move destArchetypeChunkHeader to FullList");
-				//TODO : Call engine shutdown and error handling here as this is a serious error
+			//TODO : Call engine shutdown and error handling here as this is a serious error
 
-				return moveResult;//move is false but move actually happened
+			return moveResult;//move is false but move actually happened
 
 		}
 
@@ -448,9 +446,9 @@ namespace TheEngine::ECS
 
 			assert(isMoved);
 			LOG_ERROR(m_logger, LogSource::ECS, "Failed to move srcArchetypeChunkHeader to AvaialbleList");
-				//TODO : Call engine shutdown and error handling here as this is a serious error
+			//TODO : Call engine shutdown and error handling here as this is a serious error
 
-				return moveResult;//move is false but move actually happened
+			return moveResult;//move is false but move actually happened
 		}
 
 
@@ -483,7 +481,7 @@ namespace TheEngine::ECS
 
 		std::vector<EntityRecordUpdate> entityRecordUpdateList;
 
-		MoveResult moveResult = moveEntityData( destArchetypeChunkHeader, srcArchetypeChunkHeader, &entityAddInfo.entityRecord);
+		MoveResult moveResult = moveEntityData(destArchetypeChunkHeader, srcArchetypeChunkHeader, &entityAddInfo.entityRecord);
 
 		if (!moveResult.moveResult)
 		{
@@ -497,44 +495,44 @@ namespace TheEngine::ECS
 
 
 		//TODO : ADD NULL CHECKS
-		 std::vector<ComponentLayout>& destComponentLayouts = destArchetypeChunkHeader->archetypeDefinition->componentLayouts;
+		std::vector<ComponentLayout>& destComponentLayouts = destArchetypeChunkHeader->archetypeDefinition->componentLayouts;
 		ArchetypeChunk* destArchetypeChunk = destArchetypeChunkHeader->archetypeChunk;
 
 		std::uintptr_t destChunkBaseAddress = reinterpret_cast<std::uintptr_t>(destArchetypeChunk);
 
 		const size_t movedEntityIndex = moveResult.movedEntityRecordUpdate.newIndex;
 
-					for (ComponentData& componentData : entityAddInfo.componentDataList)
-					{
+		for (ComponentData& componentData : entityAddInfo.componentDataList)
+		{
 
-						for (ComponentLayout& destComponentLayout : destComponentLayouts)
-						{
+			for (ComponentLayout& destComponentLayout : destComponentLayouts)
+			{
 
-						if (destComponentLayout.componentId == componentData.componentId)
-						{
-							std::uintptr_t destComponentAddress = destChunkBaseAddress + destComponentLayout.offsetInChunk + (movedEntityIndex * destComponentLayout.componentTypeInfo->size);
-							
-							void* destComponentPtr = reinterpret_cast<void*>(destComponentAddress);
-							//move construct
-							destComponentLayout.componentTypeInfo->moveConstructor(destComponentPtr, componentData.data);
+				if (destComponentLayout.componentId == componentData.componentId)
+				{
+					std::uintptr_t destComponentAddress = destChunkBaseAddress + destComponentLayout.offsetInChunk + (movedEntityIndex * destComponentLayout.componentTypeInfo->size);
 
-							//call destructor on source data 
-							//Note : Actually not needed as we moved data from src chunk in moveEntityData so no source data exsists for these new components
-							//Also all these src data is in temp memory block which will be freed by caller
-							destComponentLayout.componentTypeInfo->destructor(componentData.data);
+					void* destComponentPtr = reinterpret_cast<void*>(destComponentAddress);
+					//move construct
+					destComponentLayout.componentTypeInfo->moveConstructor(destComponentPtr, componentData.data);
 
-							break; //break inner loop as we found the component
-						}
-					}
+					//call destructor on source data 
+					//Note : Actually not needed as we moved data from src chunk in moveEntityData so no source data exsists for these new components
+					//Also all these src data is in temp memory block which will be freed by caller
+					destComponentLayout.componentTypeInfo->destructor(componentData.data);
 
+					break; //break inner loop as we found the component
 				}
+			}
 
-					entityRecordUpdateList.push_back(moveResult.movedEntityRecordUpdate);
+		}
 
-					if (moveResult.entityMovedToFillGap)
-					{
-						entityRecordUpdateList.push_back(moveResult.entityMovedToFillGapRecordUpdate);
-					}
+		entityRecordUpdateList.push_back(moveResult.movedEntityRecordUpdate);
+
+		if (moveResult.entityMovedToFillGap)
+		{
+			entityRecordUpdateList.push_back(moveResult.entityMovedToFillGapRecordUpdate);
+		}
 
 		return entityRecordUpdateList;
 
@@ -553,23 +551,23 @@ namespace TheEngine::ECS
 		{
 			assert(archetypeChunkHeader != nullptr);
 			LOG_ERROR(m_logger, TheEngine::Utils::LogSource::ECS, "ArchetypeChunkHeader is null in addComponentDataToArchetypeChunk");
-				//TODO : Call engine shutdown and error handling here as this is a serious error
-				//CODE EXECUTION STOPS HERE
+			//TODO : Call engine shutdown and error handling here as this is a serious error
+			//CODE EXECUTION STOPS HERE
 
-				return EntityRecordUpdate{};
+			return EntityRecordUpdate{};
 		}
 
 
-		
+
 		ArchetypeChunk* archetypeChunk = archetypeChunkHeader->archetypeChunk;
 		if (archetypeChunk == nullptr)
 		{
 			assert(archetypeChunk != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeChunk is nullptr in addComponentDataToArchetypeChunk");
-				//TODO : Call engine shutdown and error handling here as this is a serious error
-				//CODE EXECUTION STOPS HERE
+			//TODO : Call engine shutdown and error handling here as this is a serious error
+			//CODE EXECUTION STOPS HERE
 
-				return EntityRecordUpdate{};
+			return EntityRecordUpdate{};
 		}
 
 
@@ -578,10 +576,10 @@ namespace TheEngine::ECS
 		{
 			assert(archetypeRecordChunk != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeRecordChunk is nullptr in addComponentDataToArchetypeChunk");
-				//TODO : Call engine shutdown and error handling here as this is a serious error
-				//CODE EXECUTION STOPS HERE
+			//TODO : Call engine shutdown and error handling here as this is a serious error
+			//CODE EXECUTION STOPS HERE
 
-				return EntityRecordUpdate{};
+			return EntityRecordUpdate{};
 		}
 
 
@@ -590,10 +588,10 @@ namespace TheEngine::ECS
 		{
 			assert(archetypeDefinition != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeDefinition is nullptr in addComponentDataToArchetypeChunk");
-				//TODO : Call engine shutdown and error handling here as this is a serious error
-				//CODE EXECUTION STOPS HERE
+			//TODO : Call engine shutdown and error handling here as this is a serious error
+			//CODE EXECUTION STOPS HERE
 
-				return EntityRecordUpdate{};
+			return EntityRecordUpdate{};
 		}
 
 
@@ -611,7 +609,7 @@ namespace TheEngine::ECS
 		const std::uintptr_t archetypeChunkEndAddress = archetypeChunkBaseAddress + archetypeChunkRawSize;
 
 
-		for (ComponentData& srcComponentData : componentDataList) 
+		for (ComponentData& srcComponentData : componentDataList)
 		{
 			for (const ComponentLayout& destComponentLayout : destComponentLayouts)
 			{
@@ -620,16 +618,16 @@ namespace TheEngine::ECS
 					//TODO : need to review this
 					size_t destComponentAddress = archetypeChunkBaseAddress + destComponentLayout.offsetInChunk + (entityDestIndex * destComponentLayout.componentTypeInfo->size);
 
-					
+
 
 					if ((archetypeChunkEndAddress) < (destComponentAddress + destComponentLayout.componentTypeInfo->size)) // safety check
 					{
 						assert((archetypeChunkEndAddress) > (destComponentAddress + destComponentLayout.componentTypeInfo->size));
 						LOG_ERROR(m_logger, LogSource::ECS, "ArchetypeChunk OVERFLOW detected during component data addition. ");
-							//TODO : Call engine shutdown and error handling here as this is a serious error
-							//CODE EXECUTION STOPS HERE
+						//TODO : Call engine shutdown and error handling here as this is a serious error
+						//CODE EXECUTION STOPS HERE
 
-							return EntityRecordUpdate{};
+						return EntityRecordUpdate{};
 					}
 
 
@@ -658,13 +656,13 @@ namespace TheEngine::ECS
 		if (archetypeChunkHeader->chunkEntityUsed == MAX_NUM_OF_ENTITIES_PER_CHUNK)
 		{
 			//move to full list logic here
-	
+
 			bool isMoved = moveArchetypeChunkHeaderToFullList(archetypeChunkHeader);
 
 			assert(isMoved);
 			LOG_ERROR(m_logger, LogSource::ECS, "Failed to move ArchetypeChunkHeader to fullList in ChunkList ");
-				//TODO : Call engine shutdown and error handling here as this is a serious error 
-				//CODE EXECUTION STOPS HERE
+			//TODO : Call engine shutdown and error handling here as this is a serious error 
+			//CODE EXECUTION STOPS HERE
 
 		}
 
@@ -684,7 +682,7 @@ namespace TheEngine::ECS
 		//REVIEW : In progress(90 percent Complete)
 
 		//Aim : To create new ArchetypeDefinition based on given ArchetypeSignature
-		
+
 		//This method interacts with ComponentManager to get component type info for each component in the signature
 		std::vector<ComponentTypeInfo> componentTypeInfos;
 
@@ -696,7 +694,7 @@ namespace TheEngine::ECS
 		{
 			if (archetypeSignature.test(componentId))
 			{
-				
+
 				//owner of componentTypeInfo is ComponentRegistry
 				ComponentTypeInfo* componentTypeInfo = m_componentRegistry.getComponentTypeInfo(componentId);
 
@@ -704,7 +702,7 @@ namespace TheEngine::ECS
 				{
 					assert(componentTypeInfo != nullptr);
 					LOG_ERROR(m_logger, LogSource::ECS, "ComponentTypeInfo not found for componentId in createNewArchetypeDefinition");
-                    //TODO : Call engine shutdown and error handling here as this is a serious error
+					//TODO : Call engine shutdown and error handling here as this is a serious error
 					//CODE EXECUTION STOPS HERE
 
 					return nullptr;
@@ -716,8 +714,8 @@ namespace TheEngine::ECS
 			}
 		}
 		// Method A-1 ^^^^^^^^^^^: Loops through whole bits  
-		 
-	
+
+
 
 
 		// Method A-2 vvvvvv: First get MSB then loop from there
@@ -768,7 +766,7 @@ namespace TheEngine::ECS
 			totalComponentsSize += componentTypeInfos[i].size;
 		}
 
-		
+
 
 
 		//create component layouts with offsets
@@ -814,7 +812,7 @@ namespace TheEngine::ECS
 		{
 			assert(it != m_archetypeDefinitions.end());
 			LOG_ERROR(m_logger, LogSource::ECS, "Newly created ArchetypeDefinition not found in ArchetypeSignature-ArchetypeDefinition Map");
-				//TODO : Call engine shutdown and error handling here as this is a serious error
+			//TODO : Call engine shutdown and error handling here as this is a serious error
 
 			return nullptr;//code execution should not reach here, if it reaches here that means engine shutdown failed
 		}
@@ -830,8 +828,8 @@ namespace TheEngine::ECS
 		//REVIEW : Done
 		//Aim : To allocate a new ArchetypeChunkHeader along with ArchetypeChunk and ArchetypeRecordChunk from ArchetypeDefinition
 
+		void* archetypeChunkHeaderRawPtr = _aligned_malloc( sizeof(ArchetypeChunkHeader), alignof(ArchetypeChunkHeader));
 
-		void* archetypeChunkHeaderRawPtr = std::aligned_alloc(alignof(ArchetypeChunkHeader), sizeof(ArchetypeChunkHeader));
 		if (archetypeChunkHeaderRawPtr == nullptr)
 		{
 			    assert(archetypeChunkHeaderRawPtr != nullptr);
@@ -840,12 +838,13 @@ namespace TheEngine::ECS
 				//CODE EXECUTION STOPS HERE
 		}
 
+
 		//TODO : Repalce with correct alignment requirement
-		void* archetypeChunkRawPtr = std::aligned_alloc(alignof(/*replace with first component alignment requirement*/), /*replace with chunk size*/);
+		void* archetypeChunkRawPtr = _aligned_malloc(archetypeDefinition->chunkRawSize, archetypeDefinition->componentLayouts[0].alignment);
 		
 		if (archetypeChunkRawPtr == nullptr)
 		{
-			std::free(archetypeChunkHeaderRawPtr);//TODO : these are fragile need better way to do this 
+			_aligned_free(archetypeChunkHeaderRawPtr);//TODO : these are fragile need better way to do this 
 			assert(archetypeChunkRawPtr != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "Memory allocation failed for new ArchetypeChunk");
 				//TODO : Call engine shutdown and error handling here as this is a serious error
@@ -853,12 +852,12 @@ namespace TheEngine::ECS
 			
 		}
 
-		void* ArchetypeRecordChunkRawPtr = std::aligned_alloc(alignof(ArchetypeRecordChunk), /*replace with chunk size*/);
+		void* ArchetypeRecordChunkRawPtr = _aligned_malloc(MAX_NUM_OF_ENTITIES_PER_CHUNK*sizeof(EntityId), alignof(ArchetypeRecordChunk));
 		
 		if (ArchetypeRecordChunkRawPtr == nullptr)
 		{
-			std::free(archetypeChunkHeaderRawPtr);
-			std::free(archetypeChunkRawPtr);
+			_aligned_free(archetypeChunkHeaderRawPtr);
+			_aligned_free(archetypeChunkRawPtr);
 			assert(ArchetypeRecordChunkRawPtr != nullptr);
 			LOG_ERROR(m_logger, LogSource::ECS, "Memory allocation failed for new ArchetypeRecordChunk");
 				//TODO : Call engine shutdown and error handling here as this is a serious error
@@ -870,7 +869,10 @@ namespace TheEngine::ECS
 		//All allocations were successful
 
 		//casting them to correct type
-		ArchetypeChunkHeader* newArchetypeChunkHeader = static_cast<ArchetypeChunkHeader*>(archetypeChunkHeaderRawPtr);
+		//ArchetypeChunkHeader* newArchetypeChunkHeader = static_cast<ArchetypeChunkHeader*>(archetypeChunkHeaderRawPtr);
+
+		ArchetypeChunkHeader* newArchetypeChunkHeader = new (archetypeChunkHeaderRawPtr) ArchetypeChunkHeader();
+
 		ArchetypeChunk* newArchetypeChunk = static_cast<ArchetypeChunk*>(archetypeChunkRawPtr);
 		ArchetypeRecordChunk* newArchetypeRecordChunk = static_cast<ArchetypeRecordChunk*>(ArchetypeRecordChunkRawPtr);
 
@@ -1055,7 +1057,7 @@ namespace TheEngine::ECS
 		/****Public Methods ****/
 
 
-	ArchetypeManager::ArchetypeManager(ILogger& logger, ComponentRegistry& componentRegistry): m_logger(logger), m_componentRegistry(componentRegistry)
+	ArchetypeManager::ArchetypeManager(ILogger& logger, IComponentRegistry& componentRegistry) : m_logger(logger), m_componentRegistry(componentRegistry)
 		{
 			//ToDo : Implement Constructor
 		}
@@ -1069,16 +1071,16 @@ namespace TheEngine::ECS
 				ChunkList& chunkList = pair.second;
 				for (ArchetypeChunkHeader* chunkHeader : chunkList.fullChunks)
 				{
-					std::free(chunkHeader->archetypeChunk);
-					std::free(chunkHeader->archetypeRecordChunk);
-					std::free(chunkHeader);
+					_aligned_free(chunkHeader->archetypeChunk);
+					_aligned_free(chunkHeader->archetypeRecordChunk);
+					_aligned_free(chunkHeader);
 				}
 
 				for (ArchetypeChunkHeader* chunkHeader : chunkList.availableChunks)
 				{
-					std::free(chunkHeader->archetypeChunk);
-					std::free(chunkHeader->archetypeRecordChunk);
-					std::free(chunkHeader);
+					_aligned_free(chunkHeader->archetypeChunk);
+					_aligned_free(chunkHeader->archetypeRecordChunk);
+					_aligned_free(chunkHeader);
 				}
 			}
 

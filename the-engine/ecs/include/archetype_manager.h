@@ -4,14 +4,14 @@
 #include <unordered_map>
 #include <memory>
 #include "../../utils/include/logging/i_logger.h"
-#include "component_registry.h"
+#include "i_component_registry.h"
 #include "common_data_types.h"
 
 namespace TheEngine::ECS
 {
 
 	//chunk raw size might not be needed if we go with max entities per chunk approach
-	constexpr size_t CHUNK_RAW_SIZE = 16 * 1024;
+	//constexpr size_t CHUNK_RAW_SIZE = 16 * 1024;
 	
 
 
@@ -52,10 +52,10 @@ namespace TheEngine::ECS
 	struct ArchetypeRecordChunk
 	{
 		//ToDo : need to hashout the alignment requirements here when storing in chunk
-		size_t maxCount = 0; //max entities ids that can be stored in this chunk
+		//size_t maxCount = 0; //max entities ids that can be stored in this chunk
 		//this maxCount should actually be in Archetype header but since we cannot use only id[] FAM we need here to avoid zero size array
 		EntityId id[];
-		
+
 
 	};
 
@@ -110,7 +110,7 @@ namespace TheEngine::ECS
 		std::unordered_map<ArchetypeSignature, std::unique_ptr<ArchetypeDefinition>> m_archetypeDefinitions;
 		std::unordered_map<ArchetypeSignature, ChunkList> m_archetypeChunksMap;
 
-		ComponentRegistry& m_componentRegistry;
+		IComponentRegistry& m_componentRegistry;
 
 		/*
 		struct ComponentLayout
@@ -164,7 +164,7 @@ namespace TheEngine::ECS
 
 
 	public:
-		ArchetypeManager(ILogger& logger, ComponentRegistry& componentRegistry);
+		ArchetypeManager(TheEngine::Utils::ILogger& logger, IComponentRegistry& componentRegistry);
 		~ArchetypeManager();
 
 
