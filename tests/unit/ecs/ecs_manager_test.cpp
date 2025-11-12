@@ -3,7 +3,7 @@
 #include "../../../the-engine/ecs/include/ecs_manager.h"
 #include "../../../the-engine/ecs/include/common_data_types.h"
 
-
+//Feels like this is more of a integration test
 using namespace TheEngine::ECS;
 
 class ECSManagerTest : public testing::Test
@@ -23,7 +23,7 @@ public:
 
     struct ComponentB
     {
-        std::string text = "Hello";
+        std::string text = "World";
         float secondsPassed = 10.567;
         std::vector<int> dummyVector{ 1,3,5,7 };
     };
@@ -66,7 +66,17 @@ TEST_F(ECSManagerTest, RegisterComponent)
 
     ASSERT_NE(componentAId, componentBId);
 
-    ComponentId duplicateComponentAId = m_ecsManager.get()->registerComponent<ComponentA>();
 
+
+    ComponentId duplicateComponentBId = m_ecsManager.get()->registerComponent<ComponentB>();
+    ASSERT_EQ(componentBId, duplicateComponentBId);
+
+
+    ComponentId duplicateComponentAId = m_ecsManager.get()->registerComponent<ComponentA>();
     ASSERT_EQ(componentAId, duplicateComponentAId);
+
+
 }
+
+
+
