@@ -1,30 +1,15 @@
 #pragma once
 #include <functional>
 #include <typeindex>
+#include "common_data_types.h"
 
 namespace TheEngine::ECS
 {
-	using ComponentId = unsigned int;
+	
 
 
 
-	struct ComponentTypeInfo
-	{
-		std::type_index typeId;
 
-		ComponentId componentId = 0;
-
-		size_t size = 0;
-		size_t alignment = 0;
-
-		std::function<void(void*)> constructor = nullptr; // Function to construct the component
-		std::function<void(void*)> destructor = nullptr; // Function to destruct the component
-
-		//dest , src
-		std::function<void(void*, const void*)> copyConstructor = nullptr; // Function to copy construct the component
-		std::function<void(void*, void*)> moveConstructor = nullptr; // Function to move construct the component
-
-	};
 
 
 
@@ -35,9 +20,9 @@ namespace TheEngine::ECS
 
 	public:
 
-		virtual ComponentTypeInfo* getComponentTypeinfo(ComponentId componentId) const = 0;
+		virtual ComponentTypeInfo* getComponentTypeInfo(ComponentId componentId) const = 0;
 
-
+	
 	};
 
 }
