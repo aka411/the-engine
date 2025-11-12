@@ -1,18 +1,16 @@
 #include "component_registry.h"
+#include <cassert>
 
 namespace TheEngine::ECS
 {
 
 
-
-
-
-	ComponentTypeInfo* ComponentRegistry::getComponentTypeinfo(ComponentId componentId) const
+	ComponentTypeInfo* ComponentRegistry::getComponentTypeInfo(ComponentId componentId) const
 	{
 
-		//TODO : Implement this
-
-		return nullptr;
+		ComponentTypeInfo* componentTypeInfo = m_componentIdToTypeInfoMap.at(componentId).get();
+		assert(componentTypeInfo != nullptr);
+		return componentTypeInfo;
 	}
 
 }

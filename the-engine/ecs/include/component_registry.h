@@ -1,12 +1,10 @@
 #pragma once
 #include "i_component_registry.h"
+#include <memory>
+#include "common_data_types.h"
 
 namespace TheEngine::ECS
 {
-
-
-
-
 
 
 	class ComponentRegistry : public IComponentRegistry
@@ -19,34 +17,106 @@ namespace TheEngine::ECS
 
 		std::unordered_map<std::type_index, ComponentId> m_typeIndexToComponentIdMap;
 
-		std::unordered_map<ComponentId, std::unique_ptr<ComponentTypeInfo>> m_componentIdToTypeInfoMap;//use unique pointer?
+		std::unordered_map<ComponentId, std::unique_ptr<ComponentTypeInfo>> m_componentIdToTypeInfoMap;
 
 
 	public:
 
-		
+
 		ComponentRegistry() = default;
 		~ComponentRegistry() = default;
 
 		template<typename DataType>
-	    inline ComponentId RegisterComponent(DataType component);
+		inline ComponentId registerComponent();
 
-		virtual ComponentTypeInfo* getComponentTypeinfo(ComponentId componentId) const override;
+		virtual ComponentTypeInfo* getComponentTypeInfo(ComponentId componentId) const override;
 
+		template<typename ComponentType>
+		ComponentId getComponentIdFromComponent();
 
 	};
 
 
 
 	template<typename DataType>
-    ComponentId inline ComponentRegistry::RegisterComponent(DataType component)
+	ComponentId inline ComponentRegistry::registerComponent()
 	{
-		//TODO : IMPLEMENT THIS
-		return ComponentId();
+
+
+
+		// 1. Get the canonical type index
+		using ComponentType = std::decay_t<DataType>;//to reomove const ,pointer type etc
+		std::type_index typeIndex = std::type_index(typeid(ComponentType));
+
+		// 2. Check if already registered
+		auto it = m_typeIndexToComponentIdMap.find(typeIndex);
+		if (it != m_typeIndexToComponentIdMap.end())
+		{
+			// Already registered, return the existing ID
+			return it->second;
+		}
+		else
+		{
+			//TODO : need a add a list of free ids
+			m_typeIndexToComponentIdMap[typeIndex] = m_nextComponentId;
+			++m_nextComponentId;
+
+			//--Create TypeInfo ---//
+
+			std::unique_ptr<ComponentTypeInfo> componentTypeInfo = std::make_unique<ComponentTypeInfo>();
+
+			componentTypeInfo->componentId = m_typeIndexToComponentIdMap[typeIndex];
+			componentTypeInfo->size = sizeof(ComponentType);
+			componentTypeInfo->alignment = sizeof(ComponentType);
+
+			componentTypeInfo->constructor = [](void* ptr)
+			{
+				new (ptr) ComponentType();
+
+			};
+
+			componentTypeInfo->destructor = [](void* ptr)
+			{
+				ComponentType component = static_cast<ComponentType>(ptr);
+				~component();
+			};
+
+			componentTypeInfo->copyConstructor = [](void* destPtr, const void* srcPtr)
+				{
+					ComponentType* srcComponentPtr = static_cast<ComponentType*>(srcPtr);
+					new (destPtr) ComponentType(*srcComponentPtr);
+				};
+
+			componentTypeInfo->moveConstructor = [](void* destPtr, void* srcPtr)
+				{
+
+					ComponentType* srcComponentPtr = static_cast<ComponentType*>(srcPtr);
+
+					new (destPtr) ComponentType(std::move(*srcComponentPtr));
+
+				};
+
+		}
+
 	}
 
 
 
+	template<typename ComponentType>
+	ComponentId ComponentRegistry::getComponentIdFromComponent()
+	{
+		using AbsoluteComponentType = std::decay_t<ComponentType>;//to reomove const ,pointer type etc
+		std::type_index typeIndex = std::type_index(typeid(ComponentType));
 
+		auto& it = m_typeIndexToComponentIdMap.find(typeIndex);
+
+		if (it != m_typeIndexToComponentIdMap.end())
+		{
+			return it->second;
+		}
+
+
+		return registerComponent<AbsoluteComponentType>();
+	}
 
 }
