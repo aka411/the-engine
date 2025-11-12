@@ -59,7 +59,7 @@ namespace TheEngine::ECS
 		{
 			//TODO : need a add a list of free ids
 			m_typeIndexToComponentIdMap[typeIndex] = m_nextComponentId;
-			++m_nextComponentId;
+			
 
 			//--Create TypeInfo ---//
 
@@ -77,25 +77,25 @@ namespace TheEngine::ECS
 
 			componentTypeInfo->destructor = [](void* ptr)
 			{
-				ComponentType component = static_cast<ComponentType>(ptr);
-				~component();
+				ComponentType* component = reinterpret_cast<ComponentType*>(ptr);
+				component->~ComponentType();
 			};
 
 			componentTypeInfo->copyConstructor = [](void* destPtr, const void* srcPtr)
 				{
-					ComponentType* srcComponentPtr = static_cast<ComponentType*>(srcPtr);
+					const ComponentType* srcComponentPtr = reinterpret_cast<const ComponentType*>(srcPtr);
 					new (destPtr) ComponentType(*srcComponentPtr);
 				};
 
 			componentTypeInfo->moveConstructor = [](void* destPtr, void* srcPtr)
 				{
 
-					ComponentType* srcComponentPtr = static_cast<ComponentType*>(srcPtr);
+					ComponentType* srcComponentPtr = reinterpret_cast<ComponentType*>(srcPtr);
 
 					new (destPtr) ComponentType(std::move(*srcComponentPtr));
 
 				};
-
+			return m_nextComponentId++;
 		}
 
 	}
