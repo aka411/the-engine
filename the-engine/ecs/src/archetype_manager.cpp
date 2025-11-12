@@ -314,7 +314,7 @@ namespace TheEngine::ECS
 
 		//const ArchetypeSignature& srcArchetypeSignature = srcArchetypeDefinition->archetypeSignature;
 
-		const size_t srcToBeMovedEntityIndex = entityToBeMovedRecord->index;
+		const size_t srcToBeMovedEntityIndex = entityToBeMovedRecord->indexInArchetypeChunkRecordList;
 		const size_t destFreeEntitySlotIndex = destArchetypeChunkHeader->chunkEntityUsed;// zero based index
 
 		for (auto& destComponentLayout : destComponentLayouts)
@@ -367,7 +367,7 @@ namespace TheEngine::ECS
 
 
 		const size_t srcLastEntityIndex = srcArchetypeChunkHeader->chunkEntityUsed - 1;//minus one cause if dont it is the next free slot
-		const size_t srcGapEntityIndex = entityToBeMovedRecord->index;
+		const size_t srcGapEntityIndex = entityToBeMovedRecord->indexInArchetypeChunkRecordList;
 
 
 		if (srcLastEntityIndex != 0 && srcGapEntityIndex != srcLastEntityIndex) //  what we moved was not the last and there is atleast one more entity in this ArchetypeChunk
@@ -402,9 +402,9 @@ namespace TheEngine::ECS
 
 			EntityRecordUpdate lastEntityRecordUpdate;
 
-			lastEntityRecordUpdate.id = srcArchetypeRecordChunk->id[srcLastEntityIndex];
+			lastEntityRecordUpdate.entityId = srcArchetypeRecordChunk->id[srcLastEntityIndex];
 			lastEntityRecordUpdate.newArchetypeChunkHeader = srcArchetypeChunkHeader;// TODO : fix needed ,we have to move ArchetypeHeader to common data type 
-			lastEntityRecordUpdate.newIndex = srcGapEntityIndex;
+			lastEntityRecordUpdate.newIndexInArchetypeChunkRecordList = srcGapEntityIndex;
 
 			moveResult.entityMovedToFillGap = true;
 
@@ -422,7 +422,7 @@ namespace TheEngine::ECS
 		destArchetypeChunkHeader->chunkEntityUsed++;
 
 
-		destArchetypeRecordChunk->id[destFreeEntitySlotIndex] = entityToBeMovedRecord->id;
+		destArchetypeRecordChunk->id[destFreeEntitySlotIndex] = entityToBeMovedRecord->entityId;
 
 
 		if (destArchetypeChunkHeader->chunkEntityUsed == MAX_NUM_OF_ENTITIES_PER_CHUNK)
@@ -456,9 +456,9 @@ namespace TheEngine::ECS
 
 		EntityRecordUpdate destEntityRecordUpdate;
 
-		destEntityRecordUpdate.id = entityToBeMovedRecord->id;
+		destEntityRecordUpdate.entityId = entityToBeMovedRecord->entityId;
 		destEntityRecordUpdate.newArchetypeChunkHeader = destArchetypeChunkHeader;
-		destEntityRecordUpdate.newIndex = destFreeEntitySlotIndex;
+		destEntityRecordUpdate.newIndexInArchetypeChunkRecordList = destFreeEntitySlotIndex;
 
 
 		moveResult.movedEntityRecordUpdate = destEntityRecordUpdate;
@@ -500,7 +500,7 @@ namespace TheEngine::ECS
 
 		std::uintptr_t destChunkBaseAddress = reinterpret_cast<std::uintptr_t>(destArchetypeChunk);
 
-		const size_t movedEntityIndex = moveResult.movedEntityRecordUpdate.newIndex;
+		const size_t movedEntityIndex = moveResult.movedEntityRecordUpdate.newIndexInArchetypeChunkRecordList;
 
 		for (ComponentData& componentData : entityAddInfo.componentDataList)
 		{
@@ -514,12 +514,12 @@ namespace TheEngine::ECS
 
 					void* destComponentPtr = reinterpret_cast<void*>(destComponentAddress);
 					//move construct
-					destComponentLayout.componentTypeInfo->moveConstructor(destComponentPtr, componentData.data);
+					destComponentLayout.componentTypeInfo->moveConstructor(destComponentPtr, componentData.ptr);
 
 					//call destructor on source data 
 					//Note : Actually not needed as we moved data from src chunk in moveEntityData so no source data exsists for these new components
 					//Also all these src data is in temp memory block which will be freed by caller
-					destComponentLayout.componentTypeInfo->destructor(componentData.data);
+					destComponentLayout.componentTypeInfo->destructor(componentData.ptr);
 
 					break; //break inner loop as we found the component
 				}
@@ -632,14 +632,14 @@ namespace TheEngine::ECS
 
 
 					//move construct
-					destComponentLayout.componentTypeInfo->moveConstructor(reinterpret_cast<void*>(destComponentAddress), srcComponentData.data);
+					destComponentLayout.componentTypeInfo->moveConstructor(reinterpret_cast<void*>(destComponentAddress), srcComponentData.ptr);
 
 					// call destructor on source data for safety
 					//what if there is a bad move constructor, wont that resource be lost?
 					//Note : Actually not needed as we moved data from src chunk in moveEntityData so no source data exsists for these new components
 					//Also all these src data is in temp memory block which will be freed by caller
 
-					destComponentLayout.componentTypeInfo->destructor(srcComponentData.data);
+					destComponentLayout.componentTypeInfo->destructor(srcComponentData.ptr);
 					break; //break inner loop as we found the component and find next in source
 				}
 			}
@@ -650,7 +650,7 @@ namespace TheEngine::ECS
 		archetypeChunkHeader->chunkEntityUsed++;
 		//check if full and if full move to full chunk list
 
-		archetypeRecordChunk->id[entityDestIndex] = entityAddInfo.entityRecord.id;
+		archetypeRecordChunk->id[entityDestIndex] = entityAddInfo.entityRecord.entityId;
 
 		//TODO : The maxcount in ArchetypeChunkRecord might get moved to header itself so be wary of design change
 		if (archetypeChunkHeader->chunkEntityUsed == MAX_NUM_OF_ENTITIES_PER_CHUNK)
@@ -668,9 +668,9 @@ namespace TheEngine::ECS
 
 		EntityRecordUpdate entityRecordUpdate;
 
-		entityRecordUpdate.id = entityAddInfo.entityRecord.id;
+		entityRecordUpdate.entityId = entityAddInfo.entityRecord.entityId;
 		entityRecordUpdate.newArchetypeChunkHeader = archetypeChunkHeader;
-		entityRecordUpdate.newIndex = entityDestIndex;
+		entityRecordUpdate.newIndexInArchetypeChunkRecordList = entityDestIndex;
 
 		return entityRecordUpdate;
 
@@ -840,6 +840,8 @@ namespace TheEngine::ECS
 
 
 		//TODO : Repalce with correct alignment requirement
+		//TODO : Handling of zeroSignature, this is a bug found during testing
+		assert(archetypeDefinition->componentLayouts.size() > 0);
 		void* archetypeChunkRawPtr = _aligned_malloc(archetypeDefinition->chunkRawSize, archetypeDefinition->componentLayouts[0].alignment);
 		
 		if (archetypeChunkRawPtr == nullptr)
@@ -1097,13 +1099,13 @@ namespace TheEngine::ECS
 		{
 			//  REVIEW : Done
 
-			ArchetypeSignature newEntityArchetypeSignature;
+			ArchetypeSignature newEntityArchetypeSignature = entityAddInfo.newArchetypeSignature;
 
 			//Add up all component ids and make up the new ArchetypeSignature 
-			for (auto& componentData : entityAddInfo.componentDataList)
-			{
-				newEntityArchetypeSignature.set(componentData.componentId);
-			}
+			//for (auto& componentData : entityAddInfo.componentDataList)
+			//{
+			//	newEntityArchetypeSignature.set(componentData.componentId);
+			//}
 
 
 
