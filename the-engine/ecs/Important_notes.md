@@ -13,3 +13,12 @@ archetype chunk individually , this would require more complex destructor
 - Archetype Manager needs way to handle archetypeSignature with 
   zero set bits , this casued error when trying to access the component
   layouts in archetype definition for this zero signature.
+
+
+# Design Issue to solve
+
+A design problem that i overlooked was that in a archetypechunk the offset 
+info where each component starts is stroed in a vector and i have no way to 
+get offset usign component Id. Now i could use unordered map or map but i am 
+thinking of a better way to do this.may be i should use unordered map or map 
+itself casue the overhead is just per archetype.

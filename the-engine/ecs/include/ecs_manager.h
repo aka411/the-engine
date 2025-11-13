@@ -67,8 +67,11 @@ namespace TheEngine::ECS
 		command.commandType = CommandType::ADD_COMPONENT;
 		command.componentId = m_componentRegistry.getComponentIdFromComponent<ComponentType>();
 		command.ptr = &component;
+
+		//owner if the data the pointer points to is Component Registry and is managed by unique pointer so no dangling pointers
+		ComponentTypeInfo* componentTypeInfo = m_componentRegistry.getComponentTypeInfo(command.componentId);
 	
-		m_commandBuffer.storeCommand(entityId, command);
+		m_commandBuffer.storeCommand(entityId, command, componentTypeInfo);
 
 	}
 

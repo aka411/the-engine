@@ -30,7 +30,10 @@ namespace TheEngine::ECS
 
 			//moving from stack to our local managed memory block
 			void* srcPtr = command.ptr;
+
 			assert(srcPtr != nullptr);
+			assert(componentTypeInfo != nullptr);
+
 			componentTypeInfo->moveConstructor(destPtr, srcPtr);
 			localCommand.ptr = destPtr;
 		}
