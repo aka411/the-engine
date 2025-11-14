@@ -77,8 +77,9 @@ class ArchetypeManagerTest : public ::testing::Test
 
 		struct ComponentC
 		{
-			std::string name = "ComponentB";
+			std::string name = "ComponentC";
 			float componentBFloat = 1.432f;
+			int integer = 23;
 			std::vector<int> stlVector { 3,4,5 };
 		};
 
@@ -128,7 +129,10 @@ class ArchetypeManagerTest : public ::testing::Test
 		m_entityRecord1.entityId = m_entityId1;
 		m_entityRecord1.indexInArchetypeChunkRecordList = 0;
 
-
+		m_entityRecord2.archetypeChunkHeader = nullptr;
+		m_entityRecord2.archetypeSignature = 0;
+		m_entityRecord2.entityId = m_entityId2;
+		m_entityRecord2.indexInArchetypeChunkRecordList = 0;
 
 
 

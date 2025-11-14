@@ -19,6 +19,8 @@ namespace TheEngine::ECS
 	struct ChunkList
 	{
 		//owner of memory region is allocator
+		//full chunks will be full of data
+		//in availabe chunk top might have data
 		std::vector<ArchetypeChunkHeader*> fullChunks;
 		std::vector<ArchetypeChunkHeader*>  availableChunks;
 	};
@@ -112,8 +114,8 @@ namespace TheEngine::ECS
 		//std::vector<EntityRecordUpdate> deleteEntityData(EntityRecord* entityRecord);//Entity record null check will be performed by the orchastrator
 
 
-
-		std::vector<ArchetypeChunk*> getArchetypeChunks(ArchetypeSignature archetypeSignature);
+		const std::unordered_map<ArchetypeSignature, std::unique_ptr<ArchetypeDefinition>>& getArchetypeDefinitions() const;
+		std::vector<ArchetypeChunkHeader*>  getArchetypeChunksWithEntityData(ArchetypeSignature archetypeSignature);
 
 
 

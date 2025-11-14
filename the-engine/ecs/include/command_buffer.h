@@ -34,7 +34,7 @@ namespace TheEngine::ECS
 
 	struct Command
 	{
-		CommandType commandType;
+		CommandType commandType = CommandType::UNKNOWN;
 		ComponentId componentId = 0;
 		void* ptr = nullptr;
 

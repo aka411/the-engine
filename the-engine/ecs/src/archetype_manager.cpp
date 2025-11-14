@@ -44,7 +44,7 @@ namespace TheEngine::ECS
 
 				//overwrite the the copied pointer with last element and pop back to avoid gaps in vector
 				srcChunkList[i] = srcChunkList.back();
-				srcChunkList.pop_back();
+				srcChunkList.pop_back();//size correction
 
 
 				return true;
@@ -598,7 +598,8 @@ namespace TheEngine::ECS
 		const std::vector<ComponentLayout>& destComponentLayouts = archetypeDefinition->componentLayouts;//from archetypehCunkHeader
 		//TODO : do i need to check for zero size of destComponentLayouts ,most probaly not
 
-
+		//ComponentTypeInfo* componentTypeInfo = m_componentRegistry.getComponentTypeInfo(0);
+		
 		std::uintptr_t archetypeChunkBaseAddress = reinterpret_cast<std::uintptr_t>(archetypeChunk);
 		const size_t entityDestIndex = archetypeChunkHeader->chunkEntityUsed;
 
@@ -631,8 +632,11 @@ namespace TheEngine::ECS
 					}
 
 
+
 					//move construct
 					destComponentLayout.componentTypeInfo->moveConstructor(reinterpret_cast<void*>(destComponentAddress), srcComponentData.ptr);
+
+
 
 					// call destructor on source data for safety
 					//what if there is a bad move constructor, wont that resource be lost?
@@ -684,7 +688,7 @@ namespace TheEngine::ECS
 		//Aim : To create new ArchetypeDefinition based on given ArchetypeSignature
 
 		//This method interacts with ComponentManager to get component type info for each component in the signature
-		std::vector<ComponentTypeInfo> componentTypeInfos;
+		std::vector<ComponentTypeInfo*> componentTypeInfos;
 
 		//ToDo : The below loop is very inefficient as it loops  MAX_COMPONENTS times, a better way would be to find the
 		//       first set bit and then next set bit and so on Or find first set bit and proceed from there
@@ -708,7 +712,7 @@ namespace TheEngine::ECS
 					return nullptr;
 				}
 
-				componentTypeInfos.push_back(*componentTypeInfo);
+				componentTypeInfos.push_back(componentTypeInfo);
 
 
 			}
@@ -727,13 +731,13 @@ namespace TheEngine::ECS
 
 		//we need to sort componentTypeInfos by alignment then size for proper memory layout
 		//in Descending order of alignment 
-		std::sort(componentTypeInfos.begin(), componentTypeInfos.end(), [](const ComponentTypeInfo& a, const ComponentTypeInfo& b)
+		std::sort(componentTypeInfos.begin(), componentTypeInfos.end(), [](const ComponentTypeInfo* a, const ComponentTypeInfo* b)
 			{
-				if (a.alignment == b.alignment)
+				if (a->alignment == b->alignment)
 				{
-					return a.size > b.size; //larger size first if same alignment
+					return a->size > b->size; //larger size first if same alignment
 				}
-				return a.alignment > b.alignment; //larger alignment first
+				return a->alignment > b->alignment; //larger alignment first
 			});
 
 
@@ -763,7 +767,7 @@ namespace TheEngine::ECS
 
 		for (size_t i = 0; i < componentTypeInfos.size(); ++i)
 		{
-			totalComponentsSize += componentTypeInfos[i].size;
+			totalComponentsSize += componentTypeInfos[i]->size;
 		}
 
 
@@ -772,16 +776,17 @@ namespace TheEngine::ECS
 		//create component layouts with offsets
 		size_t currentOffset = 0;
 		std::vector<ComponentLayout> componentLayouts;
+		std::unordered_map<ComponentId, size_t> componentIdToComponentOffset;
 		for (size_t i = 0; i < componentTypeInfos.size(); ++i)
 		{
 			ComponentLayout layout;
-			layout.componentId = componentTypeInfos[i].componentId;
-			layout.size = componentTypeInfos[i].size;
-			layout.alignment = componentTypeInfos[i].alignment;
+			layout.componentId = componentTypeInfos[i]->componentId;
+			layout.size = componentTypeInfos[i]->size;
+			layout.alignment = componentTypeInfos[i]->alignment;
 			layout.offsetInChunk = currentOffset;
-			layout.componentTypeInfo = &componentTypeInfos[i];
-
-			currentOffset += componentTypeInfos[i].size * MAX_NUM_OF_ENTITIES_PER_CHUNK; //increment offset by size * max entities to get next component offset
+			layout.componentTypeInfo = componentTypeInfos[i];
+			componentIdToComponentOffset[layout.componentId] = layout.offsetInChunk;
+			currentOffset += componentTypeInfos[i]->size * MAX_NUM_OF_ENTITIES_PER_CHUNK; //increment offset by size * max entities to get next component offset
 
 			componentLayouts.push_back(layout);
 		}
@@ -794,7 +799,7 @@ namespace TheEngine::ECS
 		newArchetypeDefinition->archetypeSignature = archetypeSignature;
 		newArchetypeDefinition->componentLayouts = componentLayouts;
 		newArchetypeDefinition->chunkRawSize = requiredTotalChunkSize;
-
+		newArchetypeDefinition->componentIdToComponentOffset = componentIdToComponentOffset;
 
 		//store in map
 
@@ -1185,14 +1190,28 @@ namespace TheEngine::ECS
 
 		}
 
-		std::vector<ArchetypeChunk*> ArchetypeManager::getArchetypeChunks(ArchetypeSignature archetypeSignature)
+
+		const std::unordered_map<ArchetypeSignature, std::unique_ptr<ArchetypeDefinition>>& ArchetypeManager::getArchetypeDefinitions() const
 		{
-			//TODO : IMPLEMENT THIS
+			return m_archetypeDefinitions;
+		}
 
 
 
 
-			return std::vector<ArchetypeChunk*>();
+
+		std::vector<ArchetypeChunkHeader*>  ArchetypeManager::getArchetypeChunksWithEntityData(ArchetypeSignature archetypeSignature)
+		{
+			
+
+			ChunkList& chunkList = m_archetypeChunksMap.at(archetypeSignature);
+			std::vector<ArchetypeChunkHeader*> archetypeChunkHeaders(chunkList.fullChunks);
+
+			if (chunkList.availableChunks.size() > 0 && chunkList.availableChunks.front()->chunkEntityUsed > 0)archetypeChunkHeaders.push_back(chunkList.availableChunks.front());
+
+	
+		
+			return archetypeChunkHeaders;
 		}
 
 

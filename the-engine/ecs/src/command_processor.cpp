@@ -22,7 +22,7 @@ namespace TheEngine::ECS
             const std::vector<Command>& commands = pair.second;
 
             EntityAddInfo entityAddInfo;
-
+            entityAddInfo.entityRecord = m_entityManager.getEntityRecord(entityId);
             ArchetypeSignature newArchetypeSignature = 0;
 
             for (const Command& command : commands)
@@ -34,7 +34,7 @@ namespace TheEngine::ECS
                     ComponentData componentData;
                     componentData.componentId = command.componentId;
                     componentData.ptr = command.ptr;
-                  
+  
                     entityAddInfo.componentDataList.push_back(componentData);
                 }
                 else if (command.commandType == CommandType::REMOVE_COMPONENT)
@@ -69,7 +69,10 @@ namespace TheEngine::ECS
 
     }
 
-
+    std::vector<EntityAddInfo>& CommandProcessor::getEntityAddInfos()
+    {
+        return m_entityAddInfos;
+    }
 
     void CommandProcessor::reset()
     {

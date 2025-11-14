@@ -4,11 +4,11 @@ namespace TheEngine::ECS
 {
 
 
-	ECSManager::ECSManager() :
-		m_nullLogger(),
-		m_componentRegistry(),
-		m_entityManager(),
-		m_archetypeManager(m_nullLogger,m_componentRegistry),
+	ECSManager::ECSManager(ComponentRegistry& componentRegistry, EntityManager& entityManager, ArchetypeManager& archetypeManager) :
+		m_componentRegistry(componentRegistry),
+		m_entityManager(entityManager),
+		//m_nullLogger(),
+		m_archetypeManager(archetypeManager),
 		m_commandBuffer(),
 		m_commandProcessor(m_entityManager)
 	{
@@ -41,7 +41,9 @@ namespace TheEngine::ECS
 
 		for (const EntityAddInfo& entityAddInfo : entityAddInfos)
 		{
+
 			const std::vector<EntityRecordUpdate> EntityRecordUpdates = m_archetypeManager.addComponentToEntity(entityAddInfo);
+
 
 			for (const EntityRecordUpdate& entityRecordUpdate : EntityRecordUpdates)
 			{
@@ -54,6 +56,16 @@ namespace TheEngine::ECS
 
 	}
 
+	void  ECSManager::processCommands()
+	{
+		std::unordered_map<EntityId, std::vector<Command>>& entityIdToCommands = m_commandBuffer.getCommandList();
+		m_commandProcessor.process(entityIdToCommands);
+		std::vector<EntityAddInfo>& entityAddInfos = m_commandProcessor.getEntityAddInfos();
+
+		addComponntDataToEntity(entityAddInfos);
+		m_commandProcessor.reset();
+		m_commandBuffer.reset();
+	}
 
 	void ECSManager::processDestructionOfEntities(std::vector<EntityId>& m_entityIdsToBeDestroyed)
 	{

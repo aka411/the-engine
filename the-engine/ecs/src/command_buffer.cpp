@@ -35,7 +35,12 @@ namespace TheEngine::ECS
 			assert(componentTypeInfo != nullptr);
 
 			componentTypeInfo->moveConstructor(destPtr, srcPtr);
+
 			localCommand.ptr = destPtr;
+
+
+
+
 		}
 		localCommand.commandType = command.commandType;
 		commands.push_back(localCommand);
@@ -49,4 +54,11 @@ namespace TheEngine::ECS
 		return m_entityIdToBufferedCommandMap;
 	}
 
+
+
+
+	void CommandBuffer::reset()
+	{
+		m_entityIdToBufferedCommandMap.clear();
+	}
 }

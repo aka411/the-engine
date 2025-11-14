@@ -78,7 +78,7 @@ namespace TheEngine::ECS
 
 		size_t offsetInChunk = 0; //offset in chunk memory region
 
-		ComponentTypeInfo* componentTypeInfo;
+		ComponentTypeInfo* componentTypeInfo = nullptr;
 
 
 	};
@@ -89,15 +89,18 @@ namespace TheEngine::ECS
 		ArchetypeSignature archetypeSignature;
 
 		//should be sorted by alignment then size
+		//A map or unordered map would be better
 		std::vector<ComponentLayout> componentLayouts;
-
+		std::unordered_map<ComponentId, size_t>  componentIdToComponentOffset;
 
 		size_t chunkRawSize = 0;//total size of ArchetypeChunk the data is stored in for which the offsets are calculated
 
 		size_t chunkMaxEntityCapacity = 0; //how many entities can be stored for this chunkRawSize
 
-
-
+		size_t GetComponentOffset(ComponentId componentTypeId) const
+		{
+			return componentIdToComponentOffset.at(componentTypeId);
+		}
 	};
 
 	struct ArchetypeChunk
@@ -161,7 +164,7 @@ namespace TheEngine::ECS
 	struct EntityRecordUpdate
 	{
 		EntityId entityId;
-		ArchetypeChunkHeader* newArchetypeChunkHeader;
+		ArchetypeChunkHeader* newArchetypeChunkHeader = nullptr;
 		uint32_t newIndexInArchetypeChunkRecordList = 0;
 	};
 

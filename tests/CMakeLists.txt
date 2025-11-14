@@ -22,6 +22,5 @@ FetchContent_MakeAvailable(googletest)
 
 #  subdirectory for unit tests
 add_subdirectory(unit)
-
 #  subdirectory for integration tests
-#add_subdirectory(integration)
+add_subdirectory(integration)

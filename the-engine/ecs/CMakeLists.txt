@@ -9,7 +9,8 @@ add_library(TheEngine_ECS STATIC
    "src/entity_manager.cpp"
    "src/component_registry.cpp"
    "src/ecs_manager.cpp"
-
+   "src/query_system.cpp"
+   "src/ecs_engine.cpp"
 )
 
 

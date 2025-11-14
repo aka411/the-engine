@@ -22,6 +22,7 @@ namespace TheEngine::ECS
 	public:
 		CommandProcessor(EntityManager& entityManager);
 		void process(std::unordered_map<EntityId, std::vector<Command>>& entityIdToBufferedCommandMap);
+		std::vector<EntityAddInfo>& getEntityAddInfos();
 		void reset();
 	};
 

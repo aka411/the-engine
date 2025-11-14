@@ -8,8 +8,15 @@ using namespace TheEngine::ECS;
 
 class ECSManagerTest : public testing::Test
 {
+private:
+
 protected:
-    
+
+    TheEngine::Utils::NullLogger m_logger;
+    std::optional<ComponentRegistry> m_componentRegistry;
+    std::optional<EntityManager> m_entityManager;
+    std::unique_ptr<ArchetypeManager> m_archetypeManager;
+
     std::unique_ptr<ECSManager> m_ecsManager;
 
 
@@ -32,7 +39,27 @@ public:
 
     void SetUp() override
     {
-        m_ecsManager = std::make_unique<ECSManager>();
+       
+
+       // m_ecsManager = std::make_unique<ECSManager>(m_componentRegistry, m_entityManager, m_archetypeManager);
+
+
+        
+        m_componentRegistry.emplace();
+        m_entityManager.emplace();
+
+      
+        m_archetypeManager = std::make_unique<ArchetypeManager>(
+            m_logger,
+            *m_componentRegistry
+        );
+
+       
+        m_ecsManager = std::make_unique<ECSManager>(
+            *m_componentRegistry,
+            *m_entityManager,
+            *m_archetypeManager 
+        );
     }
 
     void TearDown() override

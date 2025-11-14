@@ -16,11 +16,11 @@ namespace TheEngine::ECS
 	{
 	private:
 		//Current Design makes ECS manager owner of Archetype Manager, ComponentRegistry, Entity Manager
-		TheEngine::Utils::NullLogger m_nullLogger;
+		//TheEngine::Utils::ILogger& m_logger;
 
-		ComponentRegistry m_componentRegistry;
-		EntityManager m_entityManager;
-		ArchetypeManager m_archetypeManager;
+		ComponentRegistry& m_componentRegistry;
+		EntityManager& m_entityManager;
+		ArchetypeManager& m_archetypeManager;
 
 		CommandBuffer m_commandBuffer;
 		CommandProcessor m_commandProcessor;
@@ -31,7 +31,7 @@ namespace TheEngine::ECS
 
 	public:
 
-		ECSManager();
+		ECSManager(ComponentRegistry& componentRegistry, EntityManager& entityManager,ArchetypeManager& archetypeManager);
 
 		EntityId createEntity();
 		void destroyEntity(EntityId& entityId);

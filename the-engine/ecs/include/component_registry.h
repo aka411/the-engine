@@ -67,7 +67,7 @@ namespace TheEngine::ECS
 
 			componentTypeInfo->componentId = m_typeIndexToComponentIdMap[typeIndex];
 			componentTypeInfo->size = sizeof(ComponentType);
-			componentTypeInfo->alignment = sizeof(ComponentType);
+			componentTypeInfo->alignment = alignof(ComponentType);
 
 			componentTypeInfo->constructor = [](void* ptr)
 			{
@@ -95,6 +95,8 @@ namespace TheEngine::ECS
 					new (destPtr) ComponentType(std::move(*srcComponentPtr));
 
 				};
+
+			m_componentIdToTypeInfoMap[m_nextComponentId] = std::move(componentTypeInfo);
 			return m_nextComponentId++;
 		}
 
@@ -108,7 +110,7 @@ namespace TheEngine::ECS
 		using AbsoluteComponentType = std::decay_t<ComponentType>;//to reomove const ,pointer type etc
 		std::type_index typeIndex = std::type_index(typeid(ComponentType));
 
-		auto& it = m_typeIndexToComponentIdMap.find(typeIndex);
+		auto it = m_typeIndexToComponentIdMap.find(typeIndex);
 
 		if (it != m_typeIndexToComponentIdMap.end())
 		{
