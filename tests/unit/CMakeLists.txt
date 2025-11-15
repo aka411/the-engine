@@ -45,7 +45,7 @@ add_executable(ecs-system-test
 
   ecs/archetype_manager_test.cpp
   ecs/entity_manager_test.cpp
-  ecs/ecs_manager_test.cpp
+  
 )
 
 target_link_libraries(

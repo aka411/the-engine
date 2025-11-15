@@ -36,3 +36,7 @@ defintion map in archetypeManager.
 
 I could use unique pointers instead of making copies of stuff and returning it , my assumption is that compiler 
 is smart enough to create objects in place but need to look into it 
+
+# TODO IMPORTANT
+
+1) Should 	`ComponentId ComponentRegistry::getComponentIdFromComponent() const` method in componentManager be const amd not allow creation of new component.

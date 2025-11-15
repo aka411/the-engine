@@ -8,9 +8,10 @@ add_library(TheEngine_ECS STATIC
    "src/bump_allocator.cpp" 
    "src/entity_manager.cpp"
    "src/component_registry.cpp"
-   "src/ecs_manager.cpp"
-   "src/query_system.cpp"
    "src/ecs_engine.cpp"
+   "src/query-system/query_system.cpp"
+   "src/query-system/entity_chunk_view.cpp"
+   "src/query-system/chunk_array_view.cpp" 
 )
 
 
