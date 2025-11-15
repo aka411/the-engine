@@ -39,8 +39,8 @@ public:
 
         m_ecsEngine = std::make_unique<ECSEngine>();
 
-        m_ecsEngine.get()->getECSManager().registerComponent<ComponentA>();
-        m_ecsEngine.get()->getECSManager().registerComponent<ComponentB>();
+        m_ecsEngine.get()->registerComponent<ComponentA>();
+        m_ecsEngine.get()->registerComponent<ComponentB>();
 
     }
 
@@ -56,18 +56,18 @@ public:
 TEST_F(ECSEngineTest, createStoreRetriveEditGetValidate )
 {
 
-    EntityId entityId_1 = m_ecsEngine.get()->getECSManager().createEntity();
+    EntityId entityId_1 = m_ecsEngine.get()->createEntity();
 
     ComponentA componentA;
     componentA.text = "WOW THIS WORKS";
 
-    m_ecsEngine.get()->getECSManager().addComponentToEntity<ComponentA>(entityId_1, componentA);
+    m_ecsEngine.get()->addComponentToEntity<ComponentA>(entityId_1, componentA);
 
-    m_ecsEngine.get()->getECSManager().processCommands();
+    m_ecsEngine.get()->processBufferedCommands();
 
-    EntityChunkView entityChunkView_1 = m_ecsEngine.get()->getQuerySystem().getEntityChunkView(entityId_1);
+    EntityChunkView entityChunkView_1 = m_ecsEngine.get()->getEntityChunkView(entityId_1);
 
-    ComponentA* retrievedComponentA = entityChunkView_1.getComponent<ComponentA>(m_ecsEngine.get()->getQuerySystem().getComponentRegistry());
+    ComponentA* retrievedComponentA = entityChunkView_1.getComponent<ComponentA>();
 
     ASSERT_NE(retrievedComponentA, nullptr);
     ASSERT_EQ(retrievedComponentA->text, "WOW THIS WORKS");
@@ -75,18 +75,18 @@ TEST_F(ECSEngineTest, createStoreRetriveEditGetValidate )
 
 
 
-    EntityId entityId_2 = m_ecsEngine.get()->getECSManager().createEntity();
+    EntityId entityId_2 = m_ecsEngine.get()->createEntity();
 
     ComponentA componentA_2;
     componentA_2.text = "WOW THIS WORKS FOR ENTITY 2";
 
-    m_ecsEngine.get()->getECSManager().addComponentToEntity<ComponentA>(entityId_2, componentA_2);
+    m_ecsEngine.get()->addComponentToEntity<ComponentA>(entityId_2, componentA_2);
 
-    m_ecsEngine.get()->getECSManager().processCommands();
+    m_ecsEngine.get()->processBufferedCommands();
 
-    EntityChunkView entityChunkView_2 = m_ecsEngine.get()->getQuerySystem().getEntityChunkView(entityId_2);
+    EntityChunkView entityChunkView_2 = m_ecsEngine.get()->getEntityChunkView(entityId_2);
 
-    ComponentA* retrievedComponentA_2 = entityChunkView_2.getComponent<ComponentA>(m_ecsEngine.get()->getQuerySystem().getComponentRegistry());
+    ComponentA* retrievedComponentA_2 = entityChunkView_2.getComponent<ComponentA>();
 
     ASSERT_NE(retrievedComponentA_2, nullptr);
     ASSERT_EQ(retrievedComponentA_2->text, "WOW THIS WORKS FOR ENTITY 2");
@@ -102,20 +102,20 @@ TEST_F(ECSEngineTest, createStoreRetriveEditGetValidate )
     ComponentB componentB_1;
     componentB_1.text = "WOW THIS WORKS FOR MOVING ALSO";
 
-    m_ecsEngine.get()->getECSManager().addComponentToEntity<ComponentB>(entityId_1, componentB_1);
+    m_ecsEngine.get()->addComponentToEntity<ComponentB>(entityId_1, componentB_1);
 
-    m_ecsEngine.get()->getECSManager().processCommands();
+    m_ecsEngine.get()->processBufferedCommands();
 
-    EntityChunkView entityChunkViewAgain_1 = m_ecsEngine.get()->getQuerySystem().getEntityChunkView(entityId_1);
+    EntityChunkView entityChunkViewAgain_1 = m_ecsEngine.get()->getEntityChunkView(entityId_1);
 
-    ComponentB* retrievedComponentB_1 = entityChunkViewAgain_1.getComponent<ComponentB>(m_ecsEngine.get()->getQuerySystem().getComponentRegistry());
+    ComponentB* retrievedComponentB_1 = entityChunkViewAgain_1.getComponent<ComponentB>();
 
     ASSERT_NE(retrievedComponentB_1, nullptr);
     ASSERT_EQ(retrievedComponentB_1->text, "WOW THIS WORKS FOR MOVING ALSO");
 
-    ComponentA* againRetrievedComponentA_1 = entityChunkViewAgain_1.getComponent<ComponentA>(m_ecsEngine.get()->getQuerySystem().getComponentRegistry());
+    ComponentA* againRetrievedComponentA_1 = entityChunkViewAgain_1.getComponent<ComponentA>();
 
-    EntityChunkView entityChunkViewAgain_2 = m_ecsEngine.get()->getQuerySystem().getEntityChunkView(entityId_2);
+    EntityChunkView entityChunkViewAgain_2 = m_ecsEngine.get()->getEntityChunkView(entityId_2);
     
     ASSERT_NE(againRetrievedComponentA_1, nullptr);
     ASSERT_EQ(againRetrievedComponentA_1->text, "WOW THIS WORKS");

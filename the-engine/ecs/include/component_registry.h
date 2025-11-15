@@ -2,6 +2,8 @@
 #include "i_component_registry.h"
 #include <memory>
 #include "common_data_types.h"
+#include <cassert>
+#include <stdexcept>
 
 namespace TheEngine::ECS
 {
@@ -32,7 +34,7 @@ namespace TheEngine::ECS
 		virtual ComponentTypeInfo* getComponentTypeInfo(ComponentId componentId) const override;
 
 		template<typename ComponentType>
-		ComponentId getComponentIdFromComponent();
+		ComponentId getComponentIdFromComponent() const;
 
 	};
 
@@ -105,7 +107,7 @@ namespace TheEngine::ECS
 
 
 	template<typename ComponentType>
-	ComponentId ComponentRegistry::getComponentIdFromComponent()
+	ComponentId ComponentRegistry::getComponentIdFromComponent() const
 	{
 		using AbsoluteComponentType = std::decay_t<ComponentType>;//to reomove const ,pointer type etc
 		std::type_index typeIndex = std::type_index(typeid(ComponentType));
@@ -118,7 +120,15 @@ namespace TheEngine::ECS
 		}
 
 
-		return registerComponent<AbsoluteComponentType>();
+
+		//TODO : NEED MORE THOUGHT HERE , should i allow new component to be registered and remove const
+
+		throw std::runtime_error("Attempted to get ComponentId for unregistered type: "
+			+ std::string(typeid(AbsoluteComponentType).name()));
+		
+		assert(0 && "Attempted to get ComponentId for an unregistered component type.");
+
+		return 0;// registerComponent<AbsoluteComponentType>();
 	}
 
 }
