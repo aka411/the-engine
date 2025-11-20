@@ -13,19 +13,19 @@ namespace TheEngine::ECS
 
 	void Query::addArchetypeChunkHeaders(std::vector<ArchetypeChunkHeader*> archetypeChunkHeaders, const ComponentRegistry& componentRegistry)
 	{
-		m_chunkViews.reserve(archetypeChunkHeaders.size());
+		m_chunkArrayViews.reserve(archetypeChunkHeaders.size());
 
 		for (const auto& archetypeChunkHeader : archetypeChunkHeaders)
 		{
 
-			m_chunkViews.emplace_back({ archetypeChunkHeader , componentRegistry });
+			m_chunkArrayViews.emplace_back( archetypeChunkHeader , componentRegistry );
 		}
 	}
 
-	std::vector<ChunkView>& Query::getChunkArrayView()
+	std::vector<ChunkArrayView>& Query::getChunkArrayViews()
 	{
 		
-		return m_chunkViews;
+		return m_chunkArrayViews;
 	}
 
 

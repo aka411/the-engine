@@ -55,6 +55,11 @@ namespace TheEngine::ECS
 		/*Query System Area*/
 
 		EntityChunkView getEntityChunkView(const EntityId& entityId);
+
+		template<typename... ComponentType>
+		inline Query getQuery();
+
+
 	};
 
 
@@ -84,7 +89,13 @@ namespace TheEngine::ECS
 	}
 
 
+	template<typename... ComponentType>
+	inline Query ECSEngine::getQuery()
+	{
 
+		return m_querySystem.getQuery<ComponentType...>();
+
+	}
 
 
 }

@@ -12,6 +12,7 @@ add_library(TheEngine_ECS STATIC
    "src/query-system/query_system.cpp"
    "src/query-system/entity_chunk_view.cpp"
    "src/query-system/chunk_array_view.cpp" 
+   "src/query-system/query.cpp" 
 )
 
 
