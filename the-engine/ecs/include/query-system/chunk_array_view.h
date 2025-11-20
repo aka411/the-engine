@@ -19,12 +19,12 @@ namespace TheEngine::ECS
 
 	public:
 
-		size_t getCount()
-		{
-			return m_entityCount;
-		};
+	
 
 		ChunkArrayView(ArchetypeChunkHeader* archetypeChunkHeader, const ComponentRegistry& componentRegistry);
+
+		const size_t getCount() const;
+
 
 
 		template<typename ComponentType>
@@ -40,7 +40,7 @@ namespace TheEngine::ECS
 		ComponentId componentId = m_componentRegistry.getComponentIdFromComponent<ComponentType>();
 
 		std::uintptr_t componentAddress = m_chunkBaseAddress + m_archetypeDefinition->GetComponentOffset(componentId);
-		assert(componentAddress < m_archetypeChunkSize);
+		assert(componentAddress < m_chunkBaseAddress + m_archetypeChunkSize);
 		return reinterpret_cast<ComponentType*>(componentAddress);
 	}
 

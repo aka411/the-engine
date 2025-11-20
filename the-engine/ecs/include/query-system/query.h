@@ -9,7 +9,7 @@ namespace TheEngine::ECS
 	private:
 
 		std::vector<ArchetypeChunkHeader*> m_archetypeChunkHeaders;
-		std::vector<ChunkArrayView> m_chunkViews;
+		std::vector<ChunkArrayView> m_chunkArrayViews;
 
 	public:
 
@@ -17,9 +17,11 @@ namespace TheEngine::ECS
 
 		void addArchetypeChunkHeaders(std::vector<ArchetypeChunkHeader*> archetypeChunkHeaders,const ComponentRegistry& componentRegistry);
 
-		std::vector<ChunkArrayView>& getChunkArrayView();
+		std::vector<ChunkArrayView>& getChunkArrayViews();
 
 
+		//template<typename... ComponentType>
+		//Query getQuery();
 
 	};
 }

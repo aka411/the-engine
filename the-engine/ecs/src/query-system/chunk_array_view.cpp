@@ -20,4 +20,14 @@ namespace TheEngine::ECS
 
 
 	};
+
+
+	const size_t ChunkArrayView::getCount() const
+	{
+		return m_entityCount;
+	};
+
+
+
+
 }
