@@ -36,6 +36,12 @@ namespace TheEngine::ECS
 	{
 		ComponentId componentId = m_componentRegistry.getComponentIdFromComponent<ComponentType>();
 
+		if (!m_archetypeDefinition->hasComponent(componentId))
+		{
+			return nullptr;
+		}
+
+
 		std::uintptr_t componentAddress = m_chunkBaseAddress + m_archetypeDefinition->GetComponentOffset(componentId) + sizeof(ComponentType) * m_offsetIndex;
 		assert(componentAddress < m_archetypeDefinition->chunkRawSize + m_chunkBaseAddress);
 

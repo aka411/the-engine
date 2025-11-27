@@ -97,6 +97,11 @@ namespace TheEngine::ECS
 
 		size_t chunkMaxEntityCapacity = 0; //how many entities can be stored for this chunkRawSize
 
+		bool hasComponent(ComponentId componentTypeId) const
+		{
+			return archetypeSignature.test(componentTypeId);
+		}
+
 		size_t GetComponentOffset(ComponentId componentTypeId) const
 		{
 			return componentIdToComponentOffset.at(componentTypeId);
