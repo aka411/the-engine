@@ -110,7 +110,7 @@ namespace TheEngine::ECS
 	ComponentId ComponentRegistry::getComponentIdFromComponent() const
 	{
 		using AbsoluteComponentType = std::decay_t<ComponentType>;//to reomove const ,pointer type etc
-		std::type_index typeIndex = std::type_index(typeid(ComponentType));
+		std::type_index typeIndex = std::type_index(typeid(AbsoluteComponentType));
 
 		auto it = m_typeIndexToComponentIdMap.find(typeIndex);
 
