@@ -291,3 +291,26 @@ TEST_F(ECSEngineTest, queryArray)
 
 
 }
+
+
+TEST_F(ECSEngineTest, getNonExsistentComponentFromEntity)
+{
+
+    EntityId entityId = m_ecsEngine.get()->createEntity();
+    ComponentA initialCompA;
+    initialCompA.text = "TEST_DATA_A_1";
+    initialCompA.secondsPassed = 5.0f;
+
+
+    m_ecsEngine.get()->addComponentToEntity<ComponentA>(entityId, initialCompA);
+    m_ecsEngine.get()->processBufferedCommands();
+
+
+    EntityChunkView view = m_ecsEngine.get()->getEntityChunkView(entityId);
+	ComponentA* retrievedCompA = view.getComponent<ComponentA>();
+    ComponentB* retrievedCompB = view.getComponent<ComponentB>();
+    
+	ASSERT_NE(retrievedCompA, nullptr) << "ComponentA should not be null.";
+	ASSERT_EQ(retrievedCompB, nullptr) << "ComponentB should not be present in the entity.";
+
+}
