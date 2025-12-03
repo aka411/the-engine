@@ -2,7 +2,8 @@
 
 #include "../../../the-engine/ecs/include/ecs_engine.h"
 #include "../../../the-engine/ecs/include/common_data_types.h"
-
+#include <algorithm>
+#include <string>
 
 //TODO : Write more tests and better ones 
 
@@ -313,4 +314,99 @@ TEST_F(ECSEngineTest, getNonExsistentComponentFromEntity)
 	ASSERT_NE(retrievedCompA, nullptr) << "ComponentA should not be null.";
 	ASSERT_EQ(retrievedCompB, nullptr) << "ComponentB should not be present in the entity.";
 
+}
+
+
+
+
+
+
+//Archetype Chunk Record Retrival Test
+TEST_F(ECSEngineTest, GetChunkRecordArray_ReturnsCorrectEntityIds)
+{
+    // 1. Setup: Create entities with ComponentA and ComponentB
+    const size_t NUM_ENTITIES = 50;
+    std::vector<EntityId> expectedIds;
+    expectedIds.reserve(NUM_ENTITIES);
+
+    for (size_t i = 0; i < NUM_ENTITIES; ++i)
+    {
+        EntityId newEntity = m_ecsEngine->createEntity();
+        expectedIds.push_back(newEntity);
+
+        ComponentA compA;
+        compA.text = "ID_A_" + std::to_string(newEntity.id);
+        m_ecsEngine->addComponentToEntity<ComponentA>(newEntity, compA);
+
+        ComponentB compB;
+        compB.text = "ID_B_" + std::to_string(newEntity.id);
+        m_ecsEngine->addComponentToEntity<ComponentB>(newEntity, compB);
+    }
+
+    m_ecsEngine->processBufferedCommands();
+
+    // 2. Query for the created entities
+    auto queryResult = m_ecsEngine->getQuery<ComponentA, ComponentB>();
+
+    // 3. Iterate through ChunkArrayViews and validate the record array
+    size_t totalEntitiesFound = 0;
+    std::vector<EntityId> retrievedIds;
+
+    for (auto& chunkArrayView : queryResult.getChunkArrayViews())
+    {
+        // Get the pointer to the EntityId array (the function under test)
+        const EntityId* entityRecordArray = chunkArrayView.getChunkRecordArray();
+        size_t entitiesInChunk = chunkArrayView.getCount();
+
+        // Basic check for non-null and count
+        ASSERT_NE(entityRecordArray, nullptr) << "Chunk record array should not be null.";
+        ASSERT_GT(entitiesInChunk, 0) << "Chunk should have entities.";
+
+        // Validate individual EntityIds within the chunk
+        for (size_t i = 0; i < entitiesInChunk; ++i)
+        {
+            EntityId currentId = entityRecordArray[i];
+
+       
+            // Store the retrieved ID
+            retrievedIds.push_back(currentId);
+
+            // Further validation: Ensure the ID is functional by getting the EntityChunkView back
+            EntityChunkView view = m_ecsEngine->getEntityChunkView(currentId);
+            ASSERT_NE(view.getComponent<ComponentA>(), nullptr)
+                << "Should be able to retrieve entity view using the ID from the record array.";
+
+            totalEntitiesFound++;
+        }
+    }
+
+    // 4. Final validation: Check total count and uniqueness/completeness
+    ASSERT_EQ(totalEntitiesFound, NUM_ENTITIES)
+        << "The total number of entities retrieved from chunk records must match the total created.";
+
+
+
+     auto entityIdSorterMethod = [](const EntityId& a, const EntityId& b)
+        {
+
+            if (a.id != b.id)
+            {
+                return a.id < b.id;
+            }
+
+            return a.generation < b.generation;
+        };
+
+
+    // Sort the retrieved IDs and the expected IDs to compare sets, ensuring all IDs are present.
+    std::sort(retrievedIds.begin(), retrievedIds.end(), entityIdSorterMethod);
+
+    std::sort(expectedIds.begin(), expectedIds.end(), entityIdSorterMethod);
+
+
+    ASSERT_EQ(retrievedIds.size(), expectedIds.size());
+    for (size_t i = 0; i < expectedIds.size(); ++i)
+    {
+        ASSERT_EQ(retrievedIds[i].id, expectedIds[i].id) << "Entity IDs in the record array do not match the expected IDs.";
+    }
 }

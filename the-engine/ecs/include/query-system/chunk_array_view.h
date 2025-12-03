@@ -16,6 +16,7 @@ namespace TheEngine::ECS
 		ArchetypeDefinition* m_archetypeDefinition = nullptr;
 
 		std::uintptr_t m_chunkBaseAddress = 0;
+		std::uintptr_t m_chunkRecordBaseAddress = 0;
 
 	public:
 
@@ -25,7 +26,7 @@ namespace TheEngine::ECS
 
 		const size_t getCount() const;
 
-
+		const EntityId* getChunkRecordArray() const;
 
 		template<typename ComponentType>
 		ComponentType* getComponentArray();

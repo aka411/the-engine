@@ -18,6 +18,8 @@ namespace TheEngine::ECS
 		m_archetypeChunkSize = archetypeChunkHeader->archetypeDefinition->chunkRawSize;
 		m_chunkBaseAddress = reinterpret_cast<std::uintptr_t>(archetypeChunkHeader->archetypeChunk);
 
+		//Chunk Record
+		m_chunkRecordBaseAddress = reinterpret_cast<std::uintptr_t>(archetypeChunkHeader->archetypeRecordChunk);
 
 	};
 
@@ -28,6 +30,9 @@ namespace TheEngine::ECS
 	};
 
 
-
+	const EntityId* ChunkArrayView::getChunkRecordArray() const
+	{
+		return reinterpret_cast<EntityId*> (m_chunkRecordBaseAddress);
+	}
 
 }

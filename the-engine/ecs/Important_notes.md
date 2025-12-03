@@ -37,6 +37,12 @@ defintion map in archetypeManager.
 I could use unique pointers instead of making copies of stuff and returning it , my assumption is that compiler 
 is smart enough to create objects in place but need to look into it 
 
+# Inavlid IDs
+
+Need to think about adding a invalid entity id and component id to express invalid entity or component.
+
+
+
 # TODO IMPORTANT
 
 1) Should 	`ComponentId ComponentRegistry::getComponentIdFromComponent() const` method in componentManager be const amd not allow creation of new component.
