@@ -15,7 +15,7 @@ namespace TheEngine::ECS
 
 
 	using ComponentId = int16_t;
-	constexpr size_t MAX_COMPONENTS = 10;
+	constexpr size_t MAX_COMPONENTS = 100;
 	using ComponentFilter = std::bitset<MAX_COMPONENTS>;
 	using ArchetypeSignature = std::bitset<MAX_COMPONENTS>;
 
