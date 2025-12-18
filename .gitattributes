@@ -54,6 +54,8 @@
 *.exr   binary
 *.dds   binary
 
+*.webm  binary
+*.mp4   binary
 
 ###############################################################################
 # diff behavior for common document formats
