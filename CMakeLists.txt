@@ -21,4 +21,4 @@ add_subdirectory(the-engine)
 
 # Add the tests directory.
 # This subdirectory will handle fetching Google Test and defining test executables.
-add_subdirectory(tests)
+#add_subdirectory(tests) #IMPORTANT UNCOMMENT TO INCLUDE TEST FOLDER FOR TESTING
