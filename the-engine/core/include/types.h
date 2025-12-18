@@ -2,8 +2,7 @@
 
 namespace TheEngine::Core
 {
-    // Identifier for game entities
-    using EntityId = unsigned int; // belongs to ecs system only
+
 
     // Identifier for components attached to entities
     using ComponentId = unsigned int;
