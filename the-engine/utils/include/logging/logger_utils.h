@@ -1,3 +1,5 @@
+#pragma once
+
 namespace TheEngine::Utils
 {
 
@@ -17,7 +19,7 @@ enum class LogSource
 
 
 
-std::string getLogSourceString(const LogSource logSource) const
+inline std::string getLogSourceString(const LogSource logSource)
 {
 	switch (logSource)
 	{

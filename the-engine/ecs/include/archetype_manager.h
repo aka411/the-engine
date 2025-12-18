@@ -1,205 +1,125 @@
-#pragma once 
+#pragma once
+#include <vector>
+#include <bitset>
 #include <unordered_map>
 #include <memory>
-#include <bitset>
-#include "chunk_pool_allocator.h"
-
-
-class EntityRecord;
-
+#include "../../utils/include/logging/i_logger.h"
+#include "i_component_registry.h"
+#include "common_data_types.h"
 
 namespace TheEngine::ECS
 {
 
-	constexpr size_t CHUNK_RAW_SIZE = 16 * 1024; 
-	constexpr size_t MAX_COMPONENTS = 10;
-	using ComponentId = int16_t;
-
-	using ComponentFilter = std::bitset<MAX_COMPONENTS>;
-	using ArchetypeSignature = std::bitset<MAX_COMPONENTS>;
-
-
-
-
-	struct ComponentLayout
-	{
-		ComponentId id = 0;
-
-		uint32_t size = 0; //redundant already in ComponentTypeinfo
-		uint32_t alignment = 0;//redundant already in ComponentTypeinfo
-
-		size_t offsetInChunk = 0; //offset in chunk memory region
-
-		ComponentTypeInfo* componentTypeInfo;
-
-
-	};
-
-
-
-	struct ArchetypeDefinition
-	{
-		ArchetypeSignature archetypeSignature;
-
-		//should be sorted by alignment then size
-		std::vector<ComponentLayout> componentLayouts;
-
-
-		size_t chunkRawSize = 0; //size of the chunk in bytes
-		//including header and if  padding present also
-
-		size_t chunkEntityCapacity = 0; //how many entities can be stored for this chunkRawSize
-
-		
-
-	};
-
-
-
-	//maps offset to entity id
-	//ArchetypeChunk is the sole owner of this
-	struct ArchetypeRecordChunk
-	{
-		EntityId id ;
-	};
-
-
-
-	struct ArchetypeChunk
-	{
-		ArchetypeDefinition* archetypeDefinition = nullptr;//not the owner
-
-		ArchetypeRecordChunk* archetypeRecord = nullptr;//owner
-
-		//The below data could be put inside ArchetypeDefinition
-		size_t chunkRawSize = 0; //size of the chunk in bytes
-		//including header and if  padding present also
-
-		size_t chunkEntityCapacity = 0; //how many entities can be stored in this chunk
-
-		size_t chunkEntityUsed = 0; //how many entities are currently stored in this chunk	
-
-	};
-
-
-
+	//chunk raw size not be needed if we go with max entities per chunk approach
+	//constexpr size_t CHUNK_RAW_SIZE = 16 * 1024;
+	
 
 
 
 	struct ChunkList
 	{
 		//owner of memory region is allocator
-		std::vector<ArchetypeChunk*> fullChunks;
-		std::vector<ArchetypeChunk*>  availableChunks;
+		//full chunks will be full of data
+		//in availabe chunk top might have data
+		std::vector<ArchetypeChunkHeader*> fullChunks;
+		std::vector<ArchetypeChunkHeader*>  availableChunks;
 	};
+
 
 
 	class ArchetypeManager
 	{
+
+
 	private:
-		
-		ComponentRegistry& m_componentRegistry;
-		ChunkPoolAllocator& m_chunkPoolAllocator;
+
+
+		TheEngine::Utils::ILogger& m_logger;
+
+
+
+		static const size_t MAX_NUM_OF_ENTITIES_PER_CHUNK = 256; // adjust based on performance testing
+
 
 		std::unordered_map<ArchetypeSignature, std::unique_ptr<ArchetypeDefinition>> m_archetypeDefinitions;
-		std::unordered_map<ArchetypeSignature, ChunkList> m_chunkLists;
+		std::unordered_map<ArchetypeSignature, ChunkList> m_archetypeChunksMap;
 
-	private:
+		IComponentRegistry& m_componentRegistry;
+
+		/*
+		struct ComponentLayout
+		{
+			ComponentId componentId = 0;
+
+			//consider removing these after checking if its used anywhere
+			uint32_t size = 0; //redundant already in ComponentTypeinfo
+			uint32_t alignment = 0;//redundant already in ComponentTypeinfo
+
+			size_t offsetInChunk = 0; //offset in chunk memory region
+
+			ComponentTypeInfo* componentTypeInfo;
 
 
-		bool checkFit(const size_t numOfEntities, const size_t chunkRawSize, const size_t archetypeHeaderSize, std::vector<ComponentLayout>& componentLayouts);
+		};
+		*/
+
+		//Methods:
+		bool moveArchetypeHeaderChunkToCorrectList(std::vector<ArchetypeChunkHeader*>& destChunkList, std::vector<ArchetypeChunkHeader*>& srcChunkList, ArchetypeChunkHeader* archetypeChunkHeader);
 		
-		void updateChunkStatus(const ArchetypeSignature& signature);
 
-
-		ArchetypeDefinition* getOrCreateArchetypeDefinition(const ArchetypeSignature& signature);
-		ArchetypeChunk* getOrCreateFreeArchetypeChunk(const ArchetypeSignature& signature);
-
+		bool moveArchetypeChunkHeaderToAvailableList(ArchetypeChunkHeader* archetypeChunkHeader);
+		bool moveArchetypeChunkHeaderToFullList(ArchetypeChunkHeader* archetypeChunkHeader);
 
 
 
+		struct MoveResult
+		{
+			bool moveResult = false;
+			EntityRecordUpdate movedEntityRecordUpdate;
 
-		void moveUpBetweenArchetypes(ArchetypeChunk* const srcArchetypeChunk, ArchetypeChunk* const destArchetypeChunk, const ComponentTypeInfo& componentTypeInfo, void* const component, EntityRecord& entityRecord);
-		//ToDo : check const correctness
-		//       check if enough of data is available to facilitate move
-		//this move adds components
+			bool entityMovedToFillGap = false;
+			EntityRecordUpdate entityMovedToFillGapRecordUpdate;
+		};
+
+		MoveResult moveEntityData(ArchetypeChunkHeader* destArchetypeChunkHeader, ArchetypeChunkHeader* srcArchetypeChunkHeader, EntityRecord* entityToBeMovedRecord);
 
 
+		std::vector<EntityRecordUpdate>  transferAndAddEntityDataToArchetypeChunk(ArchetypeChunkHeader* destArchetypeChunkHeader, ArchetypeChunkHeader* srcArchetypeChunkHeader, EntityAddInfo entityAddInfo);
+
+		EntityRecordUpdate addInitialComponentDataToArchetypeChunk(ArchetypeChunkHeader* archetypeChunkHeader,EntityAddInfo entityAddInfo);
 
 
+		ArchetypeDefinition* createNewArchetypeDefinition(const ArchetypeSignature& archetypeSignature);
+
+		ArchetypeChunkHeader* createArchetypeChunkHeader(ArchetypeDefinition* archetypeDefinition);
+
+		ArchetypeChunkHeader* createOrGetArchetypeChunk(ArchetypeSignature archetypeSignature);
 
 
 
 	public:
-
-		ArchetypeManager() = default;
-		~ArchetypeManager() = default;
-
+		ArchetypeManager(TheEngine::Utils::ILogger& logger, IComponentRegistry& componentRegistry);
+		~ArchetypeManager();
 
 
-		template<typename ComponentType>
-		void addComponentToEntity(EntityRecord& entityRecord, const ComponentType& component);
+		std::vector<EntityRecordUpdate> addComponentToEntity(EntityAddInfo entityAddInfo);
 
 
 
 
+		//std::vector<EntityRecordUpdate> removeComponentFromEntity(EntityRemoveInfo entityAddInfo);//ToDo : Need more thought here
+		//For MVP we are not gonna implement this
 
 
-
-	
-
-
-	};
+		//std::vector<EntityRecordUpdate> deleteEntityData(EntityRecord* entityRecord);//Entity record null check will be performed by the orchastrator
 
 
-
-	template<typename ComponentType>
-	inline void addComponentToEntity(EntityRecord& entityRecord, const ComponentType& component)//called by ECS manager
-	{
-		//ToDo : Decide whether to replace reference with pointer and adding nullptr check
-
-
-		//ToDo : Add logic to add component to Entity
-			//1)Get component id
-			//2)Get current Archetype  and compare if already there
-			// 
-			// 
-				//2.a) if already there then replace the component only
-				// 
-				//2.b)if not there already need to move to new archetypechunk and update records
-
-		//Also handle other cases.
-		
-
-
-
-		//get CompoentId
-		ComponentId componentId = m_componentRegistry.getComponentId(std::type_index(typeid(ComponentType)));
-
-
-		//check id
-		if (!entityRecord.archetypeSignature.test(componentId))
-		{
-			/*move between archetypes*/
-
-
-
-
-		}
-		else
-		{
-			/*replacing component*/
-
-
-
-
-		}
+		const std::unordered_map<ArchetypeSignature, std::unique_ptr<ArchetypeDefinition>>& getArchetypeDefinitions() const;
+		std::vector<ArchetypeChunkHeader*>  getArchetypeChunksWithEntityData(ArchetypeSignature archetypeSignature);
 
 
 
 
 	};
-
-
 
 }

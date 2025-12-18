@@ -12,13 +12,15 @@ FetchContent_Declare(
 
 )
 
-# Populate Google Test (download and make its targets available)
+
 FetchContent_MakeAvailable(googletest)
 
-# Now, Google Test targets like GTest::gtest_main are available.
+
+
+
+
 
 #  subdirectory for unit tests
 add_subdirectory(unit)
-
 #  subdirectory for integration tests
-#add_subdirectory(integration)
+add_subdirectory(integration)

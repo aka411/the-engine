@@ -1,119 +1,134 @@
-#pragma once 
-#include <unordered_map>
-#include <typeindex>
-#include <functional>
-
+#pragma once
+#include "i_component_registry.h"
+#include <memory>
+#include "common_data_types.h"
+#include <cassert>
+#include <stdexcept>
 
 namespace TheEngine::ECS
 {
-	//ComponentRegistry owner and creator of this
-
-	struct ComponentTypeInfo
-	{
-		std::type_index typeId;
-
-		size_t size = 0;
-		size_t alignment = 0;
-
-		std::function<void(void*)> constructor = nullptr; // Function to construct the component
-		std::function<void(void*)> destructor = nullptr; // Function to destruct the component
-
-		std::function<void(void*, const void*)> copyConstructor = nullptr; // Function to copy construct the component
-		std::function<void(void*, void*)> moveConstructor = nullptr; // Function to move construct the component
-
-	};
 
 
-	class ComponentRegistry
+	class ComponentRegistry : public IComponentRegistry
 	{
 
 	private:
 
-
-
 		// Internal maps to store registration data
 		ComponentId m_nextComponentId = 0;
 
-		std::unordered_map<std::type_index, ComponentId> m_typeToId;
+		std::unordered_map<std::type_index, ComponentId> m_typeIndexToComponentIdMap;
 
-		std::unordered_map<ComponentId, ComponentTypeInfo> m_IdToInfo;
+		std::unordered_map<ComponentId, std::unique_ptr<ComponentTypeInfo>> m_componentIdToTypeInfoMap;
+
 
 	public:
-		~ComponentRegistry() = default;
+
+
 		ComponentRegistry() = default;
+		~ComponentRegistry() = default;
 
 		template<typename DataType>
-		ComponentId RegisterComponent(DataType component);
+		inline ComponentId registerComponent();
 
-		ComponentTypeInfo* getComponentTypeinfo(ComponentId componentId) const;
+		virtual ComponentTypeInfo* getComponentTypeInfo(ComponentId componentId) const override;
 
-		ComponentId getComponentId(std::type_index typeIndex) const;
-
-		void removeComponent(ComponentId componentId);
-
+		template<typename ComponentType>
+		ComponentId getComponentIdFromComponent() const;
 
 	};
 
 
 
-
-
 	template<typename DataType>
-	ComponentId ComponentRegistry::RegisterComponent(DataType component)
+	ComponentId inline ComponentRegistry::registerComponent()
 	{
-		std::type_index typeIdx = typeid(DataType);
 
-		//ToDo: add check to see if the component is already registered??
 
-		auto& it = m_typeToId.find(typeIdx);
-		if (it != m_typeToId.end())
+
+		// 1. Get the canonical type index
+		using ComponentType = std::decay_t<DataType>;//to reomove const ,pointer type etc
+		std::type_index typeIndex = std::type_index(typeid(ComponentType));
+
+		// 2. Check if already registered
+		auto it = m_typeIndexToComponentIdMap.find(typeIndex);
+		if (it != m_typeIndexToComponentIdMap.end())
 		{
+			// Already registered, return the existing ID
 			return it->second;
 		}
+		else
+		{
+			//TODO : need a add a list of free ids
+			m_typeIndexToComponentIdMap[typeIndex] = m_nextComponentId;
+			
 
-		ComponentId componentId = m_nextComponentId++;
-		m_typeToId[typeIdx] = componentId;
+			//--Create TypeInfo ---//
 
+			std::unique_ptr<ComponentTypeInfo> componentTypeInfo = std::make_unique<ComponentTypeInfo>();
 
-		ComponentTypeInfo typeInfo;
-		typeInfo.typeId = typeIdx;
-		typeInfo.size = sizeof(DataType);
-		typeInfo.alignment = alignof(DataType);
+			componentTypeInfo->componentId = m_typeIndexToComponentIdMap[typeIndex];
+			componentTypeInfo->size = sizeof(ComponentType);
+			componentTypeInfo->alignment = alignof(ComponentType);
 
-		//constructors assignments
-
-		//constructor
-		typeInfo.constructor = [](void* destPtr)
+			componentTypeInfo->constructor = [](void* ptr)
 			{
-				new (destPtr) DataType();
-			};
-		//destructor
-		typeinfo.destructor = [](void* objPtr)
-			{
-				static_cast<DataType*>(objPtr)->~DataType();
+				new (ptr) ComponentType();
+
 			};
 
-
-
-		//copy constructor
-		typeinfo.copyConstructor = [](void* destPtr, const void* srcPtr)
+			componentTypeInfo->destructor = [](void* ptr)
 			{
-				new (destPtr) DataType(*static_cast<const DataType*>(srcPtr));
+				ComponentType* component = reinterpret_cast<ComponentType*>(ptr);
+				component->~ComponentType();
 			};
 
-		//move constructor
-		typeinfo.moveConstructor = [](void* destPtr, void* srcPtr)
-			{
-				new (destPtr) DataType(std::move(*static_cast<DataType*>(srcPtr)));
-			};
+			componentTypeInfo->copyConstructor = [](void* destPtr, const void* srcPtr)
+				{
+					const ComponentType* srcComponentPtr = reinterpret_cast<const ComponentType*>(srcPtr);
+					new (destPtr) ComponentType(*srcComponentPtr);
+				};
 
+			componentTypeInfo->moveConstructor = [](void* destPtr, void* srcPtr)
+				{
 
-		m_IdToInfo[componentId] = typeInfo;
+					ComponentType* srcComponentPtr = reinterpret_cast<ComponentType*>(srcPtr);
 
-		return componentId;
+					new (destPtr) ComponentType(std::move(*srcComponentPtr));
+
+				};
+
+			m_componentIdToTypeInfoMap[m_nextComponentId] = std::move(componentTypeInfo);
+			return m_nextComponentId++;
+		}
 
 	}
 
 
+
+	template<typename ComponentType>
+	ComponentId ComponentRegistry::getComponentIdFromComponent() const
+	{
+		using AbsoluteComponentType = std::decay_t<ComponentType>;//to reomove const ,pointer type etc
+		std::type_index typeIndex = std::type_index(typeid(AbsoluteComponentType));
+
+		auto it = m_typeIndexToComponentIdMap.find(typeIndex);
+
+		if (it != m_typeIndexToComponentIdMap.end())
+		{
+			return it->second;
+		}
+
+
+
+		//TODO : NEED MORE THOUGHT HERE , should i allow new component to be registered and remove const
+
+		throw std::runtime_error("Attempted to get ComponentId for unregistered type: "
+			+ std::string(typeid(AbsoluteComponentType).name()));
+		
+		assert(0 && "Attempted to get ComponentId for an unregistered component type.");
+
+		return 0;// registerComponent<AbsoluteComponentType>();
+	}
 
 }
