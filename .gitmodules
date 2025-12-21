@@ -1,0 +1,3 @@
+[submodule "external/ecs-engine"]
+	path = external/ecs-engine
+	url = https://github.com/aka411/ecs-engine.git

@@ -1,0 +1,85 @@
+#pragma once
+#include "../low-level/gpu_texture_manager.h"
+#include "../low-level/gpu_material_system.h"
+#include "../low-level/world_vertex_buffer_management_system.h"
+#include "ecs.h"
+#include "engine_loader.h"
+#include "../rendering-system/render_system.h"
+#include <string>
+#include "../low-level/gpu_buffer_manager.h"
+#include "../ui/include/core/ui_system.h"
+#include "../ui/include/builder/ui_builder.h"
+#include "../transformation_system.h"
+#include "../animation/animation_system.h"
+
+
+namespace Engine
+{
+	class EngineCore
+	{
+	private:
+
+		ECS::ECSEngine m_ecsEngine;//owner
+
+
+		GPUBufferManager m_gpuBufferManager;
+
+		GPUTextureManager m_gpuTextureManager;//owner
+
+		GPUMaterialSystem m_gpuMaterialSystem;// ---> needs GPUBufferManager
+
+		WorldVertexBufferManagementSystem m_worldVertexBufferManagementSystem;//-->needs GPUBufferManager
+
+
+		EngineLoader m_engineLoader;
+
+
+
+		/***MODEL RENDERING SYSTEMS***/
+
+
+		TransformationSystem m_transformationSystem;
+
+
+
+
+		/**UI SYSTEM**/
+
+		UI::UICoreSystem m_uiCoreSystem; // needs ECSEngine, GPUBufferManager
+		UI::UISystem m_uiSystem;//owner
+
+
+		RenderSystem m_renderSystem;// contains both world renderer and ui renderer
+
+		Engine::AnimationSystem m_animationSystem;
+
+		UI::UIBuilder m_uiBuilder;
+
+		ECS::NullFatalErrorHandler m_nullFatalErrorHandler;
+	public:
+
+
+
+		EngineCore();
+
+
+		ECS::ECSEngine& getECSEngine();
+
+
+		ECS::EntityId loadModel(std::string pathToFile);
+
+		void update(const float deltaTime);
+
+		void render(Engine::Camera camera);
+
+		void renderUI();
+
+		/***** UI SYSTEM *****/
+		UI::UIBuilder& getUIBuilder();
+
+		UI::UICoreSystem& getUICoreSystem();
+
+
+	};
+
+}
