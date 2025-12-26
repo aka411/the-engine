@@ -13,7 +13,7 @@ private:
 	ECS::ECSEngine& m_ecsEngine;
 
 	
-	UI::UIElement* m_fpsGraphElement = nullptr;
+	std::unique_ptr<UI::UIElement> m_fpsGraphElement;
 	//change to ui element
 
 
@@ -21,7 +21,7 @@ private:
 public:
 	PerformanceMonitorSystem(UI::UICoreSystem& uiCoreSystem);
 
-	void setUp(UI::UIElement& fpsGraphElement);
+	void setUp(UI::UIElement&& fpsGraphElement);
 
 	void UpdateFPSMeter(const float deltaTime);
 	void UpdateMemoryUsage(const size_t UsedBytes);

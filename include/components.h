@@ -3,8 +3,8 @@
 #include <vector>
 #include "low-level/gpu_material_system.h"
 #include "low-level/rendering_system_data_types.h"
-#include <glm/glm.hpp> 
-#include <glm/ext/matrix_float4x4.hpp>
+#include "glm/glm.hpp" 
+#include "glm/ext/matrix_float4x4.hpp"
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include "ecs.h"
@@ -161,8 +161,8 @@ struct AnimationCPUComponent
 	std::vector<ECS::EntityId> engineEntityIds;
 
 
-	Engine::AnimationData animationData;
-	std::unordered_map<std::string, Engine::Animation> animationsMap;
+	TheEngine::AnimationData animationData;
+	std::unordered_map<std::string, TheEngine::Animation> animationsMap;
 
 };
 

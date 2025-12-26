@@ -1,6 +1,6 @@
 #include "../../include/rendering-system/object_data_buffer_manager.h"
 
-namespace Engine
+namespace TheEngine
 {
 
 	ObjectDataBufferManager::ObjectDataBufferManager(GPUBufferManager& gpuBufferManager):

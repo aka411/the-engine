@@ -1,10 +1,11 @@
 #include "../../include/engine/engine_core.h"
 
 
-namespace Engine
+namespace TheEngine
 {
 
-	EngineCore::EngineCore() :
+	EngineCore::EngineCore(Platform& platform) :
+		m_platform(platform),
 		m_ecsEngine(m_nullFatalErrorHandler),
 		m_gpuBufferManager(),
 		m_gpuTextureManager(),
@@ -41,6 +42,28 @@ namespace Engine
 
 		m_ecsEngine.registerComponent<RootEntityComponent>();
 
+
+
+
+
+
+	}
+
+
+	EngineCore::~EngineCore()
+	{
+
+
+	}
+
+	Platform& EngineCore::getPlatform()
+	{
+		return m_platform;
+	}
+
+	void EngineCore::setViewportDimension(int width, int height)
+	{
+		m_renderSystem.setViewportDimension(width, height);
 	}
 
 	ECS::ECSEngine& EngineCore::getECSEngine()
@@ -70,7 +93,7 @@ namespace Engine
 
 	}
 
-	void EngineCore::render(Engine::Camera camera)
+	void EngineCore::render(TheEngine::Camera camera)
 	{
 
 		m_renderSystem.render(camera);

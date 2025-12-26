@@ -5,7 +5,7 @@
 #include "skeletal_animation_manager.h"
 #include "ecs.h"
 
-namespace Engine
+namespace TheEngine
 {
 
 

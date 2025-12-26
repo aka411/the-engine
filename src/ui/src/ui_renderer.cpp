@@ -21,9 +21,15 @@ namespace UI
 
 	}
 
+	void UIRenderer::setViewportDimension(int width, int height)
+	{
+		m_uiCamera.setOrthographicProjection(0, static_cast<float>(width), static_cast<float>(height), 0, 10, -100);
+	}
+
 
 	void UIRenderer::renderUI()
 	{
+
 
 		/****PER FRAME STATE****/
 		//glDisable(GL_DEPTH_TEST);
@@ -73,8 +79,8 @@ namespace UI
 		for (auto& chunk : query.getChunkArrayViews())
 		{
 			const size_t count = chunk.getCount();
-			UIRenderMeshComponent* uiRenderMeshComponentPtr = chunk.getComponentArray<UIRenderMeshComponent>();
-			EngineTransformationComponent* engineTransformationComponent = chunk.getComponentArray<EngineTransformationComponent>();
+			UIRenderMeshComponent* uiRenderMeshComponentArray = chunk.getComponentArray<UIRenderMeshComponent>();
+			EngineTransformationComponent* engineTransformationComponentArray = chunk.getComponentArray<EngineTransformationComponent>();
 
 	
 			for (size_t i = 0; i < count; ++i)
@@ -84,13 +90,13 @@ namespace UI
 
 
 				GLuint modelLoc = glGetUniformLocation(uiShaderProgram, "model");
-				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &engineTransformationComponent[i].worldTransformMatrix[0][0]);
+				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &engineTransformationComponentArray[i].worldTransformMatrix[0][0]);
 
 				
 				
 
-				const UIVertexFormat uiVertexFormat = uiRenderMeshComponentPtr->vertexFormat;
-				const  UIBufferType uiBuffertype = uiRenderMeshComponentPtr->bufferType;
+				const UIVertexFormat uiVertexFormat = uiRenderMeshComponentArray[i].vertexFormat;
+				const  UIBufferType uiBuffertype = uiRenderMeshComponentArray[i].bufferType;
 
 				GPUBufferInfo vertexBufferInfo = uiVertexBufferManagementSystem.getBufferInfoForVertexFormat(uiVertexFormat, uiBuffertype);
 
@@ -104,7 +110,7 @@ namespace UI
 
 			
 			
-				glDrawArrays(GL_TRIANGLES, uiRenderMeshComponentPtr[i].vertexBufferOffset / 32, uiRenderMeshComponentPtr[i].vertexCount);
+				glDrawArrays(GL_TRIANGLES, uiRenderMeshComponentArray[i].vertexBufferOffset / 32, uiRenderMeshComponentArray[i].vertexCount);
 
 	
 

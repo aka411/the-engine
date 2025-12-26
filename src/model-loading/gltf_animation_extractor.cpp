@@ -4,7 +4,7 @@
 #include "../../include/animation/animation_data_structures.h"
 #include "../../include/model-loading/gltf_animation_extractor.h"
 
-namespace Engine
+namespace TheEngine
 {
 
 

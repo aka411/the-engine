@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include "../../include/low-level/vertex_format_helper.h"
 
-namespace Engine
+namespace TheEngine
 {
 
 	RenderSystem::RenderSystem(ECS::ECSEngine& ecsEngine, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, UI::UICoreSystem& uiCoreSystem, AnimationSystem& animationSystem, GPUBufferManager& gpuBufferManager)
@@ -24,11 +24,19 @@ namespace Engine
 	}
 
 
+	void RenderSystem::setViewportDimension(int width, int height)
+	{
+		m_worldRenderer.setViewportDimension(width, height);
 
-	void RenderSystem::render(Engine::Camera& camera)
+		//tricky problem need to solve dpi scaling here
+		m_uiRenderer.setViewportDimension(width, height);
+	}
+
+
+	void RenderSystem::render(TheEngine::Camera& camera)
 	{
 
-
+	
 		
 		m_worldRenderer.startFrame(camera);
 	
@@ -76,14 +84,14 @@ namespace Engine
 		for (auto& chunkArrayView : querySingleRenderableComponent.getChunkArrayViews())
 		{
 			const size_t count = chunkArrayView.getCount();
+			EngineTransformationComponent* engineTransformationComponentArray = chunkArrayView.getComponentArray<EngineTransformationComponent>();
+			EngineRenderComponent* engineRenderComponentArray = chunkArrayView.getComponentArray<EngineRenderComponent>();
+			BoneJointMatrixIdComponent* BoneJointMatrixIdComponentArray = chunkArrayView.getComponentArray<BoneJointMatrixIdComponent>();
+
 
 			for (size_t i = 0; i < count; ++i)
 			{
-				EngineTransformationComponent* engineTransformationComponentArray = chunkArrayView.getComponentArray<EngineTransformationComponent>();
-				EngineRenderComponent* engineRenderComponentArray = chunkArrayView.getComponentArray<EngineRenderComponent>();
-				BoneJointMatrixIdComponent* BoneJointMatrixIdComponentArray = chunkArrayView.getComponentArray<BoneJointMatrixIdComponent>();
-
-
+			
 				EngineTransformationComponent& engineTransformationComponent = engineTransformationComponentArray[i];
 				EngineRenderComponent& engineRenderComponent = engineRenderComponentArray[i];
 				BoneJointMatrixId boneJointMatrixId = 0;
@@ -149,17 +157,19 @@ namespace Engine
 		{
 			const size_t count = chunkArrayView.getCount();
 
+			EngineTransformationComponent* engineTransformationComponentArray = chunkArrayView.getComponentArray<EngineTransformationComponent>();
+			EngineFatRenderComponent* engineFatRenderComponentArray = chunkArrayView.getComponentArray<EngineFatRenderComponent>();
+			BoneJointMatrixIdComponent* boneJointMatrixIdComponentArray = chunkArrayView.getComponentArray<BoneJointMatrixIdComponent>();
+
+
 			for (size_t i = 0; i < count; ++i)
 			{
-				EngineTransformationComponent* engineTransformationComponentArray = chunkArrayView.getComponentArray<EngineTransformationComponent>();
-				EngineFatRenderComponent* engineFatRenderComponentArray = chunkArrayView.getComponentArray<EngineFatRenderComponent>();
-
+			
 
 				EngineTransformationComponent& engineTransformationComponent = engineTransformationComponentArray[i];
 				EngineFatRenderComponent& engineFatRenderComponent = engineFatRenderComponentArray[i];
 
-				BoneJointMatrixIdComponent* boneJointMatrixIdComponentArray = chunkArrayView.getComponentArray<BoneJointMatrixIdComponent>();
-
+			
 
 		
 				BoneJointMatrixId boneJointMatrixId = 0;

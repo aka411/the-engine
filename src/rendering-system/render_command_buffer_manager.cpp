@@ -1,7 +1,7 @@
 
 #include "../../include/rendering-system/render_command_buffer_manager.h"
 
-namespace Engine
+namespace TheEngine
 {
 
 	RenderCommandBufferManager::RenderCommandBufferManager(GPUBufferManager& gpuBufferManager) :

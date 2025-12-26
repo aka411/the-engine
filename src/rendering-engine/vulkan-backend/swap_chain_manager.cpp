@@ -77,7 +77,7 @@ void SwapChainManager::setViewportDimensions(uint32_t width, uint32_t height)
 
 	switch (m_swapChainState)
 	{
-
+		//Go from ready state to needs recreation state
 	case SwapChainState::READY :
 		m_swapChainState = SwapChainState::NEEDS_RECREATION;
 		break;

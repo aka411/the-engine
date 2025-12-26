@@ -1,24 +1,32 @@
 #pragma once
+
 #include "ecs.h"
 #include "components.h"
 
-class TransformationSystem
+
+namespace TheEngine
 {
 
-private:
 
-	ECS::ECSEngine& m_ecsEngine;
+	class TransformationSystem
+	{
 
-	void buildLocalMatrix(EngineTransformationComponent& transform);
-	EngineTransformationComponent& getTransformationComponent(ECS::EntityId& entityId);
+	private:
 
-	
+		ECS::ECSEngine& m_ecsEngine;
 
-public:
-
-	TransformationSystem(ECS::ECSEngine& ecsEngine);
+		void buildLocalMatrix(EngineTransformationComponent& transform);
+		EngineTransformationComponent& getTransformationComponent(ECS::EntityId& entityId);
 
 
-	void updateTransformation(ECS::EntityId rootEntityId);
-	void updateTransformationsForAllEntities();
-};
+
+	public:
+
+		TransformationSystem(ECS::ECSEngine& ecsEngine);
+
+
+		void updateTransformation(ECS::EntityId rootEntityId);
+		void updateTransformationsForAllEntities();
+	};
+
+}

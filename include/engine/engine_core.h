@@ -11,9 +11,10 @@
 #include "../ui/include/builder/ui_builder.h"
 #include "../transformation_system.h"
 #include "../animation/animation_system.h"
+#include <platform.h>
 
 
-namespace Engine
+namespace TheEngine
 {
 	class EngineCore
 	{
@@ -51,16 +52,27 @@ namespace Engine
 
 		RenderSystem m_renderSystem;// contains both world renderer and ui renderer
 
-		Engine::AnimationSystem m_animationSystem;
+		TheEngine::AnimationSystem m_animationSystem;
 
 		UI::UIBuilder m_uiBuilder;
 
 		ECS::NullFatalErrorHandler m_nullFatalErrorHandler;
+
+		//Need to rethink its ownership model
+		Platform& m_platform;
+
+
 	public:
 
 
 
-		EngineCore();
+		EngineCore(Platform& platform);
+
+		~EngineCore();
+
+		Platform& getPlatform();
+
+		void setViewportDimension(int width, int height);	
 
 
 		ECS::ECSEngine& getECSEngine();
@@ -70,7 +82,7 @@ namespace Engine
 
 		void update(const float deltaTime);
 
-		void render(Engine::Camera camera);
+		void render(TheEngine::Camera camera);
 
 		void renderUI();
 
