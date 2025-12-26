@@ -11,7 +11,7 @@
 #include "render_command_buffer_manager.h"
 #include "object_data_buffer_manager.h"
 
-namespace Engine
+namespace TheEngine
 {
 
 	class WorldRenderer
@@ -41,8 +41,9 @@ namespace Engine
 		WorldRenderer(VertexFormatManager& vertexFormatManager, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, AnimationSystem& animationSystem, RenderCommandBufferManager& m_renderCommandBufferManager,
 		ObjectDataBufferManager& m_objectDataBufferManager);
 
+		void setViewportDimension(int width, int height);	
 
-		void startFrame(Engine::Camera& camera);
+		void startFrame(TheEngine::Camera& camera);
 
 		//void render(std::unordered_map<VertexFormat, std::vector<RenderCommand>>& vertexFormatToRenderCommands);
 		

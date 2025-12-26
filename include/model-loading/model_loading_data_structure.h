@@ -158,10 +158,10 @@ struct EngineIntermediateModel
 
 	//ANIMATION DATA
 	bool hasAnimations = false;
-	Engine::AnimationData animationData;
-	std::unordered_map<std::string, Engine::Animation> animationsMap;
+	TheEngine::AnimationData animationData;
+	std::unordered_map<std::string, TheEngine::Animation> animationsMap;
 
-	Engine::BoneAnimationData boneAnimationData;
+	TheEngine::BoneAnimationData boneAnimationData;
 
 
 

@@ -31,10 +31,9 @@ add_subdirectory(external/ecs-engine)
 
 
 
+add_library(TheEngine STATIC
 
-add_executable(opengl-rendering-engine
 
- "demo/main.cpp"
 
  "external/glad/glad.c"
 
@@ -43,34 +42,38 @@ add_executable(opengl-rendering-engine
  "src/camera.cpp"
 
  "src/model-loading/gltf_intermediate_mapper.cpp"
-
- "src/low-level/vertex_format_manager.cpp"
  "src/model-loading/data_convertor.cpp"
  "src/model-loading/gltf_animation_extractor.cpp"
+ "src/model-loading/vertex_attributes_repacker.cpp"
+ "src/model-loading/gltf_attribute_extractor.cpp"
 
  "src/engine/engine_core.cpp"
  "src/engine/engine_loader.cpp"
+
+ "src/low-level/vertex_format_helper.cpp"
  "src/low-level/vertex_format_manager.cpp"
+
  "src/low-level/gpu_buffer_manager.cpp"
  "src/low-level/gpu_buffer_sub_bump_allocator.cpp"
  "src/low-level/gpu_texture_manager.cpp"
  "src/low-level/gpu_material_system.cpp"
+
  "src/low-level/shader_code_generator.cpp"
  "src/low-level/shader_manager.cpp"
- "src/low-level/vertex_format_helper.cpp"
+
  "src/low-level/world_vertex_buffer_management_system.cpp"
 
- "src/model-loading/vertex_attributes_repacker.cpp"
- "src/engine/engine_loader.cpp"
 
 
 
- "src/engine/engine_core.cpp"
+
+
+
  "src/rendering-system/render_system.cpp"
  "src/rendering-system/world_renderer.cpp"
 
- "src/model-loading/gltf_attribute_extractor.cpp"
- "src/model-loading/gltf_animation_extractor.cpp"
+
+
 
  "src/ecs_hierarchy_traverser.cpp"
  "src/transformation_system.cpp"
@@ -125,14 +128,20 @@ add_executable(opengl-rendering-engine
  "src/rendering-system/object_data_buffer_manager.cpp"
  "src/rendering-system/render_command_buffer_manager.cpp"
 
+
+
+"src/platform.cpp" 
+"src/rendering-engine/opengl-backend/opengl_utils.cpp" 
+
+
 )
 
 
- set_target_properties(opengl-rendering-engine PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+ set_target_properties(TheEngine PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 
 
-target_include_directories(opengl-rendering-engine PRIVATE
+target_include_directories(TheEngine PUBLIC
 
 ${CMAKE_CURRENT_SOURCE_DIR}/include
 
@@ -144,7 +153,9 @@ ${CMAKE_CURRENT_SOURCE_DIR}/ui/include
 )
 
 #target_include_directories(opengl-rendering-engine PUBLIC ${glm_INCLUDE_DIR})
-
+set(SDL_STATIC ON CACHE BOOL "" FORCE)
+set(SDL_SHARED OFF CACHE BOOL "" FORCE)
+set(SDL_LIBC ON CACHE BOOL "" FORCE)
 FetchContent_Declare(
   SDL3
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
@@ -163,17 +174,20 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 
-target_link_libraries(opengl-rendering-engine PRIVATE
-
-  SDL3::SDL3
+target_link_libraries(TheEngine PUBLIC
+  SDL3::SDL3-static
+  #SDL3::SDL3
   glm::glm
   TheEngine_ECS
 )
 
 
-  add_custom_command(TARGET opengl-rendering-engine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    $<TARGET_FILE_DIR:SDL3::SDL3>
-   $<TARGET_FILE_DIR:opengl-rendering-engine>
-    COMMENT "Copying SDL3 DLL to the executable directory"
-  )
+add_subdirectory(demo)
+
+
+  #add_custom_command(TARGET TheEngine POST_BUILD
+  #  COMMAND ${CMAKE_COMMAND} -E copy_directory
+  #  $<TARGET_FILE_DIR:SDL3::SDL3>
+  # $<TARGET_FILE_DIR:TheEngine>
+  #  COMMENT "Copying SDL3 DLL to the executable directory"
+  #)

@@ -5,7 +5,7 @@
 #include "gltf_attribute_extractor.h"
 
 
-namespace Engine
+namespace TheEngine
 {
 
 

@@ -14,7 +14,7 @@
 #include "render_command_buffer_manager.h"
 #include "object_data_buffer_manager.h"
 
-namespace Engine
+namespace TheEngine
 {
 	//This class is the composer and conductor
 	class RenderSystem
@@ -48,7 +48,9 @@ namespace Engine
 
 		RenderSystem(ECS::ECSEngine& ecsEngine, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, UI::UICoreSystem& uiCoreSystem, AnimationSystem& animationSystem, GPUBufferManager& gpuBufferManager);
 
-		void render(Engine::Camera& camera);
+		void setViewportDimension(int width, int height);
+
+		void render(TheEngine::Camera& camera);
 
 		void renderUI();
 	};

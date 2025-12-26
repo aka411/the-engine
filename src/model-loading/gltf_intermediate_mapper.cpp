@@ -18,7 +18,7 @@
 
 
 
-namespace Engine::Utils
+namespace TheEngine::Utils
 {
 
 
@@ -210,7 +210,7 @@ namespace Engine::Utils
 
 
 
-namespace Engine
+namespace TheEngine
 {
 
 
@@ -291,9 +291,9 @@ namespace Engine
 			intermediateImage.width = tinygltfImage.width;
 			intermediateImage.height = tinygltfImage.height;
 			
-			intermediateImage.textureSourcePixelFormat = Engine::Utils::tinygltfToTextureSourcePixelFormat(tinygltfImage.component); // tinygltf to engine
-			intermediateImage.textureSourceComponentType = Engine::Utils::tinygltfToTextureSourceComponentType(tinygltfImage.pixel_type);
-			intermediateImage.internalFormat = Engine::Utils::TextureSourceEngineSoourceToTextureInternalFormat(intermediateImage.textureSourcePixelFormat, intermediateImage.textureSourceComponentType);
+			intermediateImage.textureSourcePixelFormat = TheEngine::Utils::tinygltfToTextureSourcePixelFormat(tinygltfImage.component); // tinygltf to engine
+			intermediateImage.textureSourceComponentType = TheEngine::Utils::tinygltfToTextureSourceComponentType(tinygltfImage.pixel_type);
+			intermediateImage.internalFormat = TheEngine::Utils::TextureSourceEngineSoourceToTextureInternalFormat(intermediateImage.textureSourcePixelFormat, intermediateImage.textureSourceComponentType);
 			const std::size_t byteCount = tinygltfImage.image.size();
 
 
@@ -325,11 +325,11 @@ namespace Engine
 		{
 			SamplerSetting samplerSetting;
 
-			samplerSetting.minFilter = Engine::Utils::convertToEngineMinMagFilter(tinygltfSamplerSetting.minFilter);
-			samplerSetting.magFilter = Engine::Utils::convertToEngineMinMagFilter(tinygltfSamplerSetting.magFilter);
+			samplerSetting.minFilter = TheEngine::Utils::convertToEngineMinMagFilter(tinygltfSamplerSetting.minFilter);
+			samplerSetting.magFilter = TheEngine::Utils::convertToEngineMinMagFilter(tinygltfSamplerSetting.magFilter);
 
-			samplerSetting.wrapS = Engine::Utils::convertToEngineWrapMode(tinygltfSamplerSetting.wrapS);
-			samplerSetting.wrapT = Engine::Utils::convertToEngineWrapMode(tinygltfSamplerSetting.wrapT);
+			samplerSetting.wrapS = TheEngine::Utils::convertToEngineWrapMode(tinygltfSamplerSetting.wrapS);
+			samplerSetting.wrapT = TheEngine::Utils::convertToEngineWrapMode(tinygltfSamplerSetting.wrapT);
 			//samplerSetting.wrapR = tinygltfSamplerSetting.
 			
 			samplersettings.push_back(samplerSetting);

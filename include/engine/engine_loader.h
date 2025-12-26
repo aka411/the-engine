@@ -7,36 +7,40 @@
 #include "../animation/animation_system.h"
 
 
-
-
-class EngineLoader
+namespace TheEngine
 {
 
-private:
-	GPUTextureManager& m_gpuTextureManager;
-	GPUMaterialSystem& m_gpuMaterialSystem;
 
-	WorldVertexBufferManagementSystem& m_worldVertexBufferManagementSystem;
+	class EngineLoader
+	{
 
-	ECS::ECSEngine& m_ecsEngine;
+	private:
+		GPUTextureManager& m_gpuTextureManager;
+		GPUMaterialSystem& m_gpuMaterialSystem;
 
+		WorldVertexBufferManagementSystem& m_worldVertexBufferManagementSystem;
 
-	Engine::GLTFIntermediateMapper m_gltfIntermediateMapper;
-
-
-
-	Engine::AnimationSystem& m_animationSystem;
+		ECS::ECSEngine& m_ecsEngine;
 
 
-	tinygltf::Model loadGLTFModel(const std::string& pathToModel);
-
-
-public:
-	//ecs , texture , material
-	EngineLoader(ECS::ECSEngine& ecsEngine ,GPUTextureManager& gpuTextureManager, GPUMaterialSystem& gpuMaterialSystem , WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, Engine::AnimationSystem& animationSystem);
-
-	ECS::EntityId createRootEntity(const std::string& pathToModel);
+		TheEngine::GLTFIntermediateMapper m_gltfIntermediateMapper;
 
 
 
-};
+		TheEngine::AnimationSystem& m_animationSystem;
+
+
+		tinygltf::Model loadGLTFModel(const std::string& pathToModel);
+
+
+	public:
+		//ecs , texture , material
+		EngineLoader(ECS::ECSEngine& ecsEngine, GPUTextureManager& gpuTextureManager, GPUMaterialSystem& gpuMaterialSystem, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, AnimationSystem& animationSystem);
+
+		ECS::EntityId createRootEntity(const std::string& pathToModel);
+
+
+
+	};
+
+}

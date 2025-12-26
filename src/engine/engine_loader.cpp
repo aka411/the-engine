@@ -1,170 +1,226 @@
 #include "../../include/engine/engine_loader.h"
 
 
-
-
-EngineLoader::EngineLoader(ECS::ECSEngine& ecsEngine, GPUTextureManager& gpuTextureManager, GPUMaterialSystem& gpuMaterialSystem, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, Engine::AnimationSystem& animationSystem)
-	: m_ecsEngine(ecsEngine),
-	m_gpuTextureManager(gpuTextureManager),
-	m_gpuMaterialSystem(gpuMaterialSystem), 
-	m_worldVertexBufferManagementSystem(worldVertexBufferManagementSystem),
-	m_animationSystem(animationSystem)
+namespace TheEngine
 {
 
 
 
-
-}
-
-ECS::EntityId EngineLoader::createRootEntity(const std::string& pathToModel)
-{
-	//get gltf model
-
-	tinygltf::Model gltfModel = loadGLTFModel(pathToModel);
-
-
-	EngineIntermediateModel  engineIntermediateModel = m_gltfIntermediateMapper.convertGltfToEngineIntermediateModel(gltfModel);
-
-
-	//upload images and get id 
-	std::vector<uint64_t> localImageIndexToImageHandle;
-	localImageIndexToImageHandle.reserve(engineIntermediateModel.intermediateImage.size());
-	for (auto& image : engineIntermediateModel.intermediateImage)
+	EngineLoader::EngineLoader(ECS::ECSEngine& ecsEngine, GPUTextureManager& gpuTextureManager, GPUMaterialSystem& gpuMaterialSystem, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, AnimationSystem& animationSystem)
+		: m_ecsEngine(ecsEngine),
+		m_gpuTextureManager(gpuTextureManager),
+		m_gpuMaterialSystem(gpuMaterialSystem),
+		m_worldVertexBufferManagementSystem(worldVertexBufferManagementSystem),
+		m_animationSystem(animationSystem)
 	{
-		TextureCreateInfo textureCreateInfo;
-		textureCreateInfo.width = image.width;
-		textureCreateInfo.height = image.height;
-		textureCreateInfo.textureSourceComponentType = image.textureSourceComponentType;
-		textureCreateInfo.textureSourcePixelFormat = image.textureSourcePixelFormat;
-		textureCreateInfo.internalFormat = image.internalFormat;
 
 
-		textureCreateInfo.type =TextureType::TEXTURE_2D ;
 
-		//textureCreateInfo.samplerSetting =;
 
-		textureCreateInfo.data = image.data.data();
-
-		const uint64_t imageHandle = m_gpuTextureManager.createNewTexture(textureCreateInfo).resisdentHandle;
-		localImageIndexToImageHandle.push_back(imageHandle);
 	}
 
+	ECS::EntityId EngineLoader::createRootEntity(const std::string& pathToModel)
+	{
+		//get gltf model
+
+		tinygltf::Model gltfModel = loadGLTFModel(pathToModel);
 
 
+		EngineIntermediateModel  engineIntermediateModel = m_gltfIntermediateMapper.convertGltfToEngineIntermediateModel(gltfModel);
 
 
-	std::vector<uint64_t> localTextureToEngineTexture;
-	localTextureToEngineTexture.reserve(engineIntermediateModel.intermediateTextures.size());
-
-	for (auto& texture : engineIntermediateModel.intermediateTextures)
-	{ 
-		
-		localTextureToEngineTexture.push_back(localImageIndexToImageHandle[texture.imageIndex]);
-		
-	}
-
-	
-	std::vector<MaterialId> localToEnginePBRMaterial;
-	localToEnginePBRMaterial.reserve(engineIntermediateModel.intermdediatePBRMetallicRoughnessMaterials.size());
-
-
-	auto getCorrectTextureIndex = [](int index, const std::vector<uint64_t>& textures)->uint64_t
+		//upload images and get id 
+		std::vector<uint64_t> localImageIndexToImageHandle;
+		localImageIndexToImageHandle.reserve(engineIntermediateModel.intermediateImage.size());
+		for (auto& image : engineIntermediateModel.intermediateImage)
 		{
-			if (index < 0) { return 0; }
-			return textures[index];
+			TextureCreateInfo textureCreateInfo;
+			textureCreateInfo.width = image.width;
+			textureCreateInfo.height = image.height;
+			textureCreateInfo.textureSourceComponentType = image.textureSourceComponentType;
+			textureCreateInfo.textureSourcePixelFormat = image.textureSourcePixelFormat;
+			textureCreateInfo.internalFormat = image.internalFormat;
+
+
+			textureCreateInfo.type = TextureType::TEXTURE_2D;
+
+			//textureCreateInfo.samplerSetting =;
+
+			textureCreateInfo.data = image.data.data();
+
+			const uint64_t imageHandle = m_gpuTextureManager.createNewTexture(textureCreateInfo).resisdentHandle;
+			localImageIndexToImageHandle.push_back(imageHandle);
+		}
+
+
+
+
+
+		std::vector<uint64_t> localTextureToEngineTexture;
+		localTextureToEngineTexture.reserve(engineIntermediateModel.intermediateTextures.size());
+
+		for (auto& texture : engineIntermediateModel.intermediateTextures)
+		{
+
+			localTextureToEngineTexture.push_back(localImageIndexToImageHandle[texture.imageIndex]);
+
+		}
+
+
+		std::vector<MaterialId> localToEnginePBRMaterial;
+		localToEnginePBRMaterial.reserve(engineIntermediateModel.intermdediatePBRMetallicRoughnessMaterials.size());
+
+
+		auto getCorrectTextureIndex = [](int index, const std::vector<uint64_t>& textures)->uint64_t
+			{
+				if (index < 0) { return 0; }
+				return textures[index];
+			};
+
+		for (auto& material : engineIntermediateModel.intermdediatePBRMetallicRoughnessMaterials)
+		{
+			PBRMetallicRoughnessMaterial pbrMetallicRoughnessMaterial;
+
+			pbrMetallicRoughnessMaterial.albedoTextureHandle = getCorrectTextureIndex(material.albedoTextureIndex, localTextureToEngineTexture);
+			pbrMetallicRoughnessMaterial.metallicRoughnessTextureHandle = getCorrectTextureIndex(material.metallicRoughnessTextureIndex, localTextureToEngineTexture);
+			pbrMetallicRoughnessMaterial.normalTextureHandle = getCorrectTextureIndex(material.normalTextureIndex, localTextureToEngineTexture);
+			pbrMetallicRoughnessMaterial.emissiveTextureHandle = getCorrectTextureIndex(material.emissiveTextureIndex, localTextureToEngineTexture);
+			pbrMetallicRoughnessMaterial.occlusionTextureHandle = getCorrectTextureIndex(material.occlusionTextureIndex, localTextureToEngineTexture);
+
+
+			pbrMetallicRoughnessMaterial.baseColorFactor = material.baseColorFactor;
+			pbrMetallicRoughnessMaterial.emissiveFactor = material.emissiveFactor;
+			pbrMetallicRoughnessMaterial.metallicFactor = material.metallicFactor;
+			pbrMetallicRoughnessMaterial.roughnessFactor = material.roughnessFactor;
+
+			pbrMetallicRoughnessMaterial.materialBitMask = material.materialBitMask;
+
+
+			MaterialId materialId = m_gpuMaterialSystem.uploadMaterial(MaterialType::PBR_METALLIC_ROUGHNESS, reinterpret_cast<std::byte*>(&pbrMetallicRoughnessMaterial), sizeof(pbrMetallicRoughnessMaterial));
+
+			localToEnginePBRMaterial.push_back(materialId);
+
+
+		}
+
+
+
+
+
+		/*-------VERTEX DATA-------*/
+		std::vector<size_t> engineVertexoffsets;
+		engineVertexoffsets.reserve(engineIntermediateModel.vertexDatas.size());
+		for (auto& vertex : engineIntermediateModel.vertexDatas)
+		{
+			size_t engineVertexOffset = m_worldVertexBufferManagementSystem.uploadVertexData(vertex.vertexFormat, vertex.data.data(), vertex.data.size());
+			engineVertexoffsets.push_back(engineVertexOffset);
+
+		}
+
+
+		std::vector<size_t> engineIndexoffsets;
+		engineIndexoffsets.reserve(engineIntermediateModel.indiceDatas.size());
+		for (auto& index : engineIntermediateModel.indiceDatas)
+		{
+			size_t engineIndexOffset = m_worldVertexBufferManagementSystem.uploadIndexData(index.indexType, index.data.data(), index.data.size());
+			engineIndexoffsets.push_back(engineIndexOffset);
+
+		}
+
+
+
+
+
+
+		struct EngineMesh
+		{
+			EngineRenderComponent engineRenderComponent;
+
+			bool isfat = false;
+			EngineFatRenderComponent  engineFatRenderComponent;
 		};
 
-	for (auto& material : engineIntermediateModel.intermdediatePBRMetallicRoughnessMaterials)
-	{
-		PBRMetallicRoughnessMaterial pbrMetallicRoughnessMaterial;
-
-		pbrMetallicRoughnessMaterial.albedoTextureHandle = getCorrectTextureIndex(material.albedoTextureIndex, localTextureToEngineTexture);
-		pbrMetallicRoughnessMaterial.metallicRoughnessTextureHandle = getCorrectTextureIndex(material.metallicRoughnessTextureIndex, localTextureToEngineTexture);
-		pbrMetallicRoughnessMaterial.normalTextureHandle = getCorrectTextureIndex(material.normalTextureIndex, localTextureToEngineTexture);
-		pbrMetallicRoughnessMaterial.emissiveTextureHandle = getCorrectTextureIndex(material.emissiveTextureIndex, localTextureToEngineTexture);
-		pbrMetallicRoughnessMaterial.occlusionTextureHandle = getCorrectTextureIndex(material.occlusionTextureIndex, localTextureToEngineTexture);
-
-
-		pbrMetallicRoughnessMaterial.baseColorFactor = material.baseColorFactor;
-		pbrMetallicRoughnessMaterial.emissiveFactor = material.emissiveFactor;
-		pbrMetallicRoughnessMaterial.metallicFactor = material.metallicFactor;
-		pbrMetallicRoughnessMaterial.roughnessFactor = material.roughnessFactor;
-
-		pbrMetallicRoughnessMaterial.materialBitMask = material.materialBitMask;
-
-
-		MaterialId materialId = m_gpuMaterialSystem.uploadMaterial(MaterialType::PBR_METALLIC_ROUGHNESS, reinterpret_cast<std::byte*>(&pbrMetallicRoughnessMaterial), sizeof(pbrMetallicRoughnessMaterial));
-
-		localToEnginePBRMaterial.push_back(materialId);
-	
-	
-	}
-
-
-
-
-
-	/*-------VERTEX DATA-------*/
-	std::vector<size_t> engineVertexoffsets;
-	engineVertexoffsets.reserve(engineIntermediateModel.vertexDatas.size());
-	for (auto& vertex : engineIntermediateModel.vertexDatas)
-	{
-		size_t engineVertexOffset = m_worldVertexBufferManagementSystem.uploadVertexData(vertex.vertexFormat, vertex.data.data(), vertex.data.size());
-		engineVertexoffsets.push_back(engineVertexOffset);
-
-	}
-
-
-	std::vector<size_t> engineIndexoffsets;
-	engineIndexoffsets.reserve(engineIntermediateModel.indiceDatas.size());
-	for (auto& index : engineIntermediateModel.indiceDatas)
-	{
-		size_t engineIndexOffset = m_worldVertexBufferManagementSystem.uploadIndexData(index.indexType, index.data.data(), index.data.size());
-		engineIndexoffsets.push_back(engineIndexOffset);
-
-	}
 
 
 
 
 
 
-	struct EngineMesh
-	{
-		EngineRenderComponent engineRenderComponent;
+		std::vector<EngineMesh> m_engineMeshs;
+		m_engineMeshs.reserve(engineIntermediateModel.intermediateMeshs.size());
 
-		bool isfat = false;
-		EngineFatRenderComponent  engineFatRenderComponent;
-	};
-
-
-
-
-
-
-
-	std::vector<EngineMesh> m_engineMeshs;
-	m_engineMeshs.reserve(engineIntermediateModel.intermediateMeshs.size());
-
-	for (const auto& intermdeiateMesh : engineIntermediateModel.intermediateMeshs)
-	{
-		EngineMesh engineMesh;
-
-		engineMesh.isfat = (intermdeiateMesh.intermediatePrimitives.size() > 1)? true : false;
-
-		
-
-		if (engineMesh.isfat)
+		for (const auto& intermdeiateMesh : engineIntermediateModel.intermediateMeshs)
 		{
-			engineMesh.engineFatRenderComponent.engineRenderComponents.reserve(intermdeiateMesh.intermediatePrimitives.size());
-			for (auto& primitive : intermdeiateMesh.intermediatePrimitives)
+			EngineMesh engineMesh;
+
+			engineMesh.isfat = (intermdeiateMesh.intermediatePrimitives.size() > 1) ? true : false;
+
+
+
+			if (engineMesh.isfat)
 			{
+				engineMesh.engineFatRenderComponent.engineRenderComponents.reserve(intermdeiateMesh.intermediatePrimitives.size());
+				for (auto& primitive : intermdeiateMesh.intermediatePrimitives)
+				{
+					EngineRenderComponent engineRenderComponent;
+
+					const size_t vertexOffset = engineVertexoffsets[primitive.vertexDataId];
+					const size_t vertexCount = engineIntermediateModel.vertexDatas[primitive.vertexDataId].vertexCount;
+					const VertexFormat vertexFormat = engineIntermediateModel.vertexDatas[primitive.vertexDataId].vertexFormat;
+
+
+					engineRenderComponent.vertexOffset = vertexOffset;
+					engineRenderComponent.vertexCount = vertexCount;
+					engineRenderComponent.vertexFormat = vertexFormat;
+
+					//TODO : NEED TO REVIEW THIS LATER
+					if (primitive.materialId >= 0)
+					{
+						engineRenderComponent.materialId = localToEnginePBRMaterial[primitive.materialId];
+					}
+					else
+					{
+						engineRenderComponent.materialId = -1;
+					}
+
+					if (primitive.isIndexed)
+					{
+						engineRenderComponent.isIndexed = true;
+
+						const IndexType indexType = engineIntermediateModel.indiceDatas[primitive.indexId].indexType;
+						const size_t indexCount = engineIntermediateModel.indiceDatas[primitive.indexId].indexCount;
+						const size_t indexOffset = engineIndexoffsets[primitive.indexId];
+
+						engineRenderComponent.indexType = indexType;
+						engineRenderComponent.indexCount = indexCount;
+						engineRenderComponent.indexOffset = indexOffset;
+
+					}
+
+
+
+
+
+
+
+
+					engineMesh.engineFatRenderComponent.engineRenderComponents.push_back(engineRenderComponent);
+				}
+
+
+			}
+			else
+			{
+
+				assert(intermdeiateMesh.intermediatePrimitives.size() != 0);
+
+				const IntermediatePrimitive& primitive = intermdeiateMesh.intermediatePrimitives[0];
 				EngineRenderComponent engineRenderComponent;
 
 				const size_t vertexOffset = engineVertexoffsets[primitive.vertexDataId];
 				const size_t vertexCount = engineIntermediateModel.vertexDatas[primitive.vertexDataId].vertexCount;
 				const VertexFormat vertexFormat = engineIntermediateModel.vertexDatas[primitive.vertexDataId].vertexFormat;
-				
+
 
 				engineRenderComponent.vertexOffset = vertexOffset;
 				engineRenderComponent.vertexCount = vertexCount;
@@ -179,6 +235,7 @@ ECS::EntityId EngineLoader::createRootEntity(const std::string& pathToModel)
 				{
 					engineRenderComponent.materialId = -1;
 				}
+
 
 				if (primitive.isIndexed)
 				{
@@ -195,269 +252,219 @@ ECS::EntityId EngineLoader::createRootEntity(const std::string& pathToModel)
 				}
 
 
-				
-				
-				
-				
+				engineMesh.engineRenderComponent = engineRenderComponent;
 
 
-				engineMesh.engineFatRenderComponent.engineRenderComponents.push_back(engineRenderComponent);
+
 			}
 
-			
+			m_engineMeshs.push_back(engineMesh);
+
+		}
+
+
+
+
+
+
+
+
+		std::vector<ECS::EntityId> engineEntityIds;
+		engineEntityIds.reserve(engineIntermediateModel.engineIntermediateNode.size());
+
+		for (auto& node : engineIntermediateModel.engineIntermediateNode)
+		{
+
+			engineEntityIds.push_back(m_ecsEngine.createEntity());
+
+
+		}
+
+
+
+
+		//we have added render component , transformation component , children component
+		for (size_t i = 0; i < engineIntermediateModel.engineIntermediateNode.size(); ++i)
+		{
+			EngineIntermediateNode node = engineIntermediateModel.engineIntermediateNode[i];
+			const ECS::EntityId entityId = engineEntityIds[i];
+
+			m_ecsEngine.addComponentToEntity<EngineTransformationComponent>(entityId, node.transformation);//transformation
+
+
+
+
+			if (node.meshIndex >= 0)
+			{
+				EngineMesh& engineMesh = m_engineMeshs[node.meshIndex];
+				if (engineMesh.isfat)
+				{
+					m_ecsEngine.addComponentToEntity<EngineFatRenderComponent>(entityId, engineMesh.engineFatRenderComponent);
+
+				}
+				else
+				{
+					m_ecsEngine.addComponentToEntity<EngineRenderComponent>(entityId, engineMesh.engineRenderComponent);
+				}
+			}
+
+			if (node.children.size() > 0)
+			{
+				EngineChildrenComponent engineChildrenComponent;
+				engineChildrenComponent.childrenEntities.reserve(node.children.size());
+				for (auto& childIndex : node.children)
+				{
+					engineChildrenComponent.childrenEntities.push_back(engineEntityIds[childIndex]);
+				}
+
+				m_ecsEngine.addComponentToEntity<EngineChildrenComponent>(entityId, engineChildrenComponent);
+			}
+
+
+		}
+
+
+
+
+
+
+		ECS::EntityId rootEntityId = engineEntityIds[engineIntermediateModel.rootNodeIndex];
+		RootEntityComponent rootEntityComponent{};
+		m_ecsEngine.addComponentToEntity<RootEntityComponent>(rootEntityId, rootEntityComponent);
+
+
+
+		/*ANIMATION ADDING AREA*/
+
+		if (engineIntermediateModel.hasAnimations)
+		{
+
+
+			AnimationData& animationData = engineIntermediateModel.animationData;
+			std::unordered_map<std::string, TheEngine::Animation>& animationsMap = engineIntermediateModel.animationsMap;
+
+			BoneAnimationData& boneAnimationData = engineIntermediateModel.boneAnimationData;
+
+
+
+
+
+			AnimationCPUComponent animationCPUComponent;
+
+			animationCPUComponent.animationData = animationData;
+			animationCPUComponent.animationsMap = animationsMap;
+			animationCPUComponent.engineEntityIds = engineEntityIds;//a map from gltf global node array to entity id
+
+			AnimationComponent animationComponent;
+			animationComponent.id = m_animationSystem.getKeyframeAnimationManager().storeAnimationCPUComponent(std::move(animationCPUComponent));
+
+			m_ecsEngine.addComponentToEntity<AnimationComponent>(rootEntityId, animationComponent);
+
+			AnimationStateComponent animationStateComponent;
+			m_ecsEngine.addComponentToEntity<AnimationStateComponent>(rootEntityId, animationStateComponent);
+
+
+			if (engineIntermediateModel.boneAnimationData.isSkinned)
+			{
+				BoneAnimationData& boneAnimationData = engineIntermediateModel.boneAnimationData;
+
+				BoneAnimationCPUComponent boneAnimationCPUComponent;
+				boneAnimationCPUComponent.inverseBindMatrices = boneAnimationData.inverseBindMatrices;
+				boneAnimationCPUComponent.jointIndices = boneAnimationData.jointIndices;//indice into engineEntityIds
+
+
+
+				BoneAnimationComponent boneAnimationComponent;
+
+				boneAnimationComponent.jointMatrices = boneAnimationData.jointMatrices;
+
+				boneAnimationComponent.boneDataId = m_animationSystem.getSkeletalAnimationManager().storeBoneAnimationCPUComponent(std::move(boneAnimationCPUComponent));
+				boneAnimationComponent.JointIdInSSBO = m_animationSystem.getSkeletalAnimationManager().uploadNewJointMatrixSetToSSBO(boneAnimationComponent.jointMatrices);
+
+				m_ecsEngine.addComponentToEntity<BoneAnimationComponent>(rootEntityId, boneAnimationComponent);
+
+
+				for (auto& entityId : engineEntityIds)
+				{
+					BoneJointMatrixIdComponent boneJointMatrixIdComponent;
+					boneJointMatrixIdComponent.JointIdInSSBO = boneAnimationComponent.JointIdInSSBO;
+
+					m_ecsEngine.addComponentToEntity<BoneJointMatrixIdComponent>(entityId, boneJointMatrixIdComponent);
+				}
+
+			}
+
+
+
+		}
+
+
+
+
+
+
+
+		m_ecsEngine.processBufferedCommands();
+
+		return rootEntityId;
+
+
+
+	}
+
+
+
+
+
+
+
+
+
+	tinygltf::Model EngineLoader::loadGLTFModel(const std::string& pathToModel)
+	{
+
+		tinygltf::Model model;
+		tinygltf::TinyGLTF loader;
+		std::string err;
+		std::string warn;
+
+
+
+
+
+		bool ret = false;
+
+		if (pathToModel.substr(pathToModel.length() - 4) == "gltf")
+		{
+			ret = loader.LoadASCIIFromFile(&model, &err, &warn, pathToModel);
 		}
 		else
 		{
-
-			assert(intermdeiateMesh.intermediatePrimitives.size() != 0);
-
-			const IntermediatePrimitive& primitive = intermdeiateMesh.intermediatePrimitives[0];
-			EngineRenderComponent engineRenderComponent;
-
-			const size_t vertexOffset = engineVertexoffsets[primitive.vertexDataId];
-			const size_t vertexCount = engineIntermediateModel.vertexDatas[primitive.vertexDataId].vertexCount;
-			const VertexFormat vertexFormat = engineIntermediateModel.vertexDatas[primitive.vertexDataId].vertexFormat;
-
-
-			engineRenderComponent.vertexOffset = vertexOffset;
-			engineRenderComponent.vertexCount = vertexCount;
-			engineRenderComponent.vertexFormat = vertexFormat;
-
-			//TODO : NEED TO REVIEW THIS LATER
-			if (primitive.materialId >= 0)
-			{
-				engineRenderComponent.materialId = localToEnginePBRMaterial[primitive.materialId];
-			}
-			else
-			{
-				engineRenderComponent.materialId = -1;
-			}
-
-
-			if (primitive.isIndexed)
-			{
-				engineRenderComponent.isIndexed = true;
-
-				const IndexType indexType = engineIntermediateModel.indiceDatas[primitive.indexId].indexType;
-				const size_t indexCount = engineIntermediateModel.indiceDatas[primitive.indexId].indexCount;
-				const size_t indexOffset = engineIndexoffsets[primitive.indexId];
-
-				engineRenderComponent.indexType = indexType;
-				engineRenderComponent.indexCount = indexCount;
-				engineRenderComponent.indexOffset = indexOffset;
-
-			}
-
-
-			engineMesh.engineRenderComponent = engineRenderComponent;
-
-
-
+			ret = loader.LoadBinaryFromFile(&model, &err, &warn, pathToModel); // for binary glTF(.glb)
 		}
 
-		m_engineMeshs.push_back(engineMesh);
-
-	}
-
-
-
-
-
-
-
-
-	std::vector<ECS::EntityId> engineEntityIds;
-	engineEntityIds.reserve(engineIntermediateModel.engineIntermediateNode.size());
-
-	for (auto& node : engineIntermediateModel.engineIntermediateNode)
-	{
-
-		engineEntityIds.push_back(m_ecsEngine.createEntity());
-
-		   
-	}
-
-
-
-
-	//we have added render component , transformation component , children component
-	for (size_t i = 0 ; i <  engineIntermediateModel.engineIntermediateNode.size(); ++i)
-	{
-	    EngineIntermediateNode node = engineIntermediateModel.engineIntermediateNode[i];
-		const ECS::EntityId entityId = engineEntityIds[i];
-
-		m_ecsEngine.addComponentToEntity<EngineTransformationComponent>(entityId, node.transformation);//transformation
-
-
-		
-		
-		if (node.meshIndex >= 0)
+		if (!warn.empty())
 		{
-			EngineMesh& engineMesh = m_engineMeshs[node.meshIndex];
-			if (engineMesh.isfat)
-			{
-				m_ecsEngine.addComponentToEntity<EngineFatRenderComponent>(entityId, engineMesh.engineFatRenderComponent);
-
-			}
-			else
-			{
-				m_ecsEngine.addComponentToEntity<EngineRenderComponent>(entityId, engineMesh.engineRenderComponent);
-			}
+			printf("Warn: %s\n", warn.c_str());
 		}
 
-		if (node.children.size() > 0)
+		if (!err.empty())
 		{
-			EngineChildrenComponent engineChildrenComponent;
-			engineChildrenComponent.childrenEntities.reserve(node.children.size());
-			for (auto& childIndex : node.children)
-			{
-				engineChildrenComponent.childrenEntities.push_back(engineEntityIds[childIndex]);
-			}
-
-			m_ecsEngine.addComponentToEntity<EngineChildrenComponent>(entityId,engineChildrenComponent);
+			printf("Err: %s\n", err.c_str());
+			assert(0);
 		}
 
-
-	}
-
-
-
-
-
-
-	ECS::EntityId rootEntityId = engineEntityIds[engineIntermediateModel.rootNodeIndex];
-	RootEntityComponent rootEntityComponent{};
-	m_ecsEngine.addComponentToEntity<RootEntityComponent>(rootEntityId, rootEntityComponent);
-
-
-
-	/*ANIMATION ADDING AREA*/
-
-	if (engineIntermediateModel.hasAnimations)
-	{
-
-
-		Engine::AnimationData& animationData = engineIntermediateModel.animationData;
-		std::unordered_map<std::string, Engine::Animation>& animationsMap = engineIntermediateModel.animationsMap;
-
-		Engine::BoneAnimationData& boneAnimationData = engineIntermediateModel.boneAnimationData;
-
-
-
-
-
-		AnimationCPUComponent animationCPUComponent;
-
-		animationCPUComponent.animationData = animationData;
-		animationCPUComponent.animationsMap = animationsMap;
-		animationCPUComponent.engineEntityIds = engineEntityIds;//a map from gltf global node array to entity id
-
-		AnimationComponent animationComponent;
-		animationComponent.id = m_animationSystem.getKeyframeAnimationManager().storeAnimationCPUComponent(std::move(animationCPUComponent));
-
-		m_ecsEngine.addComponentToEntity<AnimationComponent>(rootEntityId, animationComponent);
-
-		AnimationStateComponent animationStateComponent;
-		m_ecsEngine.addComponentToEntity<AnimationStateComponent>(rootEntityId, animationStateComponent);
-
-		
-		if (engineIntermediateModel.boneAnimationData.isSkinned)
+		if (!ret)
 		{
-			Engine::BoneAnimationData& boneAnimationData = engineIntermediateModel.boneAnimationData;
-
-			BoneAnimationCPUComponent boneAnimationCPUComponent;
-			boneAnimationCPUComponent.inverseBindMatrices = boneAnimationData.inverseBindMatrices;
-			boneAnimationCPUComponent.jointIndices = boneAnimationData.jointIndices;//indice into engineEntityIds
-			
-			
-
-			BoneAnimationComponent boneAnimationComponent;
-
-			boneAnimationComponent.jointMatrices = boneAnimationData.jointMatrices;
-
-			boneAnimationComponent.boneDataId = m_animationSystem.getSkeletalAnimationManager().storeBoneAnimationCPUComponent(std::move(boneAnimationCPUComponent));
-			boneAnimationComponent.JointIdInSSBO = m_animationSystem.getSkeletalAnimationManager().uploadNewJointMatrixSetToSSBO(boneAnimationComponent.jointMatrices);
-
-			m_ecsEngine.addComponentToEntity<BoneAnimationComponent>(rootEntityId, boneAnimationComponent);
-
-
-			for (auto& entityId : engineEntityIds)
-			{
-				BoneJointMatrixIdComponent boneJointMatrixIdComponent;
-				boneJointMatrixIdComponent.JointIdInSSBO = boneAnimationComponent.JointIdInSSBO;
-
-				m_ecsEngine.addComponentToEntity<BoneJointMatrixIdComponent>(entityId, boneJointMatrixIdComponent);
-			}
-
+			printf("Failed to parse glTF\n");
+			assert(0);
 		}
 
 
+		return model;
 
 	}
 
 
-
-
-
-
-
-	m_ecsEngine.processBufferedCommands();
-
-	return rootEntityId;
-
-
-
-}
-
-
-
-
-
-
-
-
-
-tinygltf::Model EngineLoader::loadGLTFModel(const std::string& pathToModel)
-{
-
-	tinygltf::Model model;
-	tinygltf::TinyGLTF loader;
-	std::string err;
-	std::string warn;
-
-	
-
-
-
-	bool ret = false;
-
-	if (pathToModel.substr(pathToModel.length() - 4) == "gltf")
-	{
-		ret = loader.LoadASCIIFromFile(&model, &err, &warn, pathToModel);
-	}
-	else
-	{
-		ret = loader.LoadBinaryFromFile(&model, &err, &warn, pathToModel); // for binary glTF(.glb)
-	}
-
-	if (!warn.empty())
-	{
-		printf("Warn: %s\n", warn.c_str());
-	}
-
-	if (!err.empty())
-	{
-		printf("Err: %s\n", err.c_str());
-		assert(0);
-	}
-
-	if (!ret)
-	{
-		printf("Failed to parse glTF\n");
-		assert(0);
-	}
-
-	
-	return model;
 
 }

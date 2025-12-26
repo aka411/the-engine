@@ -1,9 +1,9 @@
-#include "../include/camera.h"
+#include "camera.h"
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-namespace Engine
+namespace TheEngine
 {
 
 
@@ -79,11 +79,7 @@ namespace Engine
 		
 
 
-
-
 		return glm::inverse(  glm::translate(glm::mat4(1.0f), m_position) * glm::mat4_cast(m_rotation));
-		
-
 
 
 	}

@@ -4,7 +4,7 @@
 
 
 
-namespace Engine
+namespace TheEngine
 {
 
 	std::vector<EngineTransformationComponent*> AnimationSystem::getTransfomrationsOfEntities(const std::vector<ECS::EntityId>& entityIds)

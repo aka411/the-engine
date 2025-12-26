@@ -1,8 +1,9 @@
 
-#include "../../../../include/ui/include/utils/geometry_generator.h"
-#include "../../../../include/ui/include/systems/performance_monitor_system.h"
-#include "../../../../include/ui/include/core/ui_component.h"
-#include "../../../../include/ui/include/core/ui_core_system.h"
+#include "ui/include/utils/geometry_generator.h"
+#include "ui/include/systems/performance_monitor_system.h"
+#include "ui/include/core/ui_component.h"
+#include "ui/include/core/ui_core_system.h"
+#include <iostream>
 
 
 
@@ -15,10 +16,10 @@ PerformanceMonitorSystem::PerformanceMonitorSystem(UI::UICoreSystem& uiCoreSyste
 
 }
 
-void PerformanceMonitorSystem::setUp(UI::UIElement& fpsGraphElement)
+void PerformanceMonitorSystem::setUp(UI::UIElement&& fpsGraphElement)
 {
 	
-	m_fpsGraphElement = &fpsGraphElement;
+	m_fpsGraphElement = std::make_unique<UI::UIElement>(std::move(fpsGraphElement));
 
 
 }
@@ -36,7 +37,7 @@ void PerformanceMonitorSystem::UpdateFPSMeter(const float deltaTime)
 	
 
 
-	uiGraphComponentPtr->store(1.0f/(deltaTime+0.0000000001));
+	uiGraphComponentPtr->store(1.0f / (deltaTime + 0.0000001));//frames per second
 
 	//TODO : need more optimization
 	//generate mesh

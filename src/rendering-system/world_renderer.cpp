@@ -7,7 +7,7 @@
 
 
 
-namespace Engine
+namespace TheEngine
 {
 
 	WorldRenderer::WorldRenderer(VertexFormatManager& vertexFormatManager, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, AnimationSystem& animationSystem, RenderCommandBufferManager& renderCommandBufferManager,
@@ -52,19 +52,25 @@ namespace Engine
 	}
 
 
+	void WorldRenderer::setViewportDimension(int width, int height)
+	{
+		//glFlush();
+		//glWaitSync(glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0), 0, GL_TIMEOUT_IGNORED);
+		glViewport(0, 0, width, height);
+	}
 
-	void WorldRenderer::startFrame(Engine::Camera& camera)
+	void WorldRenderer::startFrame(TheEngine::Camera& camera)
 	{
 
 
 		//glFlush();
-
+	
 		glClearColor(0.2, 0.4, 0.5, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glEnable(GL_CULL_FACE);
 
 		glEnable(GL_DEPTH_TEST);
-		glClearDepth(1.0f);
+		glClearDepth(1.0f); // opengl positive z axis is into the screen
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		glDisable(GL_BLEND);
