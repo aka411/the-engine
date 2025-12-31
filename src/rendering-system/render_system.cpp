@@ -5,8 +5,8 @@
 namespace TheEngine
 {
 
-	RenderSystem::RenderSystem(ECS::ECSEngine& ecsEngine, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, UI::UICoreSystem& uiCoreSystem, UI::UISystem& uiSystem, AnimationSystem& animationSystem, GPUBufferManager& gpuBufferManager)
-		:
+	RenderSystem::RenderSystem(ECS::ECSEngine& ecsEngine, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, UI::UICoreSystem& uiCoreSystem, UI::UISystem& uiSystem, Animation::AnimationSystem& animationSystem, Memory::GPUBufferManager& gpuBufferManager)
+	:
 		m_vertexFormatManager(),
 		m_ecsEngine(ecsEngine),
 		m_worldVertexBufferManagementSystem(worldVertexBufferManagementSystem),

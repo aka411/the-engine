@@ -1,5 +1,5 @@
 #include "ui/utils/geometry_generator.h"
-
+#include <cstring>
 
 
 

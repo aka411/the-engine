@@ -57,9 +57,15 @@ void PerformanceMonitorSystem::UpdateFPSMeter(const float deltaTime)
 		//if (dataPoint < 0.0001) continue;
 		float scaledHeight = (dataPoint/500.0f ) * 100.0f;
 
+		if (scaledHeight > uiRectDimensionsComponentPtr->height)
+		{
+			//cap it to the max height of the graph rect
+			scaledHeight = uiRectDimensionsComponentPtr->height-1;
+		}
 
 		//NOTE : The scaledHeight is negated cause the 
 		//geometry generates the rectangles with Y axis up but our UI coordinate system has Y axis down
+	
 		GeometryGenerator::MeshData mesh = GeometryGenerator::getColouredRectangleWithOffset(6,-scaledHeight, { offset ,100,0}, uiGraphComponentPtr->color);
 		offset += 6;
 

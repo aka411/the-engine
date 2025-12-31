@@ -101,7 +101,7 @@ namespace TheEngine::UI
 				const UIVertexFormat uiVertexFormat = uiRenderMeshComponentArray[i].vertexFormat;
 				const  UIBufferType uiBuffertype = uiRenderMeshComponentArray[i].bufferType;
 
-				GPUBufferInfo vertexBufferInfo = uiVertexBufferManagementSystem.getBufferInfoForVertexFormat(uiVertexFormat, uiBuffertype);
+				Memory::GPUBufferInfo vertexBufferInfo = uiVertexBufferManagementSystem.getBufferInfoForVertexFormat(uiVertexFormat, uiBuffertype);
 
 			
 
@@ -198,7 +198,7 @@ namespace TheEngine::UI
 				const UIVertexFormat uiVertexFormat = uiTextMeshComponentArray[i].vertexFormat;
 				const  UIBufferType uiBuffertype = uiTextMeshComponentArray[i].bufferType;
 
-				GPUBufferInfo vertexBufferInfo = uiVertexBufferManagementSystem.getBufferInfoForTextWithVertexFormat(uiVertexFormat, uiBuffertype);
+				Memory::GPUBufferInfo vertexBufferInfo = uiVertexBufferManagementSystem.getBufferInfoForTextWithVertexFormat(uiVertexFormat, uiBuffertype);
 
 
 

@@ -1,6 +1,6 @@
 #include "ui/utils/interleaver.h"
 #include <cassert>
-
+#include <cstring>
 
 
 std::vector<std::byte> Interleaver::interleave(const std::vector<std::vector<std::byte>>& srcDatas, const std::vector<size_t>& bytesPerSetOfData)

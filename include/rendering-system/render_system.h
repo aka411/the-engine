@@ -35,10 +35,10 @@ namespace TheEngine
 
 		WorldVertexBufferManagementSystem& m_worldVertexBufferManagementSystem;
 
-		AnimationSystem& m_animationSystem;
+		Animation::AnimationSystem& m_animationSystem;
 
 
-		GPUBufferManager& m_gpuBufferManager;
+		Memory::GPUBufferManager& m_gpuBufferManager;
 
 		RenderCommandBufferManager m_renderCommandBufferManager;
 		ObjectDataBufferManager m_objectDataBufferManager;
@@ -47,7 +47,7 @@ namespace TheEngine
 
 	public:
 
-		RenderSystem(ECS::ECSEngine& ecsEngine, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, UI::UICoreSystem& uiCoreSystem,UI::UISystem& uiSystem, AnimationSystem& animationSystem, GPUBufferManager& gpuBufferManager);
+		RenderSystem(ECS::ECSEngine& ecsEngine, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, UI::UICoreSystem& uiCoreSystem,UI::UISystem& uiSystem, Animation::AnimationSystem& animationSystem, Memory::GPUBufferManager& gpuBufferManager);
 
 		void setViewportDimension(int width, int height);
 

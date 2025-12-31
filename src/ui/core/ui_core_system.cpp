@@ -8,7 +8,7 @@ namespace TheEngine::UI
 {
 
     
-    UICoreSystem::UICoreSystem(ECS::ECSEngine& ecsEngine, GPUBufferManager& gpuBufferManager, GPUTextureManager& gpuTextureManager) :
+    UICoreSystem::UICoreSystem(ECS::ECSEngine& ecsEngine, Memory::GPUBufferManager& gpuBufferManager, GPUTextureManager& gpuTextureManager) :
         m_ecsEngine(ecsEngine),
         m_uiVertexBufferManagementSystem(gpuBufferManager),
 		m_gpuTextureManager(gpuTextureManager)

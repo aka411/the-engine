@@ -53,8 +53,9 @@ add_library(TheEngine STATIC
  "src/low-level/vertex_format_helper.cpp"
  "src/low-level/vertex_format_manager.cpp"
 
- "src/low-level/gpu_buffer_manager.cpp"
- "src/low-level/gpu_buffer_sub_bump_allocator.cpp"
+ "src/memory-management/gpu_buffer_manager.cpp"
+ "src/memory-management/gpu_buffer_sub_bump_allocator.cpp"
+
  "src/low-level/gpu_texture_manager.cpp"
  "src/low-level/gpu_material_system.cpp"
 
@@ -114,7 +115,6 @@ add_library(TheEngine STATIC
 
 
 
-
  "src/animation/animation_system.cpp"
 
  "src/animation/keyframe_animation_manager.cpp"
@@ -124,21 +124,20 @@ add_library(TheEngine STATIC
  "src/animation/skeletal_animation_solver.cpp"
 
 
- "src/low-level/gpu_buffer_per_frame_allocator.cpp"
+ "src/memory-management/gpu_buffer_per_frame_allocator.cpp"
 
 
  "src/rendering-system/object_data_buffer_manager.cpp"
  "src/rendering-system/render_command_buffer_manager.cpp"
 
 
-
 "src/platform.cpp" 
 "src/rendering-engine/opengl-backend/opengl_utils.cpp" 
 
 
-
- 
  "src/utils/file-decoders/image_decoder.cpp"
+
+ "src/memory-management/gpu_buffer_circular_allocator.cpp"
 
 
 

@@ -2,150 +2,151 @@
 #include "components.h"
 
 
-
-
-
-void ECSHierarchyTraverser::reset()
+namespace TheEngine
 {
-	//m_currentIndex = -1;
-	//m_parentIndex = -1;
 
 
-	while (!m_visitInfoStack.empty())
+	void ECSHierarchyTraverser::reset()
 	{
-		m_visitInfoStack.pop();
-	}
-	while (!m_visitedEntityStack.empty())
-	{
-		m_visitedEntityStack.pop();
-	}
-
-	m_traversalComplete = true;
-
-	return;
-
-}
+		//m_currentIndex = -1;
+		//m_parentIndex = -1;
 
 
-void ECSHierarchyTraverser::reverse()
-{
-	if (m_visitInfoStack.empty())
-	{
-
-		reset();
-		return;
-	}
-
-	while (m_visitInfoStack.top().visitedChildIndex >= m_visitInfoStack.top().totalChildCount)
-	{
-		m_visitInfoStack.pop();
-		m_visitedEntityStack.pop();
-
-		if (m_visitedEntityStack.empty())
+		while (!m_visitInfoStack.empty())
 		{
+			m_visitInfoStack.pop();
+		}
+		while (!m_visitedEntityStack.empty())
+		{
+			m_visitedEntityStack.pop();
+		}
+
+		m_traversalComplete = true;
+
+		return;
+
+	}
+
+
+	void ECSHierarchyTraverser::reverse()
+	{
+		if (m_visitInfoStack.empty())
+		{
+
 			reset();
 			return;
 		}
 
-	}
+		while (m_visitInfoStack.top().visitedChildIndex >= m_visitInfoStack.top().totalChildCount)
+		{
+			m_visitInfoStack.pop();
+			m_visitedEntityStack.pop();
+
+			if (m_visitedEntityStack.empty())
+			{
+				reset();
+				return;
+			}
+
+		}
 
 
-	m_parentEntityId = m_visitedEntityStack.top();
+		m_parentEntityId = m_visitedEntityStack.top();
 
-	//assert(m_model->nodes.size() > m_parentIndex);
-	//assert(m_model->nodes[m_parentIndex].children.size() > m_visitInfoStack.top().visitedChildIndex);
-	ECS::EntityChunkView entityChunkView = m_ecsEngine.getEntityChunkView(m_parentEntityId);
+		//assert(m_model->nodes.size() > m_parentIndex);
+		//assert(m_model->nodes[m_parentIndex].children.size() > m_visitInfoStack.top().visitedChildIndex);
+		ECS::EntityChunkView entityChunkView = m_ecsEngine.getEntityChunkView(m_parentEntityId);
 
-	m_currentEntityId = entityChunkView.getComponent<EngineChildrenComponent>()->childrenEntities[m_visitInfoStack.top().visitedChildIndex];
-	m_visitInfoStack.top().visitedChildIndex++;
+		m_currentEntityId = entityChunkView.getComponent<EngineChildrenComponent>()->childrenEntities[m_visitInfoStack.top().visitedChildIndex];
+		m_visitInfoStack.top().visitedChildIndex++;
 
-	return;
-}
-
-ECSHierarchyTraverser::ECSHierarchyTraverser(ECS::ECSEngine& ecsEngine) : m_ecsEngine(ecsEngine)
-{
-
-}
-
-
-
-
-void ECSHierarchyTraverser::setRootEntity(ECS::EntityId rootEntityId)
-{
-	m_currentEntityId = rootEntityId;
-	m_traversalComplete = false;
-}
-
-ECS::EntityId ECSHierarchyTraverser::getCurrentEntityId()
-{
-
-
-	return m_currentEntityId;
-}
-
-ECS::EntityId ECSHierarchyTraverser::getParentEntityId()
-{
-	return m_parentEntityId;
-}
-
-void ECSHierarchyTraverser::traverse()
-{
-	if (m_traversalComplete)
-	{
 		return;
 	}
 
-
-	//std::vector<int> childrenList = m_model->nodes[m_currentIndex].children;
-	ECS::EntityChunkView entityChunkView = m_ecsEngine.getEntityChunkView(m_currentEntityId);
-	EngineChildrenComponent* engineChildrenComponent = entityChunkView.getComponent<EngineChildrenComponent>();
-
-	if (engineChildrenComponent == nullptr)
+	ECSHierarchyTraverser::ECSHierarchyTraverser(ECS::ECSEngine& ecsEngine) : m_ecsEngine(ecsEngine)
 	{
-	
-		reverse();
-		return;
-	}
 
-	std::vector<ECS::EntityId>& childrenList = engineChildrenComponent->childrenEntities;
-
-
-
-	VisitInfo visitInfo;
-	visitInfo.totalChildCount = childrenList.size();
-	visitInfo.visitedChildIndex = 0;
-
-	m_visitInfoStack.push(visitInfo);
-	m_visitedEntityStack.push(m_currentEntityId);
-
-	if (childrenList.size() == 0) // leaf reached
-	{
-		reverse();
-		return;
 	}
 
 
-	m_parentEntityId = m_currentEntityId;
-	m_currentEntityId = childrenList[0];
-	m_visitInfoStack.top().visitedChildIndex++;
 
-	return;
+
+	void ECSHierarchyTraverser::setRootEntity(ECS::EntityId rootEntityId)
+	{
+		m_currentEntityId = rootEntityId;
+		m_traversalComplete = false;
+	}
+
+	ECS::EntityId ECSHierarchyTraverser::getCurrentEntityId()
+	{
+
+
+		return m_currentEntityId;
+	}
+
+	ECS::EntityId ECSHierarchyTraverser::getParentEntityId()
+	{
+		return m_parentEntityId;
+	}
+
+	void ECSHierarchyTraverser::traverse()
+	{
+		if (m_traversalComplete)
+		{
+			return;
+		}
+
+
+		//std::vector<int> childrenList = m_model->nodes[m_currentIndex].children;
+		ECS::EntityChunkView entityChunkView = m_ecsEngine.getEntityChunkView(m_currentEntityId);
+		EngineChildrenComponent* engineChildrenComponent = entityChunkView.getComponent<EngineChildrenComponent>();
+
+		if (engineChildrenComponent == nullptr)
+		{
+
+			reverse();
+			return;
+		}
+
+		std::vector<ECS::EntityId>& childrenList = engineChildrenComponent->childrenEntities;
+
+
+
+		VisitInfo visitInfo;
+		visitInfo.totalChildCount = childrenList.size();
+		visitInfo.visitedChildIndex = 0;
+
+		m_visitInfoStack.push(visitInfo);
+		m_visitedEntityStack.push(m_currentEntityId);
+
+		if (childrenList.size() == 0) // leaf reached
+		{
+			reverse();
+			return;
+		}
+
+
+		m_parentEntityId = m_currentEntityId;
+		m_currentEntityId = childrenList[0];
+		m_visitInfoStack.top().visitedChildIndex++;
+
+		return;
+
+
+	}
+
+	bool ECSHierarchyTraverser::isTraversalComplete() const
+	{
+
+
+
+		return m_traversalComplete;
+
+	}
+
 
 
 }
-
-bool ECSHierarchyTraverser::isTraversalComplete() const
-{
-
-
-
-	return m_traversalComplete;
-	
-}
-
-
-
-
 
 
 

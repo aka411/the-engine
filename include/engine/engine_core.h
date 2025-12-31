@@ -6,7 +6,7 @@
 #include "engine_loader.h"
 #include "rendering-system/render_system.h"
 #include <string>
-#include "low-level/gpu_buffer_manager.h"
+#include "memory-management/gpu_buffer_manager.h"
 #include "ui/core/ui_system.h"
 #include "ui/builder/ui_builder.h"
 #include "transformation_system.h"
@@ -26,7 +26,7 @@ namespace TheEngine
 		ECS::ECSEngine m_ecsEngine;//owner
 
 
-		GPUBufferManager m_gpuBufferManager;
+		Memory::GPUBufferManager m_gpuBufferManager;
 
 		GPUTextureManager m_gpuTextureManager;//owner
 
@@ -55,7 +55,7 @@ namespace TheEngine
 
 		RenderSystem m_renderSystem;// contains both world renderer and ui renderer
 
-		TheEngine::AnimationSystem m_animationSystem;
+		Animation::AnimationSystem m_animationSystem;
 
 		UI::UIBuilder m_uiBuilder;
 

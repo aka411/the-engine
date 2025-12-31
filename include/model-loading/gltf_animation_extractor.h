@@ -11,8 +11,8 @@ namespace TheEngine
 
 	struct ExtractedAnimation
 	{
-		AnimationData animationData;
-		std::unordered_map<std::string, Animation> animationsMap;
+		Animation::AnimationData animationData;
+		std::unordered_map<std::string, Animation::Animation> animationsMap;
 		bool hasAnimations = false;
 	};
 
@@ -23,9 +23,9 @@ namespace TheEngine
 	{
 	private:
 
-		static AnimationPathType getAnimationType(const std::string& animationPath);
+		static Animation::AnimationPathType getAnimationType(const std::string& animationPath);
 
-		static AnimationInterpolationMode getAnimationInterpolationMode(const std::string& tinygltfAnimationInterpolationMode);
+		static Animation::AnimationInterpolationMode getAnimationInterpolationMode(const std::string& tinygltfAnimationInterpolationMode);
 
 	public:
 
@@ -33,7 +33,7 @@ namespace TheEngine
 
 		static ExtractedAnimation extractAnimation(const tinygltf::Model& tinygltfModel);
 
-		static BoneAnimationData getBoneAnimationData(const tinygltf::Model& tinygltfModel);
+		static Animation::BoneAnimationData getBoneAnimationData(const tinygltf::Model& tinygltfModel);
 
 
 	};

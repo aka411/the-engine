@@ -2,7 +2,7 @@
 
 /*
 This is gonna be required to enable growing global
-vertex  to dynamically coppy and create bigger buffers
+vertex  to dynamically copy and create bigger buffers
 */
 
 class GPUBufferTransferManager

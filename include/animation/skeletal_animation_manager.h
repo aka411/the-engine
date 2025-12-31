@@ -1,47 +1,54 @@
 #pragma once
 #include <vector>
-#include "../components.h"
-#include "../low-level/rendering_system_data_types.h"
+#include "components.h"
+#include "low-level/rendering_system_data_types.h"
 #include <unordered_map>
 
 
-class SkeletalAnimationManager
+
+namespace TheEngine::Animation
 {
-	/*
-	Owner of a ssbo which is managed such that
-	we can use a offset and size to upload to specific area to allow
-	reupload without changing offset
 
-	*/
-private:
+	class SkeletalAnimationManager
+	{
+		/*
+		Owner of a ssbo which is managed such that
+		we can use a offset and size to upload to specific area to allow
+		reupload without changing offset
 
-
-	std::vector<BoneAnimationCPUComponent> m_boneAnimationCPUComponents;
-
-	GPUBufferInfo m_jointMatrixSSBO;
-
-	size_t m_currentByteOffset = 0;
-
-	//Actually this is not id but a offset
-
-	
-
-public:
+		*/
+	private:
 
 
-	SkeletalAnimationManager(GPUBufferManager& gpuBufferManager);//need gpubuffer manager
+		std::vector<BoneAnimationCPUComponent> m_boneAnimationCPUComponents;
 
-	BoneAnimationCPUComponent& getBoneAnimationCPUComponentFromId(const BoneAnimationId boneAnimationId);
+		Memory::GPUBufferInfo m_jointMatrixSSBO;
 
-	//The Id is actually a offset to a reserved area in ssbo
-	BoneAnimationId storeBoneAnimationCPUComponent(BoneAnimationCPUComponent&& boneAnimationCPUComponent);
-	BoneJointMatrixId uploadNewJointMatrixSetToSSBO(const std::vector<glm::mat4>& jointMatrixSet);
+		size_t m_currentByteOffset = 0;
 
-
-	void updateJointMatrixSetInSSBO(const BoneJointMatrixId boneJointMatrixId, const std::vector<glm::mat4>& jointMatrixSet);
+		//Actually this is not id but a offset
 
 
-	//The SSBO with all joint matrices
-	GPUBufferInfo getJointMatrixSSBO();
 
-};
+	public:
+
+
+		SkeletalAnimationManager(Memory::GPUBufferManager& gpuBufferManager);//need gpubuffer manager
+
+		BoneAnimationCPUComponent& getBoneAnimationCPUComponentFromId(const BoneAnimationId boneAnimationId);
+
+		//The Id is actually a offset to a reserved area in ssbo
+		BoneAnimationId storeBoneAnimationCPUComponent(BoneAnimationCPUComponent&& boneAnimationCPUComponent);
+		BoneJointMatrixId uploadNewJointMatrixSetToSSBO(const std::vector<glm::mat4>& jointMatrixSet);
+
+
+		void updateJointMatrixSetInSSBO(const BoneJointMatrixId boneJointMatrixId, const std::vector<glm::mat4>& jointMatrixSet);
+
+
+		//The SSBO with all joint matrices
+		Memory::GPUBufferInfo getJointMatrixSSBO();
+
+	};
+
+
+}

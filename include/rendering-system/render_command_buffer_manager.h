@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
-#include "../low-level/gpu_buffer_manager.h"
-#include "../low-level/gpu_buffer_per_frame_allocator.h"
+#include "memory-management/gpu_buffer_manager.h"
+#include "memory-management/gpu_buffer_per_frame_allocator.h"
 
 #include <cstddef>
 
@@ -14,23 +14,23 @@ namespace TheEngine
 
 		struct AllocatorGroup
 		{
-			GPUBufferPerFrameAllocator gpuBufferPerFrameAllocatorForArrayCommands;
-			GPUBufferPerFrameAllocator gpuBufferPerFrameAllocatorForIndexedCommands;
+			Memory::GPUBufferPerFrameAllocator gpuBufferPerFrameAllocatorForArrayCommands;
+			Memory::GPUBufferPerFrameAllocator gpuBufferPerFrameAllocatorForIndexedCommands;
 		};
 
 
 		const int MAX_NUM_OF_FRAMES = 2;
-		GPUBufferManager& m_gpuBufferManager;
+		Memory::GPUBufferManager& m_gpuBufferManager;
 
 		std::vector<AllocatorGroup> m_perFrameAllocatorGroups;
 
 		unsigned int m_currentFrameIndex = 0;
 
 	public:
-		RenderCommandBufferManager(GPUBufferManager& gpuBufferManager);
+		RenderCommandBufferManager(Memory::GPUBufferManager& gpuBufferManager);
 
-		GPUBufferInfo getArrayGPUBufferForThisFrame();
-		GPUBufferInfo getIndexedGPUBufferForThisFrame();
+		Memory::GPUBufferInfo getArrayGPUBufferForThisFrame();
+		Memory::GPUBufferInfo getIndexedGPUBufferForThisFrame();
 
 		size_t uploadArrayCommandsForCurrentFrame(std::byte* data, const size_t size);
 		size_t uploadIndexedCommandsForCurrentFrame(std::byte* data, const size_t size);

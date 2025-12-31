@@ -12,6 +12,6 @@ private:
 
 public:
 
-	static VertexData interleaveVertexAttributes(const ExtractedAttributeData& extractedAttributeData);
+	static TheEngine::VertexData interleaveVertexAttributes(const TheEngine::ExtractedAttributeData& extractedAttributeData);
 
 };

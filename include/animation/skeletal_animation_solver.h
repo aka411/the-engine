@@ -1,18 +1,22 @@
 #pragma once
 #include "../components.h"
 
-
-class SkeletalAnimationSolver
+namespace TheEngine::Animation
 {
 
-private:
+	class SkeletalAnimationSolver
+	{
+
+	private:
 
 
 
-public:
-	SkeletalAnimationSolver();
+	public:
+		SkeletalAnimationSolver();
 
-	static void animate(const BoneAnimationCPUComponent& boneAnimationCPUComponent, std::vector<glm::mat4>& jointMatrixSet, std::vector<EngineTransformationComponent*> animationTargetTransformationComponents);
-	
+		static void animate(const BoneAnimationCPUComponent& boneAnimationCPUComponent, std::vector<glm::mat4>& jointMatrixSet, std::vector<EngineTransformationComponent*> animationTargetTransformationComponents);
 
-};
+
+	};
+
+}

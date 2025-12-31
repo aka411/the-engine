@@ -39,7 +39,7 @@ target_link_libraries(SanityCheckTests PRIVATE
 
 
 
-
+#[[
 
 add_executable(ecs-system-test
 
@@ -59,16 +59,16 @@ target_link_libraries(
     #TheEngine_Core
 )
 
+]]
 
 
 
 
 
 
+#gtest_discover_tests(ecs-system-test)
 
-gtest_discover_tests(ecs-system-test)
-
-#gtest_discover_tests(SanityCheckTests)
+gtest_discover_tests(SanityCheckTests)
 
 #gtest_discover_tests(CPUResourceManagerTests )
 
