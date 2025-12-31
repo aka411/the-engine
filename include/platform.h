@@ -3,9 +3,21 @@
 #include <cstdint>
 #include "SDL3/SDL_video.h"
 #include <memory>
+#include <string>
 
 namespace TheEngine
 {
+
+
+    struct FileData
+    {
+		//for taking ownership of data from external libriaries heap
+        std::unique_ptr < std::byte[], void(*)(void*) > data = {nullptr,nullptr};
+		size_t size = 0;// size in bytes
+       
+	};
+
+
 
     enum class RenderingAPI
     {
@@ -104,6 +116,8 @@ namespace TheEngine
     {
         //is a uint64_t
         EngineEventType engineEventType = EngineEventType::NONE;
+
+		// USE ONLY POD TYPES IN THE UNION TO AVOID CONSTRUCTOR/DESTRUCTOR ISSUES
         union
         {
             WindowResizeEvent windowResizeEvent;
@@ -144,8 +158,13 @@ namespace TheEngine
         float getTimeInSeconds() const;
 
 
+		FileData readFile(const std::string& pathToFile);
+
+
+		//swaps the front and back buffers, in opengl SDL does it for us , in vulkan its our job to do it
         void swapBuffers();
 
+		//cleans up platform specific resources
 		void shutdown();
 
 

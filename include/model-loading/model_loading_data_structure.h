@@ -1,14 +1,14 @@
 #pragma once
 #include <vector>
-#include "../components.h"
-#include "../low-level/rendering_system_data_types.h"
+#include "components.h"
+#include "low-level/rendering_system_data_types.h"
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
 #include <cstddef>
 #include <cstdint>
-#include "../animation/animation_data_structures.h"
-#include "../animation/animation_data_structures.h"
+#include "animation/animation_data_structures.h"
+#include "animation/animation_data_structures.h"
 
 
 

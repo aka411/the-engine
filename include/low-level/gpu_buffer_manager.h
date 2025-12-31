@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "glad.h"
+#include "glad/glad.h"
 #include "rendering_system_data_types.h"
 
 class GPUBufferManager

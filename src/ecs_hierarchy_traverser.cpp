@@ -1,5 +1,5 @@
-#include "../include/ecs_hierarchy_traverser.h"
-#include "../include/components.h"
+#include "ecs_hierarchy_traverser.h"
+#include "components.h"
 
 
 
