@@ -1,6 +1,6 @@
-﻿#include "../../include/rendering-system/world_renderer.h"
-#include "../../include/low-level/vertex_format_helper.h"
-#include "../../glad/glad.h"
+﻿#include "rendering-system/world_renderer.h"
+#include "low-level/vertex_format_helper.h"
+#include "glad/glad.h"
 #include <unordered_map>
 #include <iostream>
 
@@ -78,7 +78,7 @@ namespace TheEngine
 		//glFrontFace(GL_CCW);
 		//glCullFace(GL_BACK);
 
-				//material ssbo
+			
 
 
 

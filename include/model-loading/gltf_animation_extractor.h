@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_map>
-#include "tiny_gltf.h"
-#include "../animation/animation_data_structures.h"
+#include "tinygltf/tiny_gltf_wrapper.h"
+#include "animation/animation_data_structures.h"
 #include <string>
 
 

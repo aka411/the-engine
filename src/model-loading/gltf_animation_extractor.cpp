@@ -1,8 +1,8 @@
 
 #include <unordered_map>
-#include "../../include/model-loading/tiny_gltf.h"
-#include "../../include/animation/animation_data_structures.h"
-#include "../../include/model-loading/gltf_animation_extractor.h"
+#include "tinygltf/tiny_gltf.h"
+#include "animation/animation_data_structures.h"
+#include "model-loading/gltf_animation_extractor.h"
 
 namespace TheEngine
 {

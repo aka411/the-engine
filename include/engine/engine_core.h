@@ -1,16 +1,16 @@
 #pragma once
-#include "../low-level/gpu_texture_manager.h"
-#include "../low-level/gpu_material_system.h"
-#include "../low-level/world_vertex_buffer_management_system.h"
+#include "low-level/gpu_texture_manager.h"
+#include "low-level/gpu_material_system.h"
+#include "low-level/world_vertex_buffer_management_system.h"
 #include "ecs.h"
 #include "engine_loader.h"
-#include "../rendering-system/render_system.h"
+#include "rendering-system/render_system.h"
 #include <string>
-#include "../low-level/gpu_buffer_manager.h"
-#include "../ui/include/core/ui_system.h"
-#include "../ui/include/builder/ui_builder.h"
-#include "../transformation_system.h"
-#include "../animation/animation_system.h"
+#include "low-level/gpu_buffer_manager.h"
+#include "ui/core/ui_system.h"
+#include "ui/builder/ui_builder.h"
+#include "transformation_system.h"
+#include "animation/animation_system.h"
 #include <platform.h>
 
 
@@ -19,6 +19,9 @@ namespace TheEngine
 	class EngineCore
 	{
 	private:
+
+		/**Owner Of Most SubSystems**/
+
 
 		ECS::ECSEngine m_ecsEngine;//owner
 
@@ -58,6 +61,7 @@ namespace TheEngine
 
 		ECS::NullFatalErrorHandler m_nullFatalErrorHandler;
 
+
 		//Need to rethink its ownership model
 		Platform& m_platform;
 
@@ -91,7 +95,7 @@ namespace TheEngine
 
 		UI::UICoreSystem& getUICoreSystem();
 
-
+		void loadFont(const std::string& fontName, const std::string& fontJsonFilePath, const std::string& fontAtlasPath);
 	};
 
 }

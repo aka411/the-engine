@@ -2,11 +2,13 @@
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_timer.h>
 
-#include <glad.h>
+#include "glad/glad.h"
 #include "rendering-engine/opengl-backend/opengl_utils.h"
 
 #include <iostream>
-
+#include <fstream>
+#include <cassert>
+#include <vector>
 
 namespace TheEngine
 {
@@ -44,7 +46,8 @@ namespace TheEngine
 
 	}
 
-	Platform::Platform() : m_keyStates{ false }
+	Platform::Platform() :
+		m_keyStates{ false }
 	{
 
 		//std::fill(std::begin(m_keyStates), std::end(m_keyStates), false);
@@ -200,15 +203,67 @@ namespace TheEngine
 			}
 
 
-			return false;
+			
 		}
+
+		return false;
 	}
+
+
 	float Platform::getTimeInSeconds() const
 	{
 
 		return SDL_GetTicks() / 1000.0f;
 
 	}
+
+
+	FileData Platform::readFile(const std::string& pathToFile)
+	{
+
+
+		FileData fileData;
+
+
+		std::ifstream file(pathToFile, std::ios::binary | std::ios::ate);
+		if (!file) return fileData;
+
+		const std::streamsize size = file.tellg();
+		file.seekg(0, std::ios::beg);
+
+		if (size > 0)
+		{
+
+			void* rawBuffer = std::malloc(static_cast<size_t>(size));
+
+			if (rawBuffer)
+			{
+				
+				if (file.read(reinterpret_cast<char*>(rawBuffer), size))
+				{
+					fileData.size = static_cast<size_t>(size);
+					fileData.data = {
+						//reinterpret cast?
+						static_cast<std::byte*>(rawBuffer),
+						[](void* p) { std::free(p); }
+					};
+				}
+				else
+				{
+					std::free(rawBuffer);
+					assert(false && "Failed to read file data.");
+				}
+			}
+		}
+		else
+		{
+			assert(false && "File is empty or could not determine size.");
+		}
+
+		return fileData;
+
+	}
+
 
 	void Platform::swapBuffers()
 	{

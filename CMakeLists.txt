@@ -80,35 +80,37 @@ add_library(TheEngine STATIC
 
  # UI SOURCE FILES
 
- "src/ui/src/core/ui_system.cpp"
+ "src/ui/core/ui_system.cpp"
 
 
- "src/ui/src/builder/ui_element.cpp"
- "src/ui/src/builder/ui_text_label_builder.cpp"
- "src/ui/src/builder/ui_graph_builder.cpp"
- "src/ui/src/builder/ui_builder.cpp"
- "src/ui/src/builder/ui_base_builder.cpp"
- "src/ui/src/builder/ui_panel_builder.cpp"
+ "src/ui/builder/ui_element.cpp"
+ "src/ui/builder/ui_text_label_builder.cpp"
+ "src/ui/builder/ui_graph_builder.cpp"
+ "src/ui/builder/ui_builder.cpp"
+ "src/ui/builder/ui_base_builder.cpp"
+ "src/ui/builder/ui_panel_builder.cpp"
 
 
- "src/ui/src/systems/ui_vertex_buffer_management_system.cpp"
- "src/ui/src/systems/ui_mesh_system.cpp"
- "src/ui/src/systems/ui_transformation_system.cpp"
- "src/ui/src/systems/performance_monitor_system.cpp"
- "src/ui/src/systems/ui_layout_system.cpp"
+ "src/ui/systems/ui_vertex_buffer_management_system.cpp"
+ "src/ui/systems/ui_mesh_system.cpp"
+ "src/ui/systems/ui_transformation_system.cpp"
+ "src/ui/systems/performance_monitor_system.cpp"
+ "src/ui/systems/ui_layout_system.cpp"
 
+ "src/ui/text/ui_text_system.cpp"
+ "src/ui/text/json_font_parser.cpp"
+ "src/ui/text/ui_text_generation_system.cpp"
+  "src/ui/text/ui_font_manager.cpp"
 
+ "src/ui/core/ui_shader_manager.cpp"
+ "src/ui/core/ui_core_system.cpp"
 
+ "src/ui/ui_renderer.cpp"
 
- "src/ui/src/core/ui_shader_manager.cpp"
- "src/ui/src/core/ui_core_system.cpp"
+ "src/ui/utils/interleaver.cpp"
+ "src/ui/utils/geometry_generator.cpp"
 
- "src/ui/src/ui_renderer.cpp"
-
- "src/ui/src/utils/interleaver.cpp"
- "src/ui/src/utils/geometry_generator.cpp"
-
- "src/ui/src/builder/ui_window_builder.cpp"
+ "src/ui/builder/ui_window_builder.cpp"
 
 
 
@@ -116,7 +118,7 @@ add_library(TheEngine STATIC
  "src/animation/animation_system.cpp"
 
  "src/animation/keyframe_animation_manager.cpp"
-  "src/animation/skeletal_animation_manager.cpp"
+ "src/animation/skeletal_animation_manager.cpp"
 
  "src/animation/keyframe_animation_interpolator.cpp"
  "src/animation/skeletal_animation_solver.cpp"
@@ -134,6 +136,12 @@ add_library(TheEngine STATIC
 "src/rendering-engine/opengl-backend/opengl_utils.cpp" 
 
 
+
+ 
+ "src/utils/file-decoders/image_decoder.cpp"
+
+
+
 )
 
 
@@ -145,10 +153,11 @@ target_include_directories(TheEngine PUBLIC
 
 ${CMAKE_CURRENT_SOURCE_DIR}/include
 
-${CMAKE_CURRENT_SOURCE_DIR}/external/glad
+${CMAKE_CURRENT_SOURCE_DIR}/external/
+
 ${CMAKE_CURRENT_SOURCE_DIR}/external/ecs-engine/include
 
-${CMAKE_CURRENT_SOURCE_DIR}/ui/include
+#${CMAKE_CURRENT_SOURCE_DIR}/ui/include
 
 )
 
