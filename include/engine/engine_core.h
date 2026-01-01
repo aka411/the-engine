@@ -12,7 +12,15 @@
 #include "transformation_system.h"
 #include "animation/animation_system.h"
 #include <platform.h>
+#include <cstddef>
 
+struct GPUMemoryUsageStats
+{
+
+	size_t gpuTextureMemoryUsage = 0;
+	size_t gpuBufferMemoryUsage = 0;
+
+};
 
 namespace TheEngine
 {
@@ -96,6 +104,16 @@ namespace TheEngine
 		UI::UICoreSystem& getUICoreSystem();
 
 		void loadFont(const std::string& fontName, const std::string& fontJsonFilePath, const std::string& fontAtlasPath);
+
+
+
+
+		/**** GPU MEMORY USAGE STATS *****/
+
+		GPUMemoryUsageStats getGPUMemoryUsageStats() const;
+
+
+
 	};
 
 }

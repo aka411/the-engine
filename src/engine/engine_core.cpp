@@ -156,4 +156,14 @@ namespace TheEngine
 
 
 
+	GPUMemoryUsageStats EngineCore::getGPUMemoryUsageStats() const
+	{
+		GPUMemoryUsageStats gpuMemoryUsageStats;
+		gpuMemoryUsageStats.gpuBufferMemoryUsage = m_gpuBufferManager.getTotalAllocatedGPUMemory();
+		gpuMemoryUsageStats.gpuTextureMemoryUsage = m_gpuTextureManager.getTotalAllocatedTextureMemory();
+		
+		return gpuMemoryUsageStats;
+	}
+
+
 }

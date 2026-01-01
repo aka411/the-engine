@@ -1,20 +1,32 @@
 #include "ui/text/ui_text_generation_system.h"
+#include <iostream>
 
 
 namespace TheEngine::UI
 {
 
 
-	std::vector<TextVertexData> UITextGenerationSystem::generateTextVertexData(const std::string& text, const RectBound& rectBound, const float fontSize, const glm::vec3& colour, const FontData& fontData)
+	std::vector<TextVertexData> UITextGenerationSystem::generateTextVertexData(const std::string& text, const RectBound& rectBound, const float fontSize, const glm::vec3& colour, const FontData& fontData) const
 	{
+		/******
+		NOTE
+		It can get confusing here , Text placment takes in Y axis down coordinate system
+		but the Font metrics are defined in Y axis up coordinate system.
+
+
+		
+		
+		*****/
+
+
 
 		/***cursor at top of ascender and not baseline ****/
 
-
-	//..............................................Ascender
-	//	|*(Cursor Origin)
+	//  Y+
+	//..^............................................Ascender
+	//	|*<----(Cursor Origin)
 	//	|
-	//	|  We need to move the glyph by (Ascender in pixel - y1 in pixel)
+	//	|  We need to move the glyph by (Ascender in pixel - y0 in pixel)(Along Y-Axis)
 	//	|  Only then does the characters line up correctly.
 	//	| 
 	//	|
@@ -26,24 +38,42 @@ namespace TheEngine::UI
 	//	|
 
 
-		//TheMath::Vec2D offset = origin;
+		/*
+		
+		Glyph Metric Coordinates System
+		    Y+
+			^
+			|
+			|     
+	   y1...|....._________
+			|     |       |
+			|     |       |  
+			|     |       |
+			|     |       |
+	   y0...|.....|_______|
+			|     :       :
+			|     :       :
+			+-----:-------:-------------> X+
+				  x0      x1
+		
+		
+		
+		
+		*/
+
+
 		const float rectWidth = rectBound.width;
 		const float rectHeight = rectBound.height;
 
-		/*
-		std::vector<TheMath::Vec2D> baseVertices = {
-	{-1.0f, 1.0f},  // Top-left
-	{-1.0f, -1.0f},  // Bottom-left
-	{1.0f, -1.0f},  // Bottom-right
 
-	{1.0f, -1.0f},  // Bottom-right
-	{1.0f, 1.0f},  // Top-right
-	{-1.0f, 1.0f}   // Top-left
-		};
-		*/
-		//TheMath::Vec2D rectCentreOffset{0.5f,0.5f};
 
-		std::vector<glm::vec2> baseVertices = {
+
+
+
+
+		//UV coordinates range from 0.0 to 1.0
+		//two of the vertex of quad will be at (0,0) and other at (1,1)
+	    const std::vector<glm::vec2> baseVertices = {
 		{0.0f, 1.0f},  // Top-left
 		{0.0f, 0.0f},  // Bottom-left
 		{1.0f, 0.0f},  // Bottom-right
@@ -52,29 +82,33 @@ namespace TheEngine::UI
 		{1.0f, 1.0f},  // Top-right
 		{0.0f, 1.0f}   // Top-left
 		};
-
+		
 
 		const FontData& m_fontData = fontData;
 
 
-		float fontScale = m_fontData.fontScale * (fontSize / static_cast<float>(m_fontData.fontSizePx));
+		const float fontScale = m_fontData.fontScale * (fontSize / static_cast<float>(m_fontData.fontSizePx));
 
-		float sdfPaddingPixels = m_fontData.sdfPaddingPx;
+		const float sdfPaddingPixels = m_fontData.sdfPaddingPx;
 
 
-		float ascenderFontPixelUnits = m_fontData.ascenderFontUnits * fontScale;
-		float descenderPixelUnits = m_fontData.descenderFontUnits * fontScale;
-		float pixelDistScale = m_fontData.sdfSpreadScale;
+		const float ascenderFontPixelUnits = m_fontData.ascenderFontUnits * fontScale;
+		const float descenderPixelUnits = m_fontData.descenderFontUnits * fontScale;
+		const float pixelDistScale = m_fontData.sdfSpreadScale;
 
 
 		float lineGapPixelUnits = m_fontData.lineGapFontUnits * fontScale;
 
-		const float lineHeight = ascenderFontPixelUnits - descenderPixelUnits + lineGapPixelUnits;
-		float scaledSDFPadding = m_fontData.sdfPaddingPx * (fontSize / static_cast<float>(m_fontData.fontSizePx));
+		//const float lineHeight = ascenderFontPixelUnits -descenderPixelUnits + lineGapPixelUnits;
+		const float lineHeight = ascenderFontPixelUnits -descenderPixelUnits + lineGapPixelUnits;
+		const float baselineToBaselineDistance = lineHeight;
+		const float ascenderToAscenderDistance = lineHeight;
+
+		const float scaledSDFPadding = m_fontData.sdfPaddingPx * (fontSize / static_cast<float>(m_fontData.fontSizePx));
 
 
-
-		glm::vec2 cursor(0.0f, lineHeight);
+		
+		glm::vec2 cursor(0.0f, 0.0f);
 
 		std::vector<TextVertexData> textVertexDataList;
 		textVertexDataList.reserve(text.size() * sizeof(TextVertexData)); // 6 vertices per character (2 triangles)
@@ -84,9 +118,15 @@ namespace TheEngine::UI
 		{
 
 
+			if(character == '\n')
+			{
+				cursor.y += ascenderToAscenderDistance;
+				cursor.x = 0;
+				continue;
+			}
 
 			const GlyphMetric& glyphMetric = m_fontData.glyphMetrics.at(character);
-
+	
 
 
 			float advanceHPixelUnit = glyphMetric.advance * fontScale;
@@ -106,7 +146,7 @@ namespace TheEngine::UI
 
 			if (cursor.x + quadWidth > rectWidth)
 			{
-				cursor.y += lineHeight;
+				cursor.y += ascenderToAscenderDistance;
 				cursor.x = 0;
 			}
 			if (cursor.y + quadHeight >= rectHeight)
@@ -123,7 +163,7 @@ namespace TheEngine::UI
 			float uvW = glyphMetric.uvW;
 			float uvH = glyphMetric.uvH;
 
-			std::vector<glm::vec2>uvCoords = {
+			const std::vector<glm::vec2>uvCoords = {
 				{ uvX,uvY + uvH},
 				{ uvX,uvY},
 				{ uvX + uvW,uvY},
@@ -132,29 +172,37 @@ namespace TheEngine::UI
 				{ uvX + uvW,uvY + uvH},
 				{ uvX,uvY + uvH}
 			};
-			const float quadStartX = cursor.x + leftSideBearingPixelUnit;// -sdfPaddingPixels;
 
 
-			const float quadStartY = cursor.y + y0_scaled;//(ascenderFontPixelUnits - y1_scaled);
+			const float quadStartX = cursor.x +leftSideBearingPixelUnit+ x0_scaled;
+
+			//                         |-----------gets To BaseLine--------------------------------||--per glyph descend-|
+			//const float quadStartY = cursor.y + (ascenderFontPixelUnits - (y1_scaled - y0_scaled)) - y0_scaled;
+			
+
+			float baselineY = cursor.y + ascenderFontPixelUnits;
+			const float quadStartY = baselineY - y1_scaled;
+
+
 
 			glm::vec2 quadOffset(quadStartX, quadStartY);
 
 			for (size_t i = 0; i < baseVertices.size(); ++i)
 			{
 				TextVertexData textVertexData;
-				const glm::vec2 vertex = baseVertices[i];
+				const glm::vec2& vertex = baseVertices[i];
 
 				// Scale the vertex
-				float scaledX = vertex.x * quadWidth;
-				float scaledY = vertex.y * quadHeight;
+				const float scaledX = vertex.x * quadWidth;
+				const float scaledY = vertex.y * quadHeight;
 
 
 
 
 				// Translate the scaled vertex
 
-				float finalX = scaledX + quadOffset.x;
-				float finalY = scaledY + quadOffset.y - quadHeight;
+				const float finalX = scaledX + quadOffset.x;
+				const float finalY = scaledY + quadOffset.y;
 
 				textVertexData.position = glm::vec3{ finalX,finalY,0.0f };// I might use z axis in future
 				textVertexData.uv = glm::vec2{ uvCoords[i].x,uvCoords[i].y };
@@ -171,14 +219,6 @@ namespace TheEngine::UI
 
 
 		}
-
-		//std::cout << std::endl;
-		//for (auto& textVertexData : textVertexDataList)
-		//{
-
-		//	std::cout << std::to_string(textVertexData.position.x) << " " << std::to_string(textVertexData.position.y) << std::endl;
-		//}
-
 
 		return textVertexDataList;
 	}

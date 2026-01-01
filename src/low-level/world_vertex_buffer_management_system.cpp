@@ -6,7 +6,9 @@ namespace TheEngine
 
 	
 
-	WorldVertexBufferManagementSystem::WorldVertexBufferManagementSystem(Memory::GPUBufferManager& gpuBufferManager) : m_gpuBuffermanager(gpuBufferManager)
+	WorldVertexBufferManagementSystem::WorldVertexBufferManagementSystem(Memory::GPUBufferManager& gpuBufferManager) 
+		: 
+		m_gpuBuffermanager(gpuBufferManager)
 	{
 
 

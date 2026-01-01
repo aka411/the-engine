@@ -139,6 +139,7 @@ add_library(TheEngine STATIC
 
  "src/memory-management/gpu_buffer_circular_allocator.cpp"
 
+ "src/rendering-engine/opengl-backend/opengl_texture_helper.cpp"
 
 
 )

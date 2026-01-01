@@ -38,8 +38,8 @@ namespace TheEngine::UI
 
 
 	public:
-
-		std::vector<TextVertexData> generateTextVertexData(const std::string& text, const RectBound& rectBound, const float fontSize,const glm::vec3& colour, const FontData& fontData);
+		
+		std::vector<TextVertexData> generateTextVertexData(const std::string& text, const RectBound& rectBound, const float fontSize,const glm::vec3& colour, const FontData& fontData) const;
 		
 	};
 

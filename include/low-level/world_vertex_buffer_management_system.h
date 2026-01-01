@@ -13,7 +13,7 @@ namespace TheEngine
 
 	private:
 
-		Memory::GPUBufferManager m_gpuBuffermanager;
+		Memory::GPUBufferManager& m_gpuBuffermanager;
 
 		std::unordered_map<VertexFormat, Memory::GPUBufferSubBumpAllocator> m_formatToVertexBufferSubAllocators;
 		std::unordered_map<IndexType, Memory::GPUBufferSubBumpAllocator> m_formatToIndexBufferSubAllocators;
