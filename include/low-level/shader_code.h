@@ -11,7 +11,7 @@
 
 
 
-static std::string pbrNormalBaseVertexCode = R"(
+static const std::string pbrNormalBaseVertexCode = R"(
 
 #version 460 core
 #extension GL_ARB_bindless_texture : require
@@ -40,7 +40,7 @@ struct ObjectData
  mat4 modelMatrix;
  uint materialId;
  uint boneId;
-vec2 padding;
+ vec2 padding;
 };
 
 // readonly SSBO containing the data
@@ -90,7 +90,7 @@ out vec2 vs_texCoord_3;
 
 
 #ifdef HAS_TANGENT
-out vec4 vs_tangent;
+flat out vec4 vs_tangent;
 #endif
 
 
@@ -138,6 +138,7 @@ const uint boneOffset = perObjectData.boneId;
  vs_materialId = perObjectData.materialId;
 
  vs_normal = normalize(mat3(camera.view * perObjectData.modelMatrix) * inNormal);
+
  vs_position = vec3((camera.view * perObjectData.modelMatrix * vec4( inPosition, 1.0)).xyz);
 
 
@@ -156,6 +157,8 @@ vs_texCoord_2 = inTexCoord_2;
 #ifdef HAS_TEXCOORD_3
 vs_texCoord_3 = inTexCoord_3;
 #endif
+
+
 
 
 #ifdef HAS_TANGENT
@@ -177,7 +180,7 @@ vs_tangent = inTangent;
 
 
 
-static std::string pbrNormalBaseFragmentCode = R"(
+static const std::string pbrNormalBaseFragmentCode = R"(
 #version 460 core
 //#extension GL_ARB_gpu_shader_int64 : require //not supported by my graphics card
 #extension GL_ARB_bindless_texture : require
@@ -196,7 +199,7 @@ static std::string pbrNormalBaseFragmentCode = R"(
 
     // ---  Texture Coordinate Index Shifts (Bits 5-14) ---
     // These define the starting bit position for a 2-bit field (0, 1, 2 or 3) upto 3 texture coordinates.
-    // The actual value (0 or 1 ..3) will be extracted using bitwise operations.
+
 
     #define ALBEDO_TEXCOORD_SHIFT    5
     #define MR_TEXCOORD_SHIFT        8
@@ -232,7 +235,7 @@ struct PBRMetallicRoughnessMaterial
 	uvec2 occlusionTextureHandle;
 	uvec2 emissiveTextureHandle ;
 
-	uvec2 materialBitMask; 
+	uvec2 materialBitMask; //64 bit
 
 };
 
@@ -271,10 +274,11 @@ float distributionGGX(vec3 N, vec3 H, float roughness)
     float NdotH2 = NdotH * NdotH;
 
     float denom = (NdotH2 * (a2 - 1.0) + 1.0);
-    denom = PI * denom * denom; // Assuming PI is defined somewhere
+    denom = PI * denom * denom; 
 
     return a2 / denom;
 }
+
 
 // Geometry (G) term: Schlick-GGX
 float geometrySchlickGGX(float NdotV, float roughness) 
@@ -284,6 +288,7 @@ float geometrySchlickGGX(float NdotV, float roughness)
 
     return NdotV / (NdotV * (1.0 - k) + k);
 }
+
 
 // Geometry term: Smith function (combining V and L components)
 float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) 
@@ -295,6 +300,7 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 
     return ggx1 * ggx2;
 }
+
 
 // Fresnel (F) term: Schlick approximation
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
@@ -327,15 +333,16 @@ in vec2 vs_texCoord_3;
 
 
 #ifdef HAS_TANGENT
-in vec4 vs_tangent;
+flat in vec4 vs_tangent;
 #endif
 
 
 
 flat in uint vs_materialId;
 
-in vec3 vs_normal;
-in vec3 vs_position;
+ in vec3 vs_position;
+ in vec3 vs_normal;
+
 flat in mat4 viewMatrix;
 
 
@@ -357,7 +364,7 @@ vec2 getTexCoord(int index)
     if (index == 3) return vs_texCoord_3;
     #endif
 
-    return vs_texCoord_0; 
+    return vec2(0.0, 0.0); // Default fallback
 }
 
 /*** OUT TO FRAMEBUFFER ***/
@@ -556,3 +563,11 @@ vec3 finalColor = ambient + Lo + emissive;
 
 
 )";
+
+
+
+
+
+
+
+

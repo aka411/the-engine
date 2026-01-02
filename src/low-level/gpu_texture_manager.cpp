@@ -73,6 +73,8 @@ namespace TheEngine
 		glCreateTextures(GL_TEXTURE_2D, 1, &glTextureId);
 		glBindTexture(target, glTextureId);
 
+
+		/*
 		// Special handling for 1-channel textures (like R/Luminance) to prevent padding issues
 		if (textureCreateInfo.textureSourcePixelFormat == TextureSourcePixelFormat::R)
 		{
@@ -84,9 +86,7 @@ namespace TheEngine
 			// Restore default alignment for multi-channel data
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		}
-
-
-
+		*/
 
 
 		// 4. **Upload Data (The core GL call)**
@@ -163,6 +163,7 @@ namespace TheEngine
 
 	TextureInfo GPUTextureManager::createBufferTexture(const BufferTextureCreateInfo& bufferTextureCreateInfo)
 	{
+
 
 
 

@@ -264,6 +264,14 @@ namespace TheEngine
 			boneAnimationData.isSkinned = false;
 			return boneAnimationData;
 		}
+
+		if (!(bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteLength == boneAnimationData.inverseBindMatrices.size() * sizeof(glm::mat4)))
+		{
+			boneAnimationData.isSkinned = false;
+			return boneAnimationData;
+		}
+
+
 		boneAnimationData.isSkinned = true;
 
 		boneAnimationData.jointIndices = tinygltfModel.skins[0].joints;
@@ -277,8 +285,14 @@ namespace TheEngine
 		const std::vector<unsigned char>& buffer = tinygltfModel.buffers[0].data;
 
 		const size_t srcIndex = accessors[tinygltfModel.skins[0].inverseBindMatrices].byteOffset + bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteOffset;
-
-		memcpy(boneAnimationData.inverseBindMatrices.data(), &buffer[srcIndex], bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteLength);
+		
+		//Note:
+		//I need to look into gltf spec to see why byte length in buffer view is not equal to count * sizeof(mat4)
+		//in a model i tested with, i assumption is that it was either padding or corruption
+		//most probably its wrong data in the gltf file or may be issue in tinygltf loader
+		assert(bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteLength == boneAnimationData.inverseBindMatrices.size() * sizeof(glm::mat4));
+		//memcpy(boneAnimationData.inverseBindMatrices.data(), &buffer[srcIndex], bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteLength); // unsafe casued a heap corruption in one model i tested with
+		memcpy(boneAnimationData.inverseBindMatrices.data(), &buffer[srcIndex], boneAnimationData.inverseBindMatrices.size() * sizeof(glm::mat4));
 
 
 		return boneAnimationData;

@@ -803,7 +803,6 @@ namespace TheEngine
 		 
 		engineIntermediateModel.samplerSettings = getTextureSamplerSettings(tinygltfModel);
 		engineIntermediateModel.intermediateImage = extractIntermediateImages(tinygltfModel);
-		engineIntermediateModel.samplerSettings = getTextureSamplerSettings(tinygltfModel);
 		engineIntermediateModel.intermediateTextures = getIntermediateTextures(tinygltfModel);
 		engineIntermediateModel.intermdediatePBRMetallicRoughnessMaterials = getIntermediateMaterials(tinygltfModel);
 
@@ -828,11 +827,11 @@ namespace TheEngine
 
 		ExtractedAnimation extractedAnimation = GltfAnimationExtractor::extractAnimation(tinygltfModel);
 
-
+	
 
 		Animation::BoneAnimationData boneAnimationData = GltfAnimationExtractor::getBoneAnimationData(tinygltfModel);
 
-
+	
 
 		engineIntermediateModel.hasAnimations = extractedAnimation.hasAnimations;
 
