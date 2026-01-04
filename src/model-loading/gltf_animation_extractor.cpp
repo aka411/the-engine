@@ -1,51 +1,51 @@
 
 #include <unordered_map>
-#include "../../include/model-loading/tiny_gltf.h"
-#include "../../include/animation/animation_data_structures.h"
-#include "../../include/model-loading/gltf_animation_extractor.h"
+#include "tinygltf/tiny_gltf.h"
+#include "animation/animation_data_structures.h"
+#include "model-loading/gltf_animation_extractor.h"
 
 namespace TheEngine
 {
 
 
-	AnimationPathType GltfAnimationExtractor::getAnimationType(const std::string& animationPath)
+	Animation::AnimationPathType GltfAnimationExtractor::getAnimationType(const std::string& animationPath)
 	{
 
 		if (animationPath == "translation")
 		{
-			return AnimationPathType::TRANSLATION;
+			return Animation::AnimationPathType::TRANSLATION;
 		}
 		if (animationPath == "scale")
 		{
-			return AnimationPathType::SCALE;
+			return Animation::AnimationPathType::SCALE;
 		}
 		if (animationPath == "rotation")
 		{
-			return AnimationPathType::ROTATION;
+			return Animation::AnimationPathType::ROTATION;
 		}
 
-		return AnimationPathType::UNKNOWN;
+		return Animation::AnimationPathType::UNKNOWN;
 	}
 
 
 
-	AnimationInterpolationMode GltfAnimationExtractor::getAnimationInterpolationMode(const std::string& tinygltfAnimationInterpolationMode)
+	Animation::AnimationInterpolationMode GltfAnimationExtractor::getAnimationInterpolationMode(const std::string& tinygltfAnimationInterpolationMode)
 	{
 
 		if (tinygltfAnimationInterpolationMode == "LINEAR")
 		{
-			return AnimationInterpolationMode::LINEAR;
+			return Animation::AnimationInterpolationMode::LINEAR;
 		}
 		if (tinygltfAnimationInterpolationMode == "STEP")
 		{
-			return AnimationInterpolationMode::STEP;
+			return Animation::AnimationInterpolationMode::STEP;
 		}
 		if (tinygltfAnimationInterpolationMode == "CUBICSPLINE")
 		{
-			return AnimationInterpolationMode::CUBICSPLINE;
+			return Animation::AnimationInterpolationMode::CUBICSPLINE;
 		}
 
-		return AnimationInterpolationMode::UNKNOWN;
+		return Animation::AnimationInterpolationMode::UNKNOWN;
 	}
 
 
@@ -65,8 +65,8 @@ namespace TheEngine
 		std::unordered_map<int, int> outputIndexMap;
 
 
-		std::vector< AnimationTimeInput> inputList;
-		std::vector< AnimationOutputValue> outputList;
+		std::vector< Animation::AnimationTimeInput> inputList;
+		std::vector< Animation::AnimationOutputValue> outputList;
 
 		if (tinygltfModel.animations.size() != 0)
 		{
@@ -75,7 +75,7 @@ namespace TheEngine
 
 		for (auto& animation : tinygltfModel.animations)
 		{
-			extractedAnimation.animationsMap[animation.name] = Animation{}; //create empty animation entry
+			extractedAnimation.animationsMap[animation.name] = Animation::Animation{}; //create empty animation entry
 			float maxTime = 0.0f;
 
 			std::unordered_map<int, int> samplerIndexMap; /*PER ANIMATION MAP*/
@@ -83,22 +83,22 @@ namespace TheEngine
 
 
 
-			std::vector<AnimationChannel> animationChannelList;
+			std::vector<Animation::AnimationChannel> animationChannelList;
 			animationChannelList.reserve(animation.channels.size());
 
 			//CREATE SAMPLER VECTOR
-			std::vector<AnimationSampler> animationSamplerList;
+			std::vector<Animation::AnimationSampler> animationSamplerList;
 			animationSamplerList.reserve(animation.samplers.size());
 
 			for (auto& channel : animation.channels)
 			{
 
-				AnimationChannel animationChannel;
+				Animation::AnimationChannel animationChannel;
 
 				animationChannel.targetNodeIndex = channel.target_node;
 				animationChannel.pathType = getAnimationType(channel.target_path);
 
-				assert(animationChannel.pathType != AnimationPathType::UNKNOWN);
+				assert(animationChannel.pathType != Animation::AnimationPathType::UNKNOWN);
 
 				assert(channel.sampler < animation.samplers.size());
 
@@ -107,7 +107,7 @@ namespace TheEngine
 				if (samplerIndexMap.find(gltfSamplerIndex) == samplerIndexMap.end())
 				{
 					//need new sampler
-					AnimationSampler animationSampler;
+					Animation::AnimationSampler animationSampler;
 					animationSampler.interpolationMode = getAnimationInterpolationMode(animation.samplers[gltfSamplerIndex].interpolation);
 
 
@@ -131,7 +131,7 @@ namespace TheEngine
 
 						memcpy(inputKeyframes.data(), inputBuffer.data.data() + inputByteOffset, inputCount * sizeof(float));
 
-						AnimationTimeInput animationTimeInput;
+						Animation::AnimationTimeInput animationTimeInput;
 						animationTimeInput.inputKeyframes = inputKeyframes;
 
 						animationSampler.inputIndex = static_cast<int>(inputList.size());//new input index
@@ -175,11 +175,11 @@ namespace TheEngine
 						size_t outputByteOffset = outputBufferView.byteOffset + outputAccessor.byteOffset;
 						size_t outputCount = outputAccessor.count;
 						size_t typeCount = 0;
-						if (animationChannel.pathType == AnimationPathType::TRANSLATION || animationChannel.pathType == AnimationPathType::SCALE)
+						if (animationChannel.pathType == Animation::AnimationPathType::TRANSLATION || animationChannel.pathType == Animation::AnimationPathType::SCALE)
 						{
 							typeCount = 3;
 						}
-						else if (animationChannel.pathType == AnimationPathType::ROTATION)
+						else if (animationChannel.pathType == Animation::AnimationPathType::ROTATION)
 						{
 							typeCount = 4;
 						}
@@ -189,7 +189,7 @@ namespace TheEngine
 
 						memcpy(outputValues.data(), outputBuffer.data.data() + outputByteOffset, outputCount * typeCount * sizeof(float));
 
-						AnimationOutputValue animationOutputValue;
+						Animation::AnimationOutputValue animationOutputValue;
 						animationOutputValue.outputValues = outputValues;
 
 						animationSampler.outputIndex = static_cast<int>(outputList.size());//new output index
@@ -227,7 +227,7 @@ namespace TheEngine
 
 			}
 
-			Animation engineAnimation;
+			Animation::Animation engineAnimation;
 			engineAnimation.animationChannel = animationChannelList;
 			engineAnimation.animationSamplers = animationSamplerList;
 			engineAnimation.maxTime = maxTime;
@@ -252,18 +252,26 @@ namespace TheEngine
 
 
 
-	BoneAnimationData GltfAnimationExtractor::getBoneAnimationData(const tinygltf::Model& tinygltfModel)
+	Animation::BoneAnimationData GltfAnimationExtractor::getBoneAnimationData(const tinygltf::Model& tinygltfModel)
 	{
 		const std::vector<tinygltf::Accessor>& accessors = tinygltfModel.accessors;
 		const std::vector<tinygltf::BufferView>& bufferViews = tinygltfModel.bufferViews;
 
-		BoneAnimationData boneAnimationData;
+		Animation::BoneAnimationData boneAnimationData;
 
 		if (tinygltfModel.skins.size() == 0 /**!(tinygltfModel.skins[0].inverseBindMatrices >= 0)*/)
 		{
 			boneAnimationData.isSkinned = false;
 			return boneAnimationData;
 		}
+
+		if (!(bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteLength == boneAnimationData.inverseBindMatrices.size() * sizeof(glm::mat4)))
+		{
+			boneAnimationData.isSkinned = false;
+			return boneAnimationData;
+		}
+
+
 		boneAnimationData.isSkinned = true;
 
 		boneAnimationData.jointIndices = tinygltfModel.skins[0].joints;
@@ -277,8 +285,14 @@ namespace TheEngine
 		const std::vector<unsigned char>& buffer = tinygltfModel.buffers[0].data;
 
 		const size_t srcIndex = accessors[tinygltfModel.skins[0].inverseBindMatrices].byteOffset + bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteOffset;
-
-		memcpy(boneAnimationData.inverseBindMatrices.data(), &buffer[srcIndex], bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteLength);
+		
+		//Note:
+		//I need to look into gltf spec to see why byte length in buffer view is not equal to count * sizeof(mat4)
+		//in a model i tested with, i assumption is that it was either padding or corruption
+		//most probably its wrong data in the gltf file or may be issue in tinygltf loader
+		assert(bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteLength == boneAnimationData.inverseBindMatrices.size() * sizeof(glm::mat4));
+		//memcpy(boneAnimationData.inverseBindMatrices.data(), &buffer[srcIndex], bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteLength); // unsafe casued a heap corruption in one model i tested with
+		memcpy(boneAnimationData.inverseBindMatrices.data(), &buffer[srcIndex], boneAnimationData.inverseBindMatrices.size() * sizeof(glm::mat4));
 
 
 		return boneAnimationData;

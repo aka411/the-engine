@@ -3,6 +3,7 @@
 #include <iostream>
 #include "../../glad/glad.h"
 #include "../../include/low-level/shader_manager.h"
+#include <cassert>
 
 
 
@@ -53,6 +54,7 @@ GLuint ShaderManager::compileShader(const std::string& vertShaderCode, const std
 	{
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
 		std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+		assert(false && "Vertex Shader Compilation Failed");
 	}
 
 	// Check for fragment shader compilation errors
@@ -61,6 +63,7 @@ GLuint ShaderManager::compileShader(const std::string& vertShaderCode, const std
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 		std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+		assert(false && "Fragment Shader Compilation Failed");
 	}
 
 
@@ -79,7 +82,10 @@ GLuint ShaderManager::compileShader(const std::string& vertShaderCode, const std
 	{
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 		std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+		assert(false && "Shader Program Linking Failed");
 	}
+
+
 	//cleanup
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);

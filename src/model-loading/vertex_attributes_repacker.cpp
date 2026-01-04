@@ -3,13 +3,13 @@
 #include <cstring>
 
 
-#include "../../include/model-loading/vertex_attributes_repacker.h"
-#include "../../include/low-level/vertex_format_helper.h"
+#include "model-loading/vertex_attributes_repacker.h"
+#include "low-level/vertex_format_helper.h"
 
 
 
 
-VertexData VertexAttributeRepacker::interleaveVertexAttributes(const ExtractedAttributeData& extractedAttributeData)
+TheEngine::VertexData VertexAttributeRepacker::interleaveVertexAttributes(const TheEngine::ExtractedAttributeData& extractedAttributeData)
 {
 
 	const std::vector<VertexAttributeInfo>& vertexAttributeInfos = extractedAttributeData.vertexAttributeInfos;
@@ -54,7 +54,7 @@ VertexData VertexAttributeRepacker::interleaveVertexAttributes(const ExtractedAt
     }
 
 
-    VertexData vertexData;
+    TheEngine::VertexData vertexData;
 
 
 

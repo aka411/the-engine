@@ -4,9 +4,7 @@
 
 
 
-
-
-namespace TheEngine
+namespace TheEngine::Animation
 {
 
 

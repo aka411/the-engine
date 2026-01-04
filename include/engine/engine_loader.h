@@ -1,10 +1,10 @@
 #pragma once
 #include "ecs.h"
-#include "../low-level/gpu_texture_manager.h"
-#include "../low-level/gpu_material_system.h"
-#include "../low-level/world_vertex_buffer_management_system.h"
-#include "../model-loading/gltf_intermediate_mapper.h"
-#include "../animation/animation_system.h"
+#include "low-level/gpu_texture_manager.h"
+#include "low-level/gpu_material_system.h"
+#include "low-level/world_vertex_buffer_management_system.h"
+#include "model-loading/gltf_intermediate_mapper.h"
+#include "animation/animation_system.h"
 
 
 namespace TheEngine
@@ -27,7 +27,7 @@ namespace TheEngine
 
 
 
-		TheEngine::AnimationSystem& m_animationSystem;
+		Animation::AnimationSystem& m_animationSystem;
 
 
 		tinygltf::Model loadGLTFModel(const std::string& pathToModel);
@@ -35,7 +35,7 @@ namespace TheEngine
 
 	public:
 		//ecs , texture , material
-		EngineLoader(ECS::ECSEngine& ecsEngine, GPUTextureManager& gpuTextureManager, GPUMaterialSystem& gpuMaterialSystem, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, AnimationSystem& animationSystem);
+		EngineLoader(ECS::ECSEngine& ecsEngine, GPUTextureManager& gpuTextureManager, GPUMaterialSystem& gpuMaterialSystem, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, Animation::AnimationSystem& animationSystem);
 
 		ECS::EntityId createRootEntity(const std::string& pathToModel);
 

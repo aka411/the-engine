@@ -3,17 +3,17 @@
 #include <iostream>
 #include <vector>
 
-#include "../../include/model-loading/gltf_intermediate_mapper.h"
+#include "model-loading/gltf_intermediate_mapper.h"
 
-#include "../../include/model-loading/data_convertor.h"
+#include "model-loading/data_convertor.h"
 
-#include "../../include/model-loading/vertex_attributes_repacker.h"
-#include "../../include/model-loading/gltf_animation_extractor.h"
-#include "../../include/components.h"
-#include "../../include/low-level/vertex_format_helper.h"
-#include "../../include/animation/animation_data_structures.h"
+#include "model-loading/vertex_attributes_repacker.h"
+#include "model-loading/gltf_animation_extractor.h"
+#include "components.h"
+#include "low-level/vertex_format_helper.h"
+#include "animation/animation_data_structures.h"
 #include  <algorithm>
-#include "../../include/model-loading/gltf_attribute_extractor.h"
+#include "model-loading/gltf_attribute_extractor.h"
 
 
 
@@ -803,7 +803,6 @@ namespace TheEngine
 		 
 		engineIntermediateModel.samplerSettings = getTextureSamplerSettings(tinygltfModel);
 		engineIntermediateModel.intermediateImage = extractIntermediateImages(tinygltfModel);
-		engineIntermediateModel.samplerSettings = getTextureSamplerSettings(tinygltfModel);
 		engineIntermediateModel.intermediateTextures = getIntermediateTextures(tinygltfModel);
 		engineIntermediateModel.intermdediatePBRMetallicRoughnessMaterials = getIntermediateMaterials(tinygltfModel);
 
@@ -828,11 +827,11 @@ namespace TheEngine
 
 		ExtractedAnimation extractedAnimation = GltfAnimationExtractor::extractAnimation(tinygltfModel);
 
+	
 
+		Animation::BoneAnimationData boneAnimationData = GltfAnimationExtractor::getBoneAnimationData(tinygltfModel);
 
-		BoneAnimationData boneAnimationData = GltfAnimationExtractor::getBoneAnimationData(tinygltfModel);
-
-
+	
 
 		engineIntermediateModel.hasAnimations = extractedAnimation.hasAnimations;
 

@@ -1,10 +1,11 @@
 
-#include "../../include/rendering-system/render_command_buffer_manager.h"
+#include "rendering-system/render_command_buffer_manager.h"
+#include <cstring>
 
 namespace TheEngine
 {
 
-	RenderCommandBufferManager::RenderCommandBufferManager(GPUBufferManager& gpuBufferManager) :
+	RenderCommandBufferManager::RenderCommandBufferManager(Memory::GPUBufferManager& gpuBufferManager) :
 		m_gpuBufferManager(gpuBufferManager)
 	{
 
@@ -14,8 +15,8 @@ namespace TheEngine
 			//1 MiB each
 			m_perFrameAllocatorGroups.push_back(
 				AllocatorGroup(
-					GPUBufferPerFrameAllocator(m_gpuBufferManager.createMappedIBO(1024 * 1024)),
-					GPUBufferPerFrameAllocator(m_gpuBufferManager.createMappedIBO(1024 * 1024))
+					Memory::GPUBufferPerFrameAllocator(m_gpuBufferManager.createMappedIBO(1024 * 1024)),
+					Memory::GPUBufferPerFrameAllocator(m_gpuBufferManager.createMappedIBO(1024 * 1024))
 
 				)
 			);
@@ -26,7 +27,7 @@ namespace TheEngine
 
 
 
-	GPUBufferInfo RenderCommandBufferManager::getArrayGPUBufferForThisFrame()
+	Memory::GPUBufferInfo RenderCommandBufferManager::getArrayGPUBufferForThisFrame()
 	{
 
 
@@ -34,7 +35,7 @@ namespace TheEngine
 		return m_perFrameAllocatorGroups[m_currentFrameIndex].gpuBufferPerFrameAllocatorForArrayCommands.getGPUBufferInfo();
 	}
 
-	GPUBufferInfo RenderCommandBufferManager::getIndexedGPUBufferForThisFrame()
+	Memory::GPUBufferInfo RenderCommandBufferManager::getIndexedGPUBufferForThisFrame()
 	{
 
 
@@ -48,11 +49,11 @@ namespace TheEngine
 		
 
 
-		GPUBufferPerFrameAllocator& gpuBufferPerFrameAllocator =  m_perFrameAllocatorGroups[m_currentFrameIndex].gpuBufferPerFrameAllocatorForArrayCommands;
+		Memory::GPUBufferPerFrameAllocator& gpuBufferPerFrameAllocator =  m_perFrameAllocatorGroups[m_currentFrameIndex].gpuBufferPerFrameAllocatorForArrayCommands;
 
 
-		AllocationInfo allocationInfo = gpuBufferPerFrameAllocator.allocate(size);
-		GPUBufferInfo gpuBufferInfo = gpuBufferPerFrameAllocator.getGPUBufferInfo();
+		Memory::AllocationInfo allocationInfo = gpuBufferPerFrameAllocator.allocate(size);
+		Memory::GPUBufferInfo gpuBufferInfo = gpuBufferPerFrameAllocator.getGPUBufferInfo();
 
 		std::byte* bufferBasePtr = reinterpret_cast<std::byte*>(gpuBufferInfo.mappedPtr);
 
@@ -72,11 +73,11 @@ namespace TheEngine
 
 
 
-		GPUBufferPerFrameAllocator& gpuBufferPerFrameAllocator = m_perFrameAllocatorGroups[m_currentFrameIndex].gpuBufferPerFrameAllocatorForIndexedCommands;
+		Memory::GPUBufferPerFrameAllocator& gpuBufferPerFrameAllocator = m_perFrameAllocatorGroups[m_currentFrameIndex].gpuBufferPerFrameAllocatorForIndexedCommands;
 
 
-		AllocationInfo allocationInfo = gpuBufferPerFrameAllocator.allocate(size);
-		GPUBufferInfo gpuBufferInfo = gpuBufferPerFrameAllocator.getGPUBufferInfo();
+		Memory::AllocationInfo allocationInfo = gpuBufferPerFrameAllocator.allocate(size);
+		Memory::GPUBufferInfo gpuBufferInfo = gpuBufferPerFrameAllocator.getGPUBufferInfo();
 
 		std::byte* bufferBasePtr = reinterpret_cast<std::byte*>(gpuBufferInfo.mappedPtr);
 

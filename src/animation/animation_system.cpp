@@ -4,8 +4,9 @@
 
 
 
-namespace TheEngine
+namespace TheEngine::Animation
 {
+
 
 	std::vector<EngineTransformationComponent*> AnimationSystem::getTransfomrationsOfEntities(const std::vector<ECS::EntityId>& entityIds)
 	{
@@ -32,7 +33,7 @@ namespace TheEngine
 
 
 
-	AnimationSystem::AnimationSystem(ECS::ECSEngine& ecsEngine,GPUBufferManager& gpuBufferManager)
+	AnimationSystem::AnimationSystem(ECS::ECSEngine& ecsEngine,Memory::GPUBufferManager& gpuBufferManager)
 		:
 		m_keyframeAnimationManager(),
 		m_skeletalAnimationManager(gpuBufferManager),

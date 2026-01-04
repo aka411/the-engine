@@ -1,16 +1,16 @@
-#include "../../include/rendering-system/render_system.h"
+#include "rendering-system/render_system.h"
 #include <unordered_map>
-#include "../../include/low-level/vertex_format_helper.h"
+#include "low-level/vertex_format_helper.h"
 
 namespace TheEngine
 {
 
-	RenderSystem::RenderSystem(ECS::ECSEngine& ecsEngine, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, UI::UICoreSystem& uiCoreSystem, AnimationSystem& animationSystem, GPUBufferManager& gpuBufferManager)
-		:
+	RenderSystem::RenderSystem(ECS::ECSEngine& ecsEngine, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, UI::UICoreSystem& uiCoreSystem, UI::UISystem& uiSystem, Animation::AnimationSystem& animationSystem, Memory::GPUBufferManager& gpuBufferManager)
+	:
 		m_vertexFormatManager(),
 		m_ecsEngine(ecsEngine),
 		m_worldVertexBufferManagementSystem(worldVertexBufferManagementSystem),
-		m_uiRenderer(uiCoreSystem),
+		m_uiRenderer(uiCoreSystem,uiSystem),
 		m_animationSystem(animationSystem),
 		m_renderCommandBufferManager(gpuBufferManager),
 		m_objectDataBufferManager(gpuBufferManager),
@@ -29,9 +29,12 @@ namespace TheEngine
 		m_worldRenderer.setViewportDimension(width, height);
 
 		//tricky problem need to solve dpi scaling here
+		//m_uiRenderer.setViewportDimension(width, height);
+	}
+	void RenderSystem::setViewportDimensionForUI(int width, int height)
+	{
 		m_uiRenderer.setViewportDimension(width, height);
 	}
-
 
 	void RenderSystem::render(TheEngine::Camera& camera)
 	{

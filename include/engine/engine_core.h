@@ -1,18 +1,26 @@
 #pragma once
-#include "../low-level/gpu_texture_manager.h"
-#include "../low-level/gpu_material_system.h"
-#include "../low-level/world_vertex_buffer_management_system.h"
+#include "low-level/gpu_texture_manager.h"
+#include "low-level/gpu_material_system.h"
+#include "low-level/world_vertex_buffer_management_system.h"
 #include "ecs.h"
 #include "engine_loader.h"
-#include "../rendering-system/render_system.h"
+#include "rendering-system/render_system.h"
 #include <string>
-#include "../low-level/gpu_buffer_manager.h"
-#include "../ui/include/core/ui_system.h"
-#include "../ui/include/builder/ui_builder.h"
-#include "../transformation_system.h"
-#include "../animation/animation_system.h"
+#include "memory-management/gpu_buffer_manager.h"
+#include "ui/core/ui_system.h"
+#include "ui/builder/ui_builder.h"
+#include "transformation_system.h"
+#include "animation/animation_system.h"
 #include <platform.h>
+#include <cstddef>
 
+struct GPUMemoryUsageStats
+{
+
+	size_t gpuTextureMemoryUsage = 0;
+	size_t gpuBufferMemoryUsage = 0;
+
+};
 
 namespace TheEngine
 {
@@ -20,10 +28,13 @@ namespace TheEngine
 	{
 	private:
 
+		/**Owner Of Most SubSystems**/
+
+
 		ECS::ECSEngine m_ecsEngine;//owner
 
 
-		GPUBufferManager m_gpuBufferManager;
+		Memory::GPUBufferManager m_gpuBufferManager;
 
 		GPUTextureManager m_gpuTextureManager;//owner
 
@@ -52,11 +63,12 @@ namespace TheEngine
 
 		RenderSystem m_renderSystem;// contains both world renderer and ui renderer
 
-		TheEngine::AnimationSystem m_animationSystem;
+		Animation::AnimationSystem m_animationSystem;
 
 		UI::UIBuilder m_uiBuilder;
 
 		ECS::NullFatalErrorHandler m_nullFatalErrorHandler;
+
 
 		//Need to rethink its ownership model
 		Platform& m_platform;
@@ -72,7 +84,8 @@ namespace TheEngine
 
 		Platform& getPlatform();
 
-		void setViewportDimension(int width, int height);	
+		
+		void setViewportDimension(const int physicalWidth, const int physicalHeight, const int logicalWidth, const int logicalHeight);
 
 
 		ECS::ECSEngine& getECSEngine();
@@ -90,6 +103,16 @@ namespace TheEngine
 		UI::UIBuilder& getUIBuilder();
 
 		UI::UICoreSystem& getUICoreSystem();
+
+		void loadFont(const std::string& fontName, const std::string& fontJsonFilePath, const std::string& fontAtlasPath);
+
+
+
+
+		/**** GPU MEMORY USAGE STATS *****/
+
+		GPUMemoryUsageStats getGPUMemoryUsageStats() const;
+
 
 
 	};

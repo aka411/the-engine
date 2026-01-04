@@ -10,10 +10,24 @@ implementation so as to avoid redefinitions*/
 
 /*I have commented out stb headers here cause tiny gltf itself has stb libraries inside */
 
+
+
+
+#define NLOHMANN_JSON_IMPLEMENTATION
+#include "nlohmann/json.hpp"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb/stb_image_write.h"
+
+
+
 #define TINYGLTF_IMPLEMENTATION
 
-//#define TINYGLTF_LOADER_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+#define TINYGLTF_NO_INCLUDE_JSON
+#define TINYGLTF_NO_INCLUDE_STB_IMAGE
+#define TINYGLTF_NO_INCLUDE_STB_IMAGE_WRITE
 
-#include "../include/model-loading/tiny_gltf.h"
+#include "tinygltf/tiny_gltf.h"

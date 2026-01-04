@@ -3,9 +3,21 @@
 #include <cstdint>
 #include "SDL3/SDL_video.h"
 #include <memory>
+#include <string>
 
 namespace TheEngine
 {
+
+
+    struct FileData
+    {
+		//for taking ownership of data from external libriaries heap
+        std::unique_ptr < std::byte[], void(*)(void*) > data = {nullptr,nullptr};
+		size_t size = 0;// size in bytes
+       
+	};
+
+
 
     enum class RenderingAPI
     {
@@ -18,7 +30,7 @@ namespace TheEngine
     {
     private:
 		RenderingAPI m_renderingAPI;
-
+	
     public:
 
         IRenderingAPIContext(const RenderingAPI renderingAPI) :m_renderingAPI(renderingAPI) {};
@@ -104,11 +116,13 @@ namespace TheEngine
     {
         //is a uint64_t
         EngineEventType engineEventType = EngineEventType::NONE;
+
+		// USE ONLY POD TYPES IN THE UNION TO AVOID CONSTRUCTOR/DESTRUCTOR ISSUES
         union
         {
             WindowResizeEvent windowResizeEvent;
 			MouseMoveEvent mouseMoveEvent;
-            uint8_t padding[128];
+			uint8_t padding[128] = { 0 };
         };
         EngineEvent() {};
     };
@@ -128,6 +142,7 @@ namespace TheEngine
 
         bool m_keyStates[512];
 
+		std::string m_gpuVendor = "Unknown GPU Vendor";
 
         void enableOpenGLDebugging();
 
@@ -138,14 +153,21 @@ namespace TheEngine
         //creates window and GPU API context
         void initialize(const RenderingAPI renderingAPI, const int width, const int height);
 
+		std::string getGPUVendor() const { return m_gpuVendor; };
+
         bool isKeyPressed(int keycode) const;
         bool pollEvent(EngineEvent& outEvent);
 
         float getTimeInSeconds() const;
 
 
+		FileData readFile(const std::string& pathToFile);
+
+
+		//swaps the front and back buffers, in opengl SDL does it for us , in vulkan its our job to do it
         void swapBuffers();
 
+		//cleans up platform specific resources
 		void shutdown();
 
 

@@ -1,11 +1,11 @@
 #pragma once
 #include <vector>
-#include "../components.h"
+#include "components.h"
 #include "keyframe_animation_manager.h"
 #include "skeletal_animation_manager.h"
 #include "ecs.h"
 
-namespace TheEngine
+namespace TheEngine::Animation
 {
 
 
@@ -29,7 +29,7 @@ namespace TheEngine
 
 	public:
 
-		AnimationSystem(ECS::ECSEngine& ecsEngine, GPUBufferManager& gpuBufferManager);
+		AnimationSystem(ECS::ECSEngine& ecsEngine, Memory::GPUBufferManager& gpuBufferManager);
 
 		KeyframeAnimationManager& getKeyframeAnimationManager();
 		SkeletalAnimationManager& getSkeletalAnimationManager();

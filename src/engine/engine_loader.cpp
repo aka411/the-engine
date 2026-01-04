@@ -6,8 +6,8 @@ namespace TheEngine
 
 
 
-	EngineLoader::EngineLoader(ECS::ECSEngine& ecsEngine, GPUTextureManager& gpuTextureManager, GPUMaterialSystem& gpuMaterialSystem, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, AnimationSystem& animationSystem)
-		: m_ecsEngine(ecsEngine),
+	EngineLoader::EngineLoader(ECS::ECSEngine& ecsEngine, GPUTextureManager& gpuTextureManager, GPUMaterialSystem& gpuMaterialSystem, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, Animation::AnimationSystem& animationSystem):
+		m_ecsEngine(ecsEngine),
 		m_gpuTextureManager(gpuTextureManager),
 		m_gpuMaterialSystem(gpuMaterialSystem),
 		m_worldVertexBufferManagementSystem(worldVertexBufferManagementSystem),
@@ -340,10 +340,10 @@ namespace TheEngine
 		{
 
 
-			AnimationData& animationData = engineIntermediateModel.animationData;
-			std::unordered_map<std::string, TheEngine::Animation>& animationsMap = engineIntermediateModel.animationsMap;
+			Animation::AnimationData& animationData = engineIntermediateModel.animationData;
+			std::unordered_map<std::string, Animation::Animation>& animationsMap = engineIntermediateModel.animationsMap;
 
-			BoneAnimationData& boneAnimationData = engineIntermediateModel.boneAnimationData;
+			Animation::BoneAnimationData& boneAnimationData = engineIntermediateModel.boneAnimationData;
 
 
 
@@ -366,7 +366,7 @@ namespace TheEngine
 
 			if (engineIntermediateModel.boneAnimationData.isSkinned)
 			{
-				BoneAnimationData& boneAnimationData = engineIntermediateModel.boneAnimationData;
+				Animation::BoneAnimationData& boneAnimationData = engineIntermediateModel.boneAnimationData;
 
 				BoneAnimationCPUComponent boneAnimationCPUComponent;
 				boneAnimationCPUComponent.inverseBindMatrices = boneAnimationData.inverseBindMatrices;

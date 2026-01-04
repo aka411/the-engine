@@ -6,7 +6,7 @@
 
 
 
-namespace TheEngine
+namespace TheEngine::Animation
 {
 
 	KeyframeAnimationInterpolator::KeyframeAnimationInterpolator()
@@ -88,7 +88,7 @@ namespace TheEngine
 	}
 
 
-	glm::vec3 KeyframeAnimationInterpolator::animateTranslate(TheEngine::AnimationInterpolationMode animationinterpolationMode, const float totalDuration, const std::vector<float>& input, const std::vector<float>& output, float currentTime)
+	glm::vec3 KeyframeAnimationInterpolator::animateTranslate(AnimationInterpolationMode animationinterpolationMode, const float totalDuration, const std::vector<float>& input, const std::vector<float>& output, float currentTime)
 	{
 		LinearData data = linear(input, currentTime);
 
@@ -109,7 +109,7 @@ namespace TheEngine
 
 		switch (animationinterpolationMode)
 		{
-		case TheEngine::AnimationInterpolationMode::LINEAR:
+		case AnimationInterpolationMode::LINEAR:
 		{
 			glm::vec3 start = glm::make_vec3(&output[data.currentFrameIndex * 3]);
 			glm::vec3 end = glm::make_vec3(&output[data.nextFrameIndex * 3]);
@@ -118,7 +118,7 @@ namespace TheEngine
 		}
 		break;
 
-		case TheEngine::AnimationInterpolationMode::STEP:
+		case AnimationInterpolationMode::STEP:
 		{
 			int index = step(input, currentTime);
 			glm::vec3 finalTranslation = glm::make_vec3(&output[index * 3]);
@@ -138,7 +138,7 @@ namespace TheEngine
 	}
 
 
-	glm::quat KeyframeAnimationInterpolator::animateRotate(TheEngine::AnimationInterpolationMode animationinterpolationMode, const float totalDuration, const std::vector<float>& input, const std::vector<float>& output, float currentTime)
+	glm::quat KeyframeAnimationInterpolator::animateRotate(AnimationInterpolationMode animationinterpolationMode, const float totalDuration, const std::vector<float>& input, const std::vector<float>& output, float currentTime)
 	{
 
 
@@ -163,7 +163,7 @@ namespace TheEngine
 
 		switch (animationinterpolationMode)
 		{
-		case TheEngine::AnimationInterpolationMode::LINEAR:
+		case AnimationInterpolationMode::LINEAR:
 		{
 			glm::quat startRotation = glm::make_quat(&output[data.currentFrameIndex * 4]);
 			glm::quat endRotation = glm::make_quat(&output[data.nextFrameIndex * 4]);
@@ -172,7 +172,7 @@ namespace TheEngine
 		}
 		break;
 
-		case TheEngine::AnimationInterpolationMode::STEP:
+		case AnimationInterpolationMode::STEP:
 		{
 			int index = step(input, currentTime);
 			glm::quat finalRotation = glm::make_quat(&output[index * 4]);
@@ -258,7 +258,7 @@ namespace TheEngine
 
 
 
-			const TheEngine::AnimationSampler& sampler = animation.animationSamplers[channel.samplerIndex];
+			const AnimationSampler& sampler = animation.animationSamplers[channel.samplerIndex];
 
 			const int inputIndex = sampler.inputIndex;
 			const auto& inputKeyframes = animationCPUComponent.animationData.inputs[inputIndex].inputKeyframes;
@@ -272,19 +272,19 @@ namespace TheEngine
 
 			switch (channel.pathType)
 			{
-			case TheEngine::AnimationPathType::TRANSLATION:
+			case AnimationPathType::TRANSLATION:
 			{
 
 				engineTransformationComponents[channel.targetNodeIndex]->position = animateTranslate(sampler.interpolationMode, totalDuration, inputKeyframes, outputValues, currentAnimationTime);
 			}
 			break;
-			case TheEngine::AnimationPathType::ROTATION:
+			case AnimationPathType::ROTATION:
 			{
 
 				engineTransformationComponents[channel.targetNodeIndex]->rotation = animateRotate(sampler.interpolationMode, totalDuration, inputKeyframes, outputValues, currentAnimationTime);
 			}
 			break;
-			case TheEngine::AnimationPathType::SCALE:
+			case AnimationPathType::SCALE:
 			{
 
 				engineTransformationComponents[channel.targetNodeIndex]->scale = animateTranslate(sampler.interpolationMode, totalDuration, inputKeyframes, outputValues, currentAnimationTime);

@@ -2,10 +2,11 @@
 #include <vector>
 #include <glm/fwd.hpp>
 #include "animation_data_structures.h"
-#include "../components.h"
+#include "components.h"
 
 
-namespace TheEngine
+
+namespace TheEngine::Animation
 {
 
 	class KeyframeAnimationInterpolator
@@ -22,8 +23,8 @@ namespace TheEngine
 		static LinearData linear(const std::vector<float>& input, const float currentTime);
 
 
-		static glm::vec3 animateTranslate(TheEngine::AnimationInterpolationMode animationinterpolationMode, const float totalDuration, const std::vector<float>& input, const std::vector<float>& output, float currentTime);
-		static glm::quat animateRotate(TheEngine::AnimationInterpolationMode animationinterpolationMode, const float totalDuration, const std::vector<float>& input, const std::vector<float>& output, float currentTime);
+		static glm::vec3 animateTranslate(AnimationInterpolationMode animationinterpolationMode, const float totalDuration, const std::vector<float>& input, const std::vector<float>& output, float currentTime);
+		static glm::quat animateRotate(AnimationInterpolationMode animationinterpolationMode, const float totalDuration, const std::vector<float>& input, const std::vector<float>& output, float currentTime);
 
 	public:
 

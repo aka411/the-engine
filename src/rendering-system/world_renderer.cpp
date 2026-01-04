@@ -1,6 +1,6 @@
-﻿#include "../../include/rendering-system/world_renderer.h"
-#include "../../include/low-level/vertex_format_helper.h"
-#include "../../glad/glad.h"
+﻿#include "rendering-system/world_renderer.h"
+#include "low-level/vertex_format_helper.h"
+#include "glad/glad.h"
 #include <unordered_map>
 #include <iostream>
 
@@ -10,8 +10,9 @@
 namespace TheEngine
 {
 
-	WorldRenderer::WorldRenderer(VertexFormatManager& vertexFormatManager, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, AnimationSystem& animationSystem, RenderCommandBufferManager& renderCommandBufferManager,
-		ObjectDataBufferManager& objectDataBufferManager):
+	WorldRenderer::WorldRenderer(VertexFormatManager& vertexFormatManager, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, Animation::AnimationSystem& animationSystem, RenderCommandBufferManager& renderCommandBufferManager,
+		ObjectDataBufferManager& objectDataBufferManager)
+		:
 
 		m_worldVertexBufferManagementSystem(worldVertexBufferManagementSystem),
 		m_vertexFormatManager(vertexFormatManager),
@@ -78,7 +79,7 @@ namespace TheEngine
 		//glFrontFace(GL_CCW);
 		//glCullFace(GL_BACK);
 
-				//material ssbo
+			
 
 
 
@@ -131,7 +132,7 @@ namespace TheEngine
 
 			//set up vertex buffer
 
-			GPUBufferInfo vertexBufferInfo = m_worldVertexBufferManagementSystem.getBufferInfoForVertexFormat(vertexFormat);
+			Memory::GPUBufferInfo vertexBufferInfo = m_worldVertexBufferManagementSystem.getBufferInfoForVertexFormat(vertexFormat);
 			glBindVertexBuffer(0, vertexBufferInfo.bufferHandle, 0, VertexFormatHelper::getSizeOfVertexForFormatInBytes(vertexFormat));
 
 
@@ -159,10 +160,10 @@ namespace TheEngine
 
 		//set up vertex buffer
 
-		GPUBufferInfo vertexBufferInfo = m_worldVertexBufferManagementSystem.getBufferInfoForVertexFormat(vertexFormat);
+		Memory::GPUBufferInfo vertexBufferInfo = m_worldVertexBufferManagementSystem.getBufferInfoForVertexFormat(vertexFormat);
 		glBindVertexBuffer(0, vertexBufferInfo.bufferHandle, 0, VertexFormatHelper::getSizeOfVertexForFormatInBytes(vertexFormat));
 
-		GPUBufferInfo indexBufferInfo = m_worldVertexBufferManagementSystem.getBufferInfoForIndexType(indexType);
+		Memory::GPUBufferInfo indexBufferInfo = m_worldVertexBufferManagementSystem.getBufferInfoForIndexType(indexType);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferInfo.bufferHandle);
 
 		glMultiDrawElementsIndirect(GL_TRIANGLES, IndexTypeToGLType(indexType), (void*)byteOffset, count, 0);
