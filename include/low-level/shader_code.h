@@ -371,6 +371,20 @@ vec2 getTexCoord(int index)
 out vec4 FragColor;
 
 
+vec4 toLinear(vec4 srgbColor) 
+{
+    vec3 linearRGB = pow(srgbColor.rgb, vec3(2.2));
+    return vec4(linearRGB, srgbColor.a);
+}
+
+vec4 toSRGB(vec4 linearColor) 
+{
+    vec3 srgb = pow(linearColor.rgb, vec3(1.0 / 2.2));
+    return vec4(srgb, linearColor.a);
+}
+
+
+
 void main()
 {
 
@@ -414,7 +428,8 @@ const int emissiveTexCoordIndex  =  int((material.materialBitMask.x >> EMISSIVE_
 
         vec2 uv = getTexCoord(albedoTexCoordIndex);
         
-        baseColor *= texture2D(sampler2D(material.albedoTextureHandle), uv);
+        //baseColor *= texture2D(sampler2D(material.albedoTextureHandle), uv);
+        baseColor *= toLinear( texture2D(sampler2D(material.albedoTextureHandle), uv));
     }
     
 
@@ -546,16 +561,16 @@ vec3 diffuse = (kD * albedo) / PI;
 vec3 Lo = (diffuse + specular) * LIGHT_COLOR * NdotL;
 
 
-vec3 ambient = vec3(0.1) * albedo * occlusion;
+vec3 ambient = vec3(0.01) * albedo * occlusion;
 
 // Final color
 vec3 finalColor = ambient + Lo + emissive;
 
 
 
- FragColor = vec4(finalColor, baseColor.a);
+// FragColor = vec4(finalColor, baseColor.a);
 
-
+FragColor = toSRGB(vec4(finalColor, baseColor.a));
 
 }
 

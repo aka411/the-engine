@@ -84,7 +84,8 @@ namespace TheEngine
 
 		Platform& getPlatform();
 
-		void setViewportDimension(int width, int height);	
+		
+		void setViewportDimension(const int physicalWidth, const int physicalHeight, const int logicalWidth, const int logicalHeight);
 
 
 		ECS::ECSEngine& getECSEngine();

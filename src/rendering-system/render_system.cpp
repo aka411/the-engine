@@ -29,9 +29,12 @@ namespace TheEngine
 		m_worldRenderer.setViewportDimension(width, height);
 
 		//tricky problem need to solve dpi scaling here
+		//m_uiRenderer.setViewportDimension(width, height);
+	}
+	void RenderSystem::setViewportDimensionForUI(int width, int height)
+	{
 		m_uiRenderer.setViewportDimension(width, height);
 	}
-
 
 	void RenderSystem::render(TheEngine::Camera& camera)
 	{

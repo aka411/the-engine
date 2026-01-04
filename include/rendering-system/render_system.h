@@ -50,6 +50,7 @@ namespace TheEngine
 		RenderSystem(ECS::ECSEngine& ecsEngine, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, UI::UICoreSystem& uiCoreSystem,UI::UISystem& uiSystem, Animation::AnimationSystem& animationSystem, Memory::GPUBufferManager& gpuBufferManager);
 
 		void setViewportDimension(int width, int height);
+		void setViewportDimensionForUI(int width, int height);
 
 		void render(TheEngine::Camera& camera);
 

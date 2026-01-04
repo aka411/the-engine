@@ -30,7 +30,7 @@ namespace TheEngine
     {
     private:
 		RenderingAPI m_renderingAPI;
-
+	
     public:
 
         IRenderingAPIContext(const RenderingAPI renderingAPI) :m_renderingAPI(renderingAPI) {};
@@ -122,7 +122,7 @@ namespace TheEngine
         {
             WindowResizeEvent windowResizeEvent;
 			MouseMoveEvent mouseMoveEvent;
-            uint8_t padding[128];
+			uint8_t padding[128] = { 0 };
         };
         EngineEvent() {};
     };
@@ -142,6 +142,7 @@ namespace TheEngine
 
         bool m_keyStates[512];
 
+		std::string m_gpuVendor = "Unknown GPU Vendor";
 
         void enableOpenGLDebugging();
 
@@ -151,6 +152,8 @@ namespace TheEngine
 
         //creates window and GPU API context
         void initialize(const RenderingAPI renderingAPI, const int width, const int height);
+
+		std::string getGPUVendor() const { return m_gpuVendor; };
 
         bool isKeyPressed(int keycode) const;
         bool pollEvent(EngineEvent& outEvent);

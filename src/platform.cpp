@@ -62,8 +62,7 @@ namespace TheEngine
 
 		SDL_Init(SDL_INIT_VIDEO);
 
-
-
+	
 
 		switch (renderingAPI)
 		{
@@ -93,6 +92,13 @@ namespace TheEngine
 			gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 
 			enableOpenGLDebugging();
+			const GLubyte* rawString = glGetString(GL_RENDERER);
+
+			if (rawString != nullptr)
+			{
+				m_gpuVendor = reinterpret_cast<const char*>(rawString);
+			}
+		
 			break;
 		}
 
@@ -140,12 +146,16 @@ namespace TheEngine
 			case SDL_EVENT_WINDOW_RESIZED:
 			{
 				outEvent.engineEventType = EngineEventType::WINDOW_RESIZE;
-				float dps = SDL_GetWindowDisplayScale(m_window);
-				outEvent.windowResizeEvent.logicalPixelWidth = sdlEvent.window.data1;
-				outEvent.windowResizeEvent.logicalPixelHeight = sdlEvent.window.data2;
 
-				outEvent.windowResizeEvent.physicalPixelWidth = static_cast<int32_t>(sdlEvent.window.data1 * dps);
-				outEvent.windowResizeEvent.physicalPixelHeight = static_cast<int32_t>(sdlEvent.window.data2 * dps);
+				// Physical Pixels, not logical pixels, it has DPI scaling applied
+				outEvent.windowResizeEvent.physicalPixelWidth = sdlEvent.window.data1;
+				outEvent.windowResizeEvent.physicalPixelHeight = sdlEvent.window.data2;
+				
+				/// Logical pixels, 
+				int logicalW, logicalH;
+				SDL_GetWindowSize(m_window, &logicalW, &logicalH);
+				outEvent.windowResizeEvent.logicalPixelWidth = logicalW;
+				outEvent.windowResizeEvent.logicalPixelHeight = logicalH;
 				return true;
 			}
 			break;

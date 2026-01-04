@@ -61,10 +61,14 @@ namespace TheEngine
 		return m_platform;
 	}
 
-	void EngineCore::setViewportDimension(int width, int height)
+	void EngineCore::setViewportDimension(const int physicalWidth,const int physicalHeight,const int logicalWidth,const int logicalHeight)
 	{
-		m_renderSystem.setViewportDimension(width, height);
+		m_renderSystem.setViewportDimension(physicalWidth, physicalHeight);
+		m_renderSystem.setViewportDimensionForUI(logicalWidth, logicalHeight);
+
 	}
+
+
 
 	ECS::ECSEngine& EngineCore::getECSEngine()
 	{
