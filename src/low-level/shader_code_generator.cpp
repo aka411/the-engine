@@ -127,7 +127,7 @@ ShaderCodeGenerator::ShaderFlagsAndAttributes ShaderCodeGenerator::getFlagsForAt
                 .append(") in ")
                 .append(COMPONENT_DATA_TYPE_TO_SHADER_COMPONENT_DATA_TYPE_PREFIX_STRING.at(componentDataType))
                 .append(COMPONENT_TYPE_TO_SHADER_COMPONENT_TYPE_STRING.at(componentType))
-                .append(" in")
+                .append(" in")//for getting name like  inPosition,inNormal
                 .append(VERTEX_ATTRIBUTE_TO_SHADER_ATTRIBUTE_STRING.at(vertexAttributeType))
                 .append(indexString)
                 .append(";")

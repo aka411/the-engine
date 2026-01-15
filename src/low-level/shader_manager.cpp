@@ -10,7 +10,7 @@
 ShaderManager::ShaderManager()
 {
 
-
+	m_depthPrePassShaderProgram = compileShader(preDepthPassVertexCode, preDepthPassFragmentCode);
 
 }
 
@@ -103,4 +103,14 @@ void ShaderManager::createNewShaderProgramForFormat(VertexFormat vertexFormat)
 	GLuint shaderProgram = compileShader(shaderCode.vertexShaderCode, shaderCode.fragmentShaderCode);
 
 	m_vertexFormatToShaderProgram[vertexFormat] = shaderProgram;
+}
+
+
+
+GLuint ShaderManager::getDepthPrePassShaderProgram()
+{
+
+
+
+	return GLuint();
 }

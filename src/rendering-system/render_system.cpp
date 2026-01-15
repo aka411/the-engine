@@ -5,7 +5,16 @@
 namespace TheEngine
 {
 
-	RenderSystem::RenderSystem(ECS::ECSEngine& ecsEngine, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, UI::UICoreSystem& uiCoreSystem, UI::UISystem& uiSystem, Animation::AnimationSystem& animationSystem, Memory::GPUBufferManager& gpuBufferManager)
+	RenderSystem::RenderSystem(
+		ECS::ECSEngine& ecsEngine,
+		WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem,
+		GPUMaterialSystem& gpuMaterialSystem,
+		UI::UICoreSystem& uiCoreSystem,
+		UI::UISystem& uiSystem,
+		Animation::AnimationSystem& animationSystem,
+		Memory::GPUBufferManager& gpuBufferManager,
+		LightSystem& lightSystem
+	)
 	:
 		m_vertexFormatManager(),
 		m_ecsEngine(ecsEngine),
@@ -15,8 +24,16 @@ namespace TheEngine
 		m_renderCommandBufferManager(gpuBufferManager),
 		m_objectDataBufferManager(gpuBufferManager),
 		m_gpuBufferManager(gpuBufferManager),
-		m_worldRenderer(m_vertexFormatManager, worldVertexBufferManagementSystem, gpuMaterialSystem, animationSystem, m_renderCommandBufferManager, m_objectDataBufferManager)
-
+		m_worldRenderer(
+			m_vertexFormatManager,
+			worldVertexBufferManagementSystem,
+			gpuMaterialSystem, 
+			animationSystem,
+			m_renderCommandBufferManager,
+			m_objectDataBufferManager,
+			lightSystem
+		),
+		m_lightSystem(lightSystem)//do i need this here?
 	{
 
 
@@ -39,7 +56,7 @@ namespace TheEngine
 	void RenderSystem::render(TheEngine::Camera& camera)
 	{
 
-	
+		m_numOfDrawCallsInLastFrame = 0;
 		
 		m_worldRenderer.startFrame(camera);
 	
@@ -257,7 +274,8 @@ namespace TheEngine
 		);
 
 
-
+		//for metrics
+		m_numOfDrawCallsInLastFrame += batchArrayCommands.size();
 
 		for (auto& batchArrayCommand : batchArrayCommands)
 		{
@@ -273,7 +291,7 @@ namespace TheEngine
 
 			//call draw
 
-			m_worldRenderer.IndirectDrawArray(vertexFormat, byteOffset, count);
+			m_worldRenderer.indirectDrawArray(vertexFormat, byteOffset, count);
 
 
 		}
@@ -283,6 +301,9 @@ namespace TheEngine
 		{
 			const VertexFormat vertexFormat = batchIndexedCommandsPerIndexType.first;
 			std::unordered_map<IndexType, BatchIndexedCommand>& batchIndexedCommandToIndexType = batchIndexedCommandsPerIndexType.second;
+
+			//for metrics
+			m_numOfDrawCallsInLastFrame += batchIndexedCommandToIndexType.size();
 
 			for (auto& batchIndexedCommand : batchIndexedCommandToIndexType)
 			{
@@ -298,12 +319,22 @@ namespace TheEngine
 				const size_t count = IndirectIndexedRenderCommands.size();
 				//draw
 
-				m_worldRenderer.IndirectDrawIndexed(vertexFormat, indexType, byteOffset, count);
+				m_worldRenderer.indirectDrawIndexed(vertexFormat, indexType, byteOffset, count);
 
 
 			}
 		}
 	
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -321,5 +352,16 @@ namespace TheEngine
 
 
 
+	}
+
+
+	float RenderSystem::getGPUTimeForLastFrameMS()
+	{
+		return m_worldRenderer.getGPUTimeForLastFrameMS();
+	}
+
+	int  RenderSystem::getNumOfDrawCalls() const
+	{
+		return m_numOfDrawCallsInLastFrame;
 	}
 }

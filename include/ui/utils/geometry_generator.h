@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <vector>
-
+#include <array>
 
 
 
@@ -14,27 +14,30 @@ private:
 
 
 public:
-	//need more thought here
-	struct MeshData
-	{
-		//I think i need to add format info here too
 
-		size_t numOfVertex = 0;
-		std::vector<std::byte> data;
+
+	struct ShapeTrapezium
+	{
+		std::array<glm::vec2, 6> slopedRectangleLine;
+		std::array<glm::vec2, 3> triangle;
+		std::array<glm::vec2, 6> baseRectangle;
 	};
 
-	static MeshData getRectangle(const float length, const float breadth); // ablity to add offset later
-	static MeshData getRectangleWithOffset(const float length, const float breadth,const glm::vec3 offset);
-
-	static MeshData getCuboidMesh(const float legnth,const float breadth, const float height);
+	static std::array<glm::vec2, 6> generateLine(const glm::vec2& lineVector, const float lineWidth);
 
 
+	//6 vertices for a rectangle since its made of two triangles
+	static std::array<glm::vec2,6> generateRectangle(const float width, const float height);
+	//yeah why have two methods one for line and one for rectangle why not use a common one ,
+	// generateRectangle() method is for upright rectangle only and its faster than generateLine() method
 
-	//MeshData?
-	static MeshData getColouredRectangle(const float length, const float breadth, glm::vec4 colour);
-	static MeshData getColouredRectangleWithOffset(const float length, const float breadth, const glm::vec3 offset, const glm::vec4 colour);
 
-	static MeshData getColouredCuboidMesh(const float legnth, const float breadth, const float height,glm::vec4 colour);
 
+
+
+	static ShapeTrapezium generateTrapezium(const float pointA, const float pointB, const float width);
+
+	
+	
 
 };

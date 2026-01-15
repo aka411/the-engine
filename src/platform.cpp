@@ -82,7 +82,7 @@ namespace TheEngine
 			);
 
 
-			//Bad
+		
 			SDL_GLContext  gl_context = SDL_GL_CreateContext(m_window);
 
 			SDL_GL_MakeCurrent(m_window, gl_context);
@@ -223,7 +223,7 @@ namespace TheEngine
 	float Platform::getTimeInSeconds() const
 	{
 
-		return SDL_GetTicks() / 1000.0f;
+		return SDL_GetTicks() / 1000.0f;//to seconds from ms
 
 	}
 

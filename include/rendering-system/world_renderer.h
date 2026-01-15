@@ -10,7 +10,9 @@
 #include "world_renderer_data_structures.h"
 #include "render_command_buffer_manager.h"
 #include "object_data_buffer_manager.h"
+#include "light-system/light_system.h"
 
+#include <memory>
 
 namespace TheEngine
 {
@@ -37,10 +39,26 @@ namespace TheEngine
 		RenderCommandBufferManager& m_renderCommandBufferManager;
 		ObjectDataBufferManager& m_objectDataBufferManager;
 
+
+		/*Lighting*/
+
+		LightSystem& m_lightSystem;
+
+
+		/*Timing Info*/
+		//To keep header clean from opengl 
+		std::unique_ptr<GLuint> m_timeQuery;
+		float m_gpuTimeMS = 0;
 	public:
 
-		WorldRenderer(VertexFormatManager& vertexFormatManager, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, Animation::AnimationSystem& animationSystem, RenderCommandBufferManager& m_renderCommandBufferManager,
-		ObjectDataBufferManager& m_objectDataBufferManager);
+		WorldRenderer(
+			VertexFormatManager& vertexFormatManager,
+			WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem,
+			GPUMaterialSystem& gpuMaterialSystem, Animation::AnimationSystem& animationSystem,
+			RenderCommandBufferManager& m_renderCommandBufferManager,
+		    ObjectDataBufferManager& m_objectDataBufferManager,
+			LightSystem& lightSystem
+		);
 
 		void setViewportDimension(int width, int height);	
 
@@ -48,12 +66,16 @@ namespace TheEngine
 
 		//void render(std::unordered_map<VertexFormat, std::vector<RenderCommand>>& vertexFormatToRenderCommands);
 		
-		void IndirectDrawArray(const VertexFormat vertexFormat, const size_t byteOffset, const size_t count);
-		void IndirectDrawIndexed(const VertexFormat vertexFormat, const IndexType indexType, const size_t byteOffset, const size_t count);
+		//void depthPrePass();//setting state is a headache might need to rethink this class
+
+
+		void indirectDrawArray(const VertexFormat vertexFormat, const size_t byteOffset, const size_t count);
+		void indirectDrawIndexed(const VertexFormat vertexFormat, const IndexType indexType, const size_t byteOffset, const size_t count);
 		
 
 		void endFrame();
 
+		float getGPUTimeForLastFrameMS();
 
 
 	};

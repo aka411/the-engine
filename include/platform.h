@@ -12,6 +12,7 @@ namespace TheEngine
     struct FileData
     {
 		//for taking ownership of data from external libriaries heap
+        //need more thought here , seems very brittle though
         std::unique_ptr < std::byte[], void(*)(void*) > data = {nullptr,nullptr};
 		size_t size = 0;// size in bytes
        
@@ -134,6 +135,8 @@ namespace TheEngine
 
     class Platform
     {
+
+
     private:
 
         std::unique_ptr<IRenderingAPIContext> m_iRenderingAPIContext;
