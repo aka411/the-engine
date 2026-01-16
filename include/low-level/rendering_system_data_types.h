@@ -1,6 +1,7 @@
 #pragma once
-#include "../../glad/glad.h"
-#include <bitset>
+#include <cstdint>
+#include <cstddef>
+//#include <bitset>
 
 
 
@@ -11,14 +12,7 @@
 
 /*VERTEX BUFFER MANAGEMENT SYSTEM*/
 
-enum class BufferUsageType
-{
-	UNKNOWN,
-	STATIC,
-	DYNAMIC,
-	STREAMING
-	
-};
+
 
 
 enum class VertexLayout 
@@ -132,40 +126,9 @@ enum class IndexType
 
 
 
-/* BUFFER SYSTEM */
-
-
-enum BufferType
-{
-	VERTEX,
-	INDEX,
-	SSBO,
-	UBO,
-	UNKNOWN
-};
-
-struct AllocationInfo
-{
-	size_t offset = 0;
-
-};
 
 
 
-struct GPUBufferInfo
-{
-	BufferType bufferType = BufferType::UNKNOWN;
-
-	GLuint bufferHandle ;
-
-	//size in bytes
-	size_t size = 0;
-
-	void* mappedPtr = nullptr;
-
-	bool isMapped = false;
-
-};
 
 
 /*TEXTURE SYSTEM*/

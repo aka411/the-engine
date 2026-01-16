@@ -1,8 +1,9 @@
 #pragma once 
 
-#include "tiny_gltf.h"
+
 #include "model_loading_data_structure.h"
 #include "gltf_attribute_extractor.h"
+#include "tinygltf/tiny_gltf_wrapper.h"
 
 
 namespace TheEngine

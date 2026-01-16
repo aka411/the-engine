@@ -5,13 +5,114 @@
 //yup i know hardcoding shader code in header files is not a good idea, i will change this later
 
 
+//we have design issues regarding this , particularly regarding boned vertex data
+static const std::string preDepthPassVertexCode = R"(
+
+#version 460 core
+
+layout(location = 0) in vec3 inPosition;
+
+
+
+
+/****PER FRAME DATA****/
+layout(std140,binding = 0 ) uniform Camera
+{
+ mat4 projection;
+ mat4 view;
+
+} camera;
+
+
+
+
+
+struct ObjectData
+{
+ mat4 modelMatrix;
+ uint materialId;
+ uint boneId;
+ vec2 padding;
+};
+
+
+
+
+// readonly SSBO containing the data
+layout(binding = 0, std430) readonly buffer objectDataSSBO 
+{
+
+ ObjectData objectData[];
+
+};
+
+
+
+
+
+void main()
+{
+
+ObjectData perObjectData = objectData[gl_BaseInstance];
+
+
+
+vec4 position = vec4(inPosition, 1.0);
+
+#ifdef HAS_JOINTS
+
+const uint boneOffset = perObjectData.boneId;
+
+    mat4 boneTransform = 
+        inWeights.x * joints[boneOffset+inJoints.x] +
+        inWeights.y * joints[boneOffset+inJoints.y] +
+        inWeights.z * joints[boneOffset+inJoints.z] +
+        inWeights.w * joints[boneOffset+inJoints.w];
+
+
+    position = boneTransform * position;
+#endif
+
+
+
+ 
+ gl_Position = camera.projection * camera.view * perObjectData.modelMatrix * position;
+
+
+
+
+
+}
+
+
+
+)";
+
+
+
+
+
+static const std::string preDepthPassFragmentCode = R"(
+#version 460 core
+
+
+void main()
+{
+
+return;
+}
+
+
+
+
+)";
 
 
 
 
 
 
-static std::string pbrNormalBaseVertexCode = R"(
+static const std::string pbrNormalBaseVertexCode = R"(
 
 #version 460 core
 #extension GL_ARB_bindless_texture : require
@@ -40,7 +141,7 @@ struct ObjectData
  mat4 modelMatrix;
  uint materialId;
  uint boneId;
-vec2 padding;
+ vec2 padding;
 };
 
 // readonly SSBO containing the data
@@ -90,7 +191,7 @@ out vec2 vs_texCoord_3;
 
 
 #ifdef HAS_TANGENT
-out vec4 vs_tangent;
+flat out vec4 vs_tangent;
 #endif
 
 
@@ -138,6 +239,7 @@ const uint boneOffset = perObjectData.boneId;
  vs_materialId = perObjectData.materialId;
 
  vs_normal = normalize(mat3(camera.view * perObjectData.modelMatrix) * inNormal);
+
  vs_position = vec3((camera.view * perObjectData.modelMatrix * vec4( inPosition, 1.0)).xyz);
 
 
@@ -156,6 +258,8 @@ vs_texCoord_2 = inTexCoord_2;
 #ifdef HAS_TEXCOORD_3
 vs_texCoord_3 = inTexCoord_3;
 #endif
+
+
 
 
 #ifdef HAS_TANGENT
@@ -177,7 +281,7 @@ vs_tangent = inTangent;
 
 
 
-static std::string pbrNormalBaseFragmentCode = R"(
+static const std::string pbrNormalBaseFragmentCode = R"(
 #version 460 core
 //#extension GL_ARB_gpu_shader_int64 : require //not supported by my graphics card
 #extension GL_ARB_bindless_texture : require
@@ -196,7 +300,7 @@ static std::string pbrNormalBaseFragmentCode = R"(
 
     // ---  Texture Coordinate Index Shifts (Bits 5-14) ---
     // These define the starting bit position for a 2-bit field (0, 1, 2 or 3) upto 3 texture coordinates.
-    // The actual value (0 or 1 ..3) will be extracted using bitwise operations.
+
 
     #define ALBEDO_TEXCOORD_SHIFT    5
     #define MR_TEXCOORD_SHIFT        8
@@ -232,7 +336,7 @@ struct PBRMetallicRoughnessMaterial
 	uvec2 occlusionTextureHandle;
 	uvec2 emissiveTextureHandle ;
 
-	uvec2 materialBitMask; 
+	uvec2 materialBitMask; //64 bit
 
 };
 
@@ -244,8 +348,29 @@ layout(std430, binding = 2) readonly buffer MaterialData
 
 
 
+struct Light
+{
+
+	vec4 position;//for point and spotlight
+	vec4 color;
+	vec4 direction; //for directional and spotlight
+	float intensity;// for all lights, units -> 
+
+	//uint8_t padding1[4]; //padding to align next member
+
+	int lightType;
 
 
+	//uint8_t padding2[4]; 
+
+};
+
+layout(binding = 3, std430) readonly buffer LightData 
+{
+
+ Light light[];
+
+};
 
 
 
@@ -271,10 +396,11 @@ float distributionGGX(vec3 N, vec3 H, float roughness)
     float NdotH2 = NdotH * NdotH;
 
     float denom = (NdotH2 * (a2 - 1.0) + 1.0);
-    denom = PI * denom * denom; // Assuming PI is defined somewhere
+    denom = PI * denom * denom; 
 
     return a2 / denom;
 }
+
 
 // Geometry (G) term: Schlick-GGX
 float geometrySchlickGGX(float NdotV, float roughness) 
@@ -284,6 +410,7 @@ float geometrySchlickGGX(float NdotV, float roughness)
 
     return NdotV / (NdotV * (1.0 - k) + k);
 }
+
 
 // Geometry term: Smith function (combining V and L components)
 float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) 
@@ -295,6 +422,7 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 
     return ggx1 * ggx2;
 }
+
 
 // Fresnel (F) term: Schlick approximation
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
@@ -327,15 +455,16 @@ in vec2 vs_texCoord_3;
 
 
 #ifdef HAS_TANGENT
-in vec4 vs_tangent;
+flat in vec4 vs_tangent;
 #endif
 
 
 
 flat in uint vs_materialId;
 
-in vec3 vs_normal;
-in vec3 vs_position;
+ in vec3 vs_position;
+ in vec3 vs_normal;
+
 flat in mat4 viewMatrix;
 
 
@@ -357,11 +486,25 @@ vec2 getTexCoord(int index)
     if (index == 3) return vs_texCoord_3;
     #endif
 
-    return vs_texCoord_0; 
+    return vec2(0.0, 0.0); // Default fallback
 }
 
 /*** OUT TO FRAMEBUFFER ***/
 out vec4 FragColor;
+
+
+vec4 toLinear(vec4 srgbColor) 
+{
+    vec3 linearRGB = pow(srgbColor.rgb, vec3(2.2));
+    return vec4(linearRGB, srgbColor.a);
+}
+
+vec4 toSRGB(vec4 linearColor) 
+{
+    vec3 srgb = pow(linearColor.rgb, vec3(1.0 / 2.2));
+    return vec4(srgb, linearColor.a);
+}
+
 
 
 void main()
@@ -407,7 +550,9 @@ const int emissiveTexCoordIndex  =  int((material.materialBitMask.x >> EMISSIVE_
 
         vec2 uv = getTexCoord(albedoTexCoordIndex);
         
-        baseColor *= texture2D(sampler2D(material.albedoTextureHandle), uv);
+        //baseColor *= texture2D(sampler2D(material.albedoTextureHandle), uv);
+        baseColor *= toLinear( texture2D(sampler2D(material.albedoTextureHandle), uv));
+
     }
     
 
@@ -487,8 +632,11 @@ finalNormal = vs_normal;
 
 
 
-const vec3 LIGHT_DIRECTION_WORLD = normalize(vec3(0.5, -0.8, 0.2));
-const vec3 LIGHT_COLOR = vec3(1.0, 1.0, 1.0); 
+const vec3 LIGHT_DIRECTION_WORLD = vec3(light[0].direction.xyz);// normalize(vec3(0.5, -0.8, 0.2));
+const vec3 LIGHT_COLOR = vec3(light[0].color.xyz);//vec3(1.0, 1.0, 1.0); 
+
+
+
 const vec3 CAMERA_POS = vec3(0.0, 0.0, 0.0); //camera always at origin in view space
 
 
@@ -539,16 +687,21 @@ vec3 diffuse = (kD * albedo) / PI;
 vec3 Lo = (diffuse + specular) * LIGHT_COLOR * NdotL;
 
 
-vec3 ambient = vec3(0.1) * albedo * occlusion;
+vec3 ambient = vec3(0.01) * albedo * occlusion;
 
 // Final color
 vec3 finalColor = ambient + Lo + emissive;
 
 
 
- FragColor = vec4(finalColor, baseColor.a);
+// FragColor = vec4(finalColor, baseColor.a);
 
+if(baseColor.a < 0.001)
+{
+discard;
+}
 
+FragColor = toSRGB(vec4(finalColor, baseColor.a));
 
 }
 
@@ -556,3 +709,11 @@ vec3 finalColor = ambient + Lo + emissive;
 
 
 )";
+
+
+
+
+
+
+
+

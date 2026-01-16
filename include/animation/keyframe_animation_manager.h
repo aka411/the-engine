@@ -1,24 +1,30 @@
 #pragma once
 #include <vector>
-#include "../components.h"
+#include "components.h"
 
-
-class KeyframeAnimationManager
+namespace TheEngine::Animation
 {
 
-private:
-	
 
-	std::vector<AnimationCPUComponent>  m_animationCPUComponents;
+	class KeyframeAnimationManager
+	{
 
-public:
-
-	KeyframeAnimationManager() = default;
-
-	AnimationCPUComponent& getAnimationCPUComponentFromId(KeyframeAnimationId keyframeAnimationId);
-
-	KeyframeAnimationId storeAnimationCPUComponent(AnimationCPUComponent&& animationCPUComponent);
+	private:
 
 
+		std::vector<AnimationCPUComponent>  m_animationCPUComponents;
 
-};
+	public:
+
+		KeyframeAnimationManager() = default;
+
+		AnimationCPUComponent& getAnimationCPUComponentFromId(KeyframeAnimationId keyframeAnimationId);
+
+		KeyframeAnimationId storeAnimationCPUComponent(AnimationCPUComponent&& animationCPUComponent);
+
+
+
+	};
+
+
+}

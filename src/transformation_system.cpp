@@ -6,7 +6,8 @@ namespace TheEngine
 {
 
 
-	TransformationSystem::TransformationSystem(ECS::ECSEngine& ecsEngine) : m_ecsEngine(ecsEngine)
+	TransformationSystem::TransformationSystem(ECS::ECSEngine& ecsEngine) :
+		m_ecsEngine(ecsEngine)
 	{
 
 

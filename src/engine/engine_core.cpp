@@ -1,4 +1,5 @@
 #include "../../include/engine/engine_core.h"
+#include <utils/file-decoders/image_decoder.h>
 
 
 namespace TheEngine
@@ -13,6 +14,7 @@ namespace TheEngine
 		m_gpuMaterialSystem(m_gpuBufferManager),
 		m_worldVertexBufferManagementSystem(m_gpuBufferManager),
 		m_animationSystem(m_ecsEngine, m_gpuBufferManager),
+		m_lightSystem(m_gpuBufferManager),
 
 		m_engineLoader(m_ecsEngine, m_gpuTextureManager,
 		m_gpuMaterialSystem, m_worldVertexBufferManagementSystem, m_animationSystem),
@@ -20,10 +22,18 @@ namespace TheEngine
 		m_transformationSystem(m_ecsEngine),
 
 		
-		m_uiCoreSystem(m_ecsEngine, m_gpuBufferManager),
-
-		m_renderSystem(m_ecsEngine, m_worldVertexBufferManagementSystem, m_gpuMaterialSystem, m_uiCoreSystem, m_animationSystem, m_gpuBufferManager),
+		m_uiCoreSystem(m_ecsEngine, m_gpuBufferManager, m_gpuTextureManager),
 		m_uiSystem(m_uiCoreSystem),
+		m_renderSystem(
+			m_ecsEngine,
+			m_worldVertexBufferManagementSystem,
+			m_gpuMaterialSystem,
+			m_uiCoreSystem,
+			m_uiSystem,
+			m_animationSystem,
+			m_gpuBufferManager,
+			m_lightSystem
+		),
 		m_uiBuilder(m_uiCoreSystem)
 	
 
@@ -61,10 +71,14 @@ namespace TheEngine
 		return m_platform;
 	}
 
-	void EngineCore::setViewportDimension(int width, int height)
+	void EngineCore::setViewportDimension(const int physicalWidth,const int physicalHeight,const int logicalWidth,const int logicalHeight)
 	{
-		m_renderSystem.setViewportDimension(width, height);
+		m_renderSystem.setViewportDimension(physicalWidth, physicalHeight);
+		m_renderSystem.setViewportDimensionForUI(logicalWidth, logicalHeight);
+
 	}
+
+
 
 	ECS::ECSEngine& EngineCore::getECSEngine()
 	{
@@ -122,5 +136,55 @@ namespace TheEngine
 
 		return m_uiCoreSystem;
 	}
+
+
+	void EngineCore::loadFont(const std::string& fontName, const std::string& fontJsonFilePath, const std::string& fontAtlasPath)
+	{
+
+		TheEngine::Utils::ImageDecoder imageDecoder(m_platform);
+		Utils::ImageData fontAtlasImageData = imageDecoder.decodeImageFromFile(fontAtlasPath);
+		TextureCreateInfo textureCreateInfo;
+		textureCreateInfo.type = TextureType::TEXTURE_2D;
+		textureCreateInfo.internalFormat = TextureInternalFormat::R8;
+		textureCreateInfo.textureSourcePixelFormat = TextureSourcePixelFormat::R;
+		textureCreateInfo.textureSourceComponentType = TextureSourceComponentType::UNSIGNED_BYTE;
+		textureCreateInfo.width = static_cast<uint32_t>(fontAtlasImageData.width);
+		textureCreateInfo.height = static_cast<uint32_t>(fontAtlasImageData.height);
+
+		//confirm the destructor of fontAtlasImageData will free the data after this function
+		textureCreateInfo.data = fontAtlasImageData.data.get();
+
+
+		
+		TextureInfo fontAtlasTextureInfo = m_gpuTextureManager.createNewTexture(textureCreateInfo);
+
+
+
+		FileData jsonData = m_platform.readFile(fontJsonFilePath);
+		
+		m_uiSystem.getUITextSystem().getUIFontManager().loadFont(fontName, jsonData, fontAtlasTextureInfo.resisdentHandle);
+
+
+
+	}
+
+
+	RenderSystem& EngineCore::getRenderSystem()
+	{
+
+		return m_renderSystem;
+	}
+
+
+
+	GPUMemoryUsageStats EngineCore::getGPUMemoryUsageStats() const
+	{
+		GPUMemoryUsageStats gpuMemoryUsageStats;
+		gpuMemoryUsageStats.gpuBufferMemoryUsage = m_gpuBufferManager.getTotalAllocatedGPUMemory();
+		gpuMemoryUsageStats.gpuTextureMemoryUsage = m_gpuTextureManager.getTotalAllocatedTextureMemory();
+		
+		return gpuMemoryUsageStats;
+	}
+
 
 }

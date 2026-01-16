@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
-#include "../low-level/rendering_system_data_types.h"
+#include "low-level/rendering_system_data_types.h"
 #include <vector>
-#include "tiny_gltf.h"
+#include "tinygltf/tiny_gltf_wrapper.h"
 
 struct AttributeExtractionResult
 {

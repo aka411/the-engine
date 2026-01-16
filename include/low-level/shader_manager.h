@@ -25,6 +25,8 @@ private:
 	std::unordered_map<VertexFormat, GLuint> m_vertexFormatToShaderProgram;
 	ShaderCodeGenerator m_shaderCodeGenerator;
 
+	GLuint m_depthPrePassShaderProgram;
+
 		GLuint compileShader(const std::string& vertShaderCode, const std::string& fragShaderCode);
 		void createNewShaderProgramForFormat(VertexFormat vertexFormat);
 public:
@@ -32,4 +34,8 @@ public:
 	ShaderManager();
 
 	GLuint getShaderProgramForVertexFormat(VertexFormat vertexFormat);
+
+
+	GLuint getDepthPrePassShaderProgram();
+
 };

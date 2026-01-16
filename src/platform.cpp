@@ -2,11 +2,13 @@
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_timer.h>
 
-#include <glad.h>
+#include "glad/glad.h"
 #include "rendering-engine/opengl-backend/opengl_utils.h"
 
 #include <iostream>
-
+#include <fstream>
+#include <cassert>
+#include <vector>
 
 namespace TheEngine
 {
@@ -44,7 +46,8 @@ namespace TheEngine
 
 	}
 
-	Platform::Platform() : m_keyStates{ false }
+	Platform::Platform() :
+		m_keyStates{ false }
 	{
 
 		//std::fill(std::begin(m_keyStates), std::end(m_keyStates), false);
@@ -59,8 +62,7 @@ namespace TheEngine
 
 		SDL_Init(SDL_INIT_VIDEO);
 
-
-
+	
 
 		switch (renderingAPI)
 		{
@@ -80,7 +82,7 @@ namespace TheEngine
 			);
 
 
-			//Bad
+		
 			SDL_GLContext  gl_context = SDL_GL_CreateContext(m_window);
 
 			SDL_GL_MakeCurrent(m_window, gl_context);
@@ -90,6 +92,13 @@ namespace TheEngine
 			gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 
 			enableOpenGLDebugging();
+			const GLubyte* rawString = glGetString(GL_RENDERER);
+
+			if (rawString != nullptr)
+			{
+				m_gpuVendor = reinterpret_cast<const char*>(rawString);
+			}
+		
 			break;
 		}
 
@@ -137,12 +146,16 @@ namespace TheEngine
 			case SDL_EVENT_WINDOW_RESIZED:
 			{
 				outEvent.engineEventType = EngineEventType::WINDOW_RESIZE;
-				float dps = SDL_GetWindowDisplayScale(m_window);
-				outEvent.windowResizeEvent.logicalPixelWidth = sdlEvent.window.data1;
-				outEvent.windowResizeEvent.logicalPixelHeight = sdlEvent.window.data2;
 
-				outEvent.windowResizeEvent.physicalPixelWidth = static_cast<int32_t>(sdlEvent.window.data1 * dps);
-				outEvent.windowResizeEvent.physicalPixelHeight = static_cast<int32_t>(sdlEvent.window.data2 * dps);
+				// Physical Pixels, not logical pixels, it has DPI scaling applied
+				outEvent.windowResizeEvent.physicalPixelWidth = sdlEvent.window.data1;
+				outEvent.windowResizeEvent.physicalPixelHeight = sdlEvent.window.data2;
+				
+				/// Logical pixels, 
+				int logicalW, logicalH;
+				SDL_GetWindowSize(m_window, &logicalW, &logicalH);
+				outEvent.windowResizeEvent.logicalPixelWidth = logicalW;
+				outEvent.windowResizeEvent.logicalPixelHeight = logicalH;
 				return true;
 			}
 			break;
@@ -200,15 +213,67 @@ namespace TheEngine
 			}
 
 
-			return false;
+			
 		}
+
+		return false;
 	}
+
+
 	float Platform::getTimeInSeconds() const
 	{
 
-		return SDL_GetTicks() / 1000.0f;
+		return SDL_GetTicks() / 1000.0f;//to seconds from ms
 
 	}
+
+
+	FileData Platform::readFile(const std::string& pathToFile)
+	{
+
+
+		FileData fileData;
+
+
+		std::ifstream file(pathToFile, std::ios::binary | std::ios::ate);
+		if (!file) return fileData;
+
+		const std::streamsize size = file.tellg();
+		file.seekg(0, std::ios::beg);
+
+		if (size > 0)
+		{
+
+			void* rawBuffer = std::malloc(static_cast<size_t>(size));
+
+			if (rawBuffer)
+			{
+				
+				if (file.read(reinterpret_cast<char*>(rawBuffer), size))
+				{
+					fileData.size = static_cast<size_t>(size);
+					fileData.data = {
+						//reinterpret cast?
+						static_cast<std::byte*>(rawBuffer),
+						[](void* p) { std::free(p); }
+					};
+				}
+				else
+				{
+					std::free(rawBuffer);
+					assert(false && "Failed to read file data.");
+				}
+			}
+		}
+		else
+		{
+			assert(false && "File is empty or could not determine size.");
+		}
+
+		return fileData;
+
+	}
+
 
 	void Platform::swapBuffers()
 	{
