@@ -10,8 +10,15 @@
 namespace TheEngine
 {
 
-	WorldRenderer::WorldRenderer(VertexFormatManager& vertexFormatManager, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, Animation::AnimationSystem& animationSystem, RenderCommandBufferManager& renderCommandBufferManager,
-		ObjectDataBufferManager& objectDataBufferManager)
+	WorldRenderer::WorldRenderer(
+		VertexFormatManager& vertexFormatManager,
+		WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem,
+		GPUMaterialSystem& gpuMaterialSystem,
+		Animation::AnimationSystem& animationSystem,
+		RenderCommandBufferManager& renderCommandBufferManager,
+		ObjectDataBufferManager& objectDataBufferManager,
+		LightSystem& lightSystem
+	)
 		:
 
 		m_worldVertexBufferManagementSystem(worldVertexBufferManagementSystem),
@@ -20,15 +27,17 @@ namespace TheEngine
 		m_gpuMaterialSystem(gpuMaterialSystem),
 		m_animationSystem(animationSystem),
 		m_renderCommandBufferManager(renderCommandBufferManager),
-		m_objectDataBufferManager(objectDataBufferManager)
+		m_objectDataBufferManager(objectDataBufferManager),
+		m_lightSystem(lightSystem)
 	{
 
 
 
 		m_cameraBufferInfo = m_gpuBufferManager.createMappedUBOBuffer(1024 * 10, nullptr);//10 KiB
 	
+		m_timeQuery = std::make_unique<GLuint>();
 
-
+		glGenQueries(1, m_timeQuery.get());
 	}
 
 
@@ -62,11 +71,12 @@ namespace TheEngine
 
 	void WorldRenderer::startFrame(TheEngine::Camera& camera)
 	{
-
+		glBeginQuery(GL_TIME_ELAPSED, *m_timeQuery.get());
 
 		//glFlush();
-	
-		glClearColor(0.2, 0.4, 0.5, 1.0);
+		//glFinish();
+		//RGB(135, 206, 235)
+		glClearColor(135.0f/255.0f, 206.0f / 255.0f, 235.0f / 255.0f,1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glEnable(GL_CULL_FACE);
 
@@ -108,11 +118,12 @@ namespace TheEngine
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_objectDataBufferManager.getGPUBufferForThisFrame().bufferHandle);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_animationSystem.getSkeletalAnimationManager().getJointMatrixSSBO().bufferHandle);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_gpuMaterialSystem.getGPUBufferInfo(MaterialType::PBR_METALLIC_ROUGHNESS).bufferHandle);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_lightSystem.getLightSSBO().bufferHandle);
 		
 	}
 
 
-	void WorldRenderer::IndirectDrawArray(const VertexFormat vertexFormat, const size_t byteOffset, const size_t count)
+	void WorldRenderer::indirectDrawArray(const VertexFormat vertexFormat, const size_t byteOffset, const size_t count)
 	{
 
 
@@ -142,7 +153,7 @@ namespace TheEngine
 
 
 
-	void WorldRenderer::IndirectDrawIndexed(const VertexFormat vertexFormat, const IndexType indexType, const size_t byteOffset, const size_t count)
+	void WorldRenderer::indirectDrawIndexed(const VertexFormat vertexFormat, const IndexType indexType, const size_t byteOffset, const size_t count)
 	{
 
 		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_renderCommandBufferManager.getIndexedGPUBufferForThisFrame().bufferHandle);
@@ -174,12 +185,28 @@ namespace TheEngine
 
 	void WorldRenderer::endFrame()
 	{
+		glEndQuery(GL_TIME_ELAPSED);
 
 		m_renderCommandBufferManager.nextFrame();
 		m_objectDataBufferManager.nextFrame();
 
 	}
 
+	float WorldRenderer::getGPUTimeForLastFrameMS()
+	{
+		//yeah not so clean
+		GLint done = 0;
+		glGetQueryObjectiv(*m_timeQuery.get(), GL_QUERY_RESULT_AVAILABLE, &done);
+
+		//if (done)
+		//{
+			GLuint64 elapsedNanoseconds;
+			glGetQueryObjectui64v(*m_timeQuery.get(), GL_QUERY_RESULT, &elapsedNanoseconds);
+			m_gpuTimeMS = elapsedNanoseconds / 1000000.0f;// to milliseconds
+		//}
+
+		return m_gpuTimeMS;
+	}
 
 
 

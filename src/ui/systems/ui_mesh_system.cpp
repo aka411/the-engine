@@ -1,6 +1,6 @@
 #include "ui/systems/ui_mesh_system.h"
-#include "ui/utils/geometry_generator.h"
 #include "ui/core/ui_component.h"
+#include <ui/utils/ui_geometry_generator.h>
 
 
 
@@ -22,7 +22,7 @@ namespace TheEngine::UI
 	void UIMeshSystem::generateUIMeshesForDirty()
 	{
 		ECS::Query uiMeshQuery = m_ecsEngine.getQuery<UIRenderMeshComponent, UIRectDimensionsComponent, UIMaterialComponent>();
-
+		
 
 
 		for (auto& chunkArrayView : uiMeshQuery.getChunkArrayViews())
@@ -52,15 +52,15 @@ namespace TheEngine::UI
 
 
 
-				GeometryGenerator::MeshData quadMeshData = GeometryGenerator::getColouredRectangle(width, height, uiMaterialComponentArray[i].color);
-
+				UIGeometryGenerator::MeshData mesh = UIGeometryGenerator::generateRectangle(width, height, {0,0,0}, uiMaterialComponentArray[i].color);
+		
 				const auto bufferType = uRenderMeshComponentArray[i].bufferType;
 				const auto vertexFormat = uRenderMeshComponentArray[i].vertexFormat;
 
-				size_t offset = m_uiCoreSystem.getUIVertexBufferManagementSystem().uploadVertexData(vertexFormat, bufferType, quadMeshData.data.data(), quadMeshData.data.size());
+				size_t offset = m_uiCoreSystem.getUIVertexBufferManagementSystem().uploadVertexData(vertexFormat, bufferType, mesh.data.data(), mesh.data.size());
 
 				uRenderMeshComponentArray[i].vertexBufferOffset = offset;
-				uRenderMeshComponentArray[i].vertexCount = quadMeshData.numOfVertex/*Not in Bytes*/;
+				uRenderMeshComponentArray[i].vertexCount = mesh.numOfVertex/*Not in Bytes*/;
 				uRenderMeshComponentArray[i].isDirty = false;
 
 			}

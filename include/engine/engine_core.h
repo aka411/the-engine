@@ -70,6 +70,9 @@ namespace TheEngine
 		ECS::NullFatalErrorHandler m_nullFatalErrorHandler;
 
 
+		/*Light System*/
+		LightSystem m_lightSystem;
+
 		//Need to rethink its ownership model
 		Platform& m_platform;
 
@@ -107,6 +110,9 @@ namespace TheEngine
 		void loadFont(const std::string& fontName, const std::string& fontJsonFilePath, const std::string& fontAtlasPath);
 
 
+		/**Render System**/
+
+		RenderSystem& getRenderSystem();
 
 
 		/**** GPU MEMORY USAGE STATS *****/

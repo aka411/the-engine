@@ -43,11 +43,23 @@ namespace TheEngine
 		RenderCommandBufferManager m_renderCommandBufferManager;
 		ObjectDataBufferManager m_objectDataBufferManager;
 
+		LightSystem& m_lightSystem;
 
+
+		int m_numOfDrawCallsInLastFrame = 0;
 
 	public:
 
-		RenderSystem(ECS::ECSEngine& ecsEngine, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, GPUMaterialSystem& gpuMaterialSystem, UI::UICoreSystem& uiCoreSystem,UI::UISystem& uiSystem, Animation::AnimationSystem& animationSystem, Memory::GPUBufferManager& gpuBufferManager);
+		RenderSystem(
+			ECS::ECSEngine& ecsEngine,
+			WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem,
+			GPUMaterialSystem& gpuMaterialSystem,
+			UI::UICoreSystem& uiCoreSystem,
+			UI::UISystem& uiSystem,
+			Animation::AnimationSystem& animationSystem,
+			Memory::GPUBufferManager& gpuBufferManager,
+			LightSystem& lightSystem
+		);
 
 		void setViewportDimension(int width, int height);
 		void setViewportDimensionForUI(int width, int height);
@@ -55,6 +67,11 @@ namespace TheEngine
 		void render(TheEngine::Camera& camera);
 
 		void renderUI();
+
+
+		float getGPUTimeForLastFrameMS();
+
+		int getNumOfDrawCalls() const;
 	};
 
 }

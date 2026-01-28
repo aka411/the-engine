@@ -1,238 +1,309 @@
 #include "ui/utils/geometry_generator.h"
-#include <cstring>
+
+    
 
 
 
-
-
-
-
-GeometryGenerator::MeshData GeometryGenerator::getRectangle(const float length, const float breadth)
+std::array<glm::vec2, 6> GeometryGenerator::generateLine(const glm::vec2& lineVector, const float lineWidth)
 {
 
-	//length along x axis
-	//breadth along z axis
-	const glm::vec4 unitSquare[6] =
-	{
-		{0,0,0,1},
-		{1,1,0,1},
-		{0,1,0,1},
+	/*        ^Normal
+	          |
+	          |
+	          |     lineVector
+	----------|------------>
+	
+	*/
 
-		{0,0,0,1},
-		{1,0,0,1},
-		{1,1,0,1}
-	};
+	const glm::vec2 normal = glm::normalize(glm::vec2(-lineVector.y, lineVector.x));//unit normal
 
-	MeshData meshData;
-	meshData.numOfVertex = 6;
-	meshData.data.resize(sizeof(glm::vec4) * meshData.numOfVertex);
+	/*
+	A---------------------B      BC = AD = width
+	|                     |       
+   -------------------------> lineVector     
+    |                     |        
+	D---------------------C 
+	
+	*/
 
-	//we need to scale the unit square to the desired length and breadth
+	const float lineWidthHalf = lineWidth / 2.0f;
 
-	glm::vec4* vertexDataPtr = reinterpret_cast<glm::vec4*>(meshData.data.data());
-	for (size_t i = 0; i < meshData.numOfVertex; ++i)
-	{
-		vertexDataPtr[i] = glm::vec4(unitSquare[i].x * length, unitSquare[i].y * breadth, unitSquare[i].z,1.0f );
-	}
+	const glm::vec2 a = (lineWidthHalf * normal);
+	const glm::vec2 d = (lineWidthHalf * -normal);
+
+	const glm::vec2 b = lineVector + (lineWidthHalf * normal);
+	const glm::vec2 c = lineVector + (lineWidthHalf * -normal);
 
 
-	return meshData;
 
-}
 
-GeometryGenerator::MeshData GeometryGenerator::getRectangleWithOffset(const float length, const float breadth, const glm::vec3 offset)
-{
+	const std::array<glm::vec2, 6> rectangle{a, d, b, d, c, b};
+
+	
 	
 
+	return rectangle;
 
-	//length along x axis
-	//breadth along z axis
-	const glm::vec4 unitSquare[6] =
+}
+
+std::array<glm::vec2, 6> GeometryGenerator::generateRectangle(const float width, const float height)
+{
+
+	//Anti-ClockWise Winding
+	const glm::vec2 unitSquare[6] =
 	{
-		{0,0,0,1},
-		{1,1,0,1},
-		{0,1,0,1},
 
-		{0,0,0,1},
-		{1,0,0,1},
-		{1,1,0,1}
+		/*
+		_______
+		|    /
+		|   /
+		|  /
+		| /
+		|/
+		*/
+
+		{0,0},
+		{1,1}, 
+		{0,1},
+
+
+
+
+		/*
+	
+		    /|
+		   / |
+		  /  |
+		 /   |
+		/    |
+	    ------
+		*/
+
+		{0,0},
+		{1,0},
+		{1,1}
 	};
 
-	MeshData meshData;
-	meshData.numOfVertex = 6;
-	meshData.data.resize(sizeof(glm::vec4) * meshData.numOfVertex);
-
-	//we need to scale the unit square to the desired length and breadth
-
-
-	std::vector<glm::vec4> resultVector(6);
-
-	for (size_t i = 0; i < meshData.numOfVertex; ++i)
+	std::array<glm::vec2, 6> rectangle;
+	for (size_t i = 0; i < 6; ++i)
 	{
-		resultVector[i] = glm::vec4(offset,0.0f) + glm::vec4(unitSquare[i].x * length, unitSquare[i].y * breadth, unitSquare[i].z,1.0f);
-	
+		rectangle[i] = { unitSquare[i].x * width, unitSquare[i].y * height };
+
 	}
 
-	memcpy(meshData.data.data(), resultVector.data(), sizeof(glm::vec4) * meshData.numOfVertex);
-
-	return meshData;
-
+	return rectangle;
 
 }
 
 
 
-GeometryGenerator::MeshData GeometryGenerator::getCuboidMesh(const float legnth, const float breadth, const float height)
-{
 
-	const glm::vec3 unitCube[36] =
+
+
+GeometryGenerator::ShapeTrapezium GeometryGenerator::generateTrapezium(const float pointA, const float pointB, const float width)
+{
+	
+	
+	/* 
+	     B
+	   . |
+	 .   |   winding order : anti-clockwise
+	A....|
+	|    |
+	|    |
+	|    |
+	------
+
+	*/
+
+
+
+
+	const float maxHeight = (pointA >= pointB) ? pointA : pointB;
+	const float minHeight = (pointA <= pointB) ? pointA : pointB;
+
+
+	/* 
+	    ^
+		|
+   A\   |   /B
+	 \  |  /
+	  \ | /
+	  B\|/A
+
+	*/
+
+	const float quadrant = (pointA <= pointB) ? 1.0 : -1.0f;
+	const float lineThickness = 2.0;
+	//there is issue like A > B or B >A
+	std::array<glm::vec2, 6> slopedRectangleLine = generateLine(glm::vec2{ width, quadrant * (maxHeight-minHeight)}, lineThickness);
+
+	if (quadrant < 0)
 	{
-		//front face
-		{0,0,0},
-		{1,1,0},
-		{0,1,0},
-		{0,0,0},
-		{1,0,0},
-		{1,1,0},
-		//back face
-		{1,0,1},
-		{0,1,1},
-		{1,1,1},
-		{1,0,1},
-		{0,0,1},
-		{0,1,1},
-		//left face
-		{0,0,1},
-		{0,1,0},
-		{0,1,1},
-		{0,0,1},
-		{0,0,0},
-		{0,1,0},
-		//right face
-		{1,0,0},
-		{1,1,1},
-		{1,1,0},
-		{1,0,0},
-		{1,0,1},
-		{1,1,1},
-		//top face
-		{0,1,0},
-		{1,1,1},
-		{0,1,1},
-		{0,1,0},
-		{1,1,0},
-		{1,1,1},
-		//bottom face
-		{0,0,1},
-		{1,0,0},
-		{0,0,0},
-		{0,0,1},
-		{1,0,1},
-		{1,0,0}
-
-	};
-
-
-
-
-	return MeshData();
-
-
-}
-
-
-
-GeometryGenerator::MeshData GeometryGenerator::getColouredRectangle(const float length, const float breadth, glm::vec4 colour)
-{
-
-		//length along x axis
-		//breadth along z axis
-		const glm::vec4 unitSquare[6] =
+		for (int i = 0; i < 6; ++i)
 		{
-			{0,0,0,1},
-			{1,1,0,1},
-			{0,1,0,1},
-
-			{0,0,0,1},
-			{1,0,0,1},
-			{1,1,0,1}
-		};
-
-		struct Vertex
-		{
-			glm::vec4 position;
-			glm::vec4 colour;
-			
-		};
-
-		MeshData meshData;
-		meshData.numOfVertex = 6;
-		meshData.data.resize(sizeof(Vertex) * meshData.numOfVertex);
-
-		//we need to scale the unit square to the desired length and breadth
-
-		Vertex* vertexDataPtr = reinterpret_cast<Vertex*>(meshData.data.data());
-		for (size_t i = 0; i < meshData.numOfVertex; ++i)
-		{
-			vertexDataPtr[i].position= glm::vec4(unitSquare[i].x * length, unitSquare[i].y * breadth, unitSquare[i].z, 1.0f);
-			vertexDataPtr[i].colour = colour;
+			slopedRectangleLine[i].y = slopedRectangleLine[i].y + (maxHeight - minHeight);
 		}
+	}
+
+	const std::array<glm::vec2, 6> baseRectangle = generateRectangle(width, minHeight);
 
 
-		return meshData;
 
+
+	//Calculation for middle triangle
+	float h = maxHeight - minHeight;//what if its zero
 	
+	glm::vec2 a = { 0,0 };
+	glm::vec2 b = { width,0 };
+
+	if (abs(pointA) > abs(pointB))
+	{
+		a = { 0,h };
+	}
+	else
+	{
+		b = { h,width };
+	}
+
+	//Middle triangle
+	std::array<glm::vec2, 3> triangle;
+
+	triangle[0] = glm::vec2{ 0.0f, 0.0f };
+
+	triangle[1] = b;
+	triangle[2] = a;
+
+
+	//Now correct offsets
+	//for Middle Triangle
+	for (int i = 0; i < 3; ++i)
+	{
+		triangle[i].y = triangle[i].y + minHeight;
+	}
+
+	//for Sloped Rectangle (Line)
+	for (int i = 0; i < 6; ++i)
+	{
+		slopedRectangleLine[i].y = slopedRectangleLine[i].y + minHeight;
+	}
+
+	ShapeTrapezium shapeTrapezium;
+	shapeTrapezium.baseRectangle = baseRectangle;
+	shapeTrapezium.triangle = triangle;
+	shapeTrapezium.slopedRectangleLine = slopedRectangleLine;
+
+	return shapeTrapezium;
+
+
 }
 
 
 
-GeometryGenerator::MeshData GeometryGenerator::getColouredRectangleWithOffset(const float length, const float breadth, const glm::vec3 offset, const glm::vec4 colour)
-{
 
-	//length along x axis
-	//breadth along z axis
-	const glm::vec4 unitSquare[6] =
+
+
+/*
+GeometryGenerator::MeshData GeometryGenerator::getColouredTrapeziumWithOffset(const float pointA, const float pointB, const float width, const glm::vec3 startOffset, const glm::vec4& lineColour, const glm::vec4& baseColour)
+{ /*      B
+       . |
+	 .   |   winding order : anti-clockwise
+    A....|
+	|    |
+    |    |
+    |    |
+	------
+
+	
+
+
+
+	const float maxHeight = (pointA >= pointB) ? pointA : pointB;
+	const float minHeight = (pointA <= pointB) ? pointA : pointB;
+
+
+	/*  ^
+	    |
+   A\   |   /B
+	 \  |  /
+	  \ | /
+	  B\|/A
+	
+	
+
+	const float quadrant = (pointA <= pointB) ? 1.0 : -1.0f;
+	const float lineThickness = 3;
+	//there is issue like A > B or B >A 
+    std::array<glm::vec2, 6> slopedRectangleLine = generateLine(glm::vec2{ width, quadrant * (maxHeight)}, lineThickness);
+
+
+
+	const std::array<glm::vec2, 6> baseRectangle = generateRectangle(minHeight, width);
+
+
+
+
+	//Calculation for middle triangle
+	float h = maxHeight - minHeight;//what if its zero
+	float w = 0;
+	
+	if (pointA > pointB)
 	{
-		{0,0,0,1},
-		{1,1,0,1},
-		{0,1,0,1},
-
-		{0,0,0,1},
-		{1,0,0,1},
-		{1,1,0,1}
-	};
-
-	struct Vertex
+		w = 0;
+	}
+	else
 	{
-		glm::vec4 position;
-		glm::vec4 colour;
+		w = width;
+	}
 
-	};
+	//Middle triangle
+	glm::vec2 triangle[3];
+	triangle[0] = glm::vec2{ 0.0f, 0.0f };
+	triangle[1] = glm::vec2{ 0.0f, width };
+	triangle[2] = glm::vec2{ h, w };
 
-	MeshData meshData;
-	meshData.numOfVertex = 6;
-	meshData.data.resize(sizeof(Vertex) * meshData.numOfVertex);
 
-	//we need to scale the unit square to the desired length and breadth
-
-	Vertex* vertexDataPtr = reinterpret_cast<Vertex*>(meshData.data.data());
-	for (size_t i = 0; i < meshData.numOfVertex; ++i)
+	//Now correct offsets
+	//for Middle Triangle
+	for (int i = 0; i < 3; ++i)
 	{
-		vertexDataPtr[i].position = glm::vec4(offset, 0.0f) + glm::vec4(unitSquare[i].x * length, unitSquare[i].y * breadth, unitSquare[i].z, 1.0f);
-		vertexDataPtr[i].colour = colour;
+		triangle[i].y = triangle[i].y + minHeight;
+    }
+
+	//for Sloped Rectangle (Line)
+	for (int i = 0; i < 6; ++i)
+	{
+		slopedRectangleLine[i].y = slopedRectangleLine[i].y + minHeight;
 	}
 
 
-	return meshData;
+
+	//combine all
+
+	std::array<glm::vec2, 15> trapezium;
+
+	for (int i = 0; i < 6; ++i)
+	{
+		trapezium[i] = baseRectangle[i];
+	}
+
+	for (int i = 6; i < 6+3; ++i)//till 9
+	{
+		trapezium[i] = triangle[i-6];
+	}
+
+	for (int i = 9; i < 9 + 6; ++i)//till 15
+	{
+		trapezium[i] = slopedRectangleLine[i-9];
+	}
 
 
-}
 
-
-
-
-GeometryGenerator::MeshData GeometryGenerator::getColouredCuboidMesh(const float legnth, const float breadth, const float height, glm::vec4 colour)
-{
+	//return trapezium;
 	return MeshData();
+
 }
+*/
+
+
 

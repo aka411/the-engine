@@ -5,6 +5,107 @@
 //yup i know hardcoding shader code in header files is not a good idea, i will change this later
 
 
+//we have design issues regarding this , particularly regarding boned vertex data
+static const std::string preDepthPassVertexCode = R"(
+
+#version 460 core
+
+layout(location = 0) in vec3 inPosition;
+
+
+
+
+/****PER FRAME DATA****/
+layout(std140,binding = 0 ) uniform Camera
+{
+ mat4 projection;
+ mat4 view;
+
+} camera;
+
+
+
+
+
+struct ObjectData
+{
+ mat4 modelMatrix;
+ uint materialId;
+ uint boneId;
+ vec2 padding;
+};
+
+
+
+
+// readonly SSBO containing the data
+layout(binding = 0, std430) readonly buffer objectDataSSBO 
+{
+
+ ObjectData objectData[];
+
+};
+
+
+
+
+
+void main()
+{
+
+ObjectData perObjectData = objectData[gl_BaseInstance];
+
+
+
+vec4 position = vec4(inPosition, 1.0);
+
+#ifdef HAS_JOINTS
+
+const uint boneOffset = perObjectData.boneId;
+
+    mat4 boneTransform = 
+        inWeights.x * joints[boneOffset+inJoints.x] +
+        inWeights.y * joints[boneOffset+inJoints.y] +
+        inWeights.z * joints[boneOffset+inJoints.z] +
+        inWeights.w * joints[boneOffset+inJoints.w];
+
+
+    position = boneTransform * position;
+#endif
+
+
+
+ 
+ gl_Position = camera.projection * camera.view * perObjectData.modelMatrix * position;
+
+
+
+
+
+}
+
+
+
+)";
+
+
+
+
+
+static const std::string preDepthPassFragmentCode = R"(
+#version 460 core
+
+
+void main()
+{
+
+return;
+}
+
+
+
+
+)";
 
 
 
@@ -247,8 +348,29 @@ layout(std430, binding = 2) readonly buffer MaterialData
 
 
 
+struct Light
+{
+
+	vec4 position;//for point and spotlight
+	vec4 color;
+	vec4 direction; //for directional and spotlight
+	float intensity;// for all lights, units -> 
+
+	//uint8_t padding1[4]; //padding to align next member
+
+	int lightType;
 
 
+	//uint8_t padding2[4]; 
+
+};
+
+layout(binding = 3, std430) readonly buffer LightData 
+{
+
+ Light light[];
+
+};
 
 
 
@@ -430,6 +552,7 @@ const int emissiveTexCoordIndex  =  int((material.materialBitMask.x >> EMISSIVE_
         
         //baseColor *= texture2D(sampler2D(material.albedoTextureHandle), uv);
         baseColor *= toLinear( texture2D(sampler2D(material.albedoTextureHandle), uv));
+
     }
     
 
@@ -509,8 +632,11 @@ finalNormal = vs_normal;
 
 
 
-const vec3 LIGHT_DIRECTION_WORLD = normalize(vec3(0.5, -0.8, 0.2));
-const vec3 LIGHT_COLOR = vec3(1.0, 1.0, 1.0); 
+const vec3 LIGHT_DIRECTION_WORLD = vec3(light[0].direction.xyz);// normalize(vec3(0.5, -0.8, 0.2));
+const vec3 LIGHT_COLOR = vec3(light[0].color.xyz);//vec3(1.0, 1.0, 1.0); 
+
+
+
 const vec3 CAMERA_POS = vec3(0.0, 0.0, 0.0); //camera always at origin in view space
 
 
@@ -569,6 +695,11 @@ vec3 finalColor = ambient + Lo + emissive;
 
 
 // FragColor = vec4(finalColor, baseColor.a);
+
+if(baseColor.a < 0.001)
+{
+discard;
+}
 
 FragColor = toSRGB(vec4(finalColor, baseColor.a));
 

@@ -57,7 +57,7 @@ namespace TheEngine
 	TextureInfo GPUTextureManager::createNewTexture(const TextureCreateInfo& textureCreateInfo)
 	{
 
-
+		//ToDo : add methods for 3D also
 
 		GLenum glInternalFormat = OpenGLBackend::toGLEnum(textureCreateInfo.internalFormat);
 		GLenum glSourceFormat = OpenGLBackend::toGLEnum(textureCreateInfo.textureSourcePixelFormat);
@@ -114,6 +114,10 @@ namespace TheEngine
 		glGenerateMipmap(target);
 		//}
 
+		//void glGenerateMipmap(GLenum target);
+
+		//void glGenerateTextureMipmap(GLuint texture);
+
 
 
 
@@ -122,7 +126,7 @@ namespace TheEngine
 		glTexParameteri(target, GL_TEXTURE_WRAP_S, OpenGLBackend::toGLEnum(samplerSettings.wrapS));
 		glTexParameteri(target, GL_TEXTURE_WRAP_T, OpenGLBackend::toGLEnum(samplerSettings.wrapT));
 
-
+		
 
 
 
@@ -166,9 +170,65 @@ namespace TheEngine
 
 
 
+		GLenum glInternalFormat = OpenGLBackend::toGLEnum(bufferTextureCreateInfo.textureInternalFormat);
+
+		
+		
+
+		GLenum target = OpenGLBackend::toGLEnum(bufferTextureCreateInfo.type);
+
+		//SamplerSetting samplerSettings = bufferTextureCreateInfo.
 
 
-		return TextureInfo();
+		GLuint glTextureId;
+		glCreateTextures(target, 1, &glTextureId);
+		glBindTexture(target, glTextureId);
+
+
+	
+		glTexStorage2D(
+			GL_TEXTURE_2D,
+			1, 
+			glInternalFormat,
+			bufferTextureCreateInfo.width, 
+			bufferTextureCreateInfo.height
+		);
+
+
+
+
+
+		GLuint64 residentHandle = 0;
+
+
+		residentHandle = glGetTextureHandleARB(glTextureId);
+
+		assert(residentHandle != 0);
+		glMakeTextureHandleResidentARB(residentHandle);
+
+		//std::cout<<GLErrorToString(glGetError())<<std::endl;
+
+
+	//m_allotedGLTextureIDs.push_back(glTextureId); // For destruction tracking
+
+
+
+
+		TextureInfo info;
+		//info.textureHandle = glTextureId;
+		info.resisdentHandle = residentHandle;
+		info.type = bufferTextureCreateInfo.type;
+		info.width = bufferTextureCreateInfo.width;
+		info.height = bufferTextureCreateInfo.height;
+		info.internalFormat = bufferTextureCreateInfo.textureInternalFormat;
+		//info.samplerSettings = samplerSettings;
+		info.hasMipmaps = false;
+
+
+		m_residentHandleToTextureApiHandle.emplace(residentHandle, glTextureId);// info);
+		m_totalAllocatedTextureMemory += bufferTextureCreateInfo.width * bufferTextureCreateInfo.height * OpenGLBackend::getBytesPerPixel(bufferTextureCreateInfo.textureInternalFormat);
+
+		return info;
 	}
 
 

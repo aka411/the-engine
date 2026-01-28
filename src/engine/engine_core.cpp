@@ -14,6 +14,7 @@ namespace TheEngine
 		m_gpuMaterialSystem(m_gpuBufferManager),
 		m_worldVertexBufferManagementSystem(m_gpuBufferManager),
 		m_animationSystem(m_ecsEngine, m_gpuBufferManager),
+		m_lightSystem(m_gpuBufferManager),
 
 		m_engineLoader(m_ecsEngine, m_gpuTextureManager,
 		m_gpuMaterialSystem, m_worldVertexBufferManagementSystem, m_animationSystem),
@@ -23,7 +24,16 @@ namespace TheEngine
 		
 		m_uiCoreSystem(m_ecsEngine, m_gpuBufferManager, m_gpuTextureManager),
 		m_uiSystem(m_uiCoreSystem),
-		m_renderSystem(m_ecsEngine, m_worldVertexBufferManagementSystem, m_gpuMaterialSystem, m_uiCoreSystem, m_uiSystem, m_animationSystem, m_gpuBufferManager),
+		m_renderSystem(
+			m_ecsEngine,
+			m_worldVertexBufferManagementSystem,
+			m_gpuMaterialSystem,
+			m_uiCoreSystem,
+			m_uiSystem,
+			m_animationSystem,
+			m_gpuBufferManager,
+			m_lightSystem
+		),
 		m_uiBuilder(m_uiCoreSystem)
 	
 
@@ -156,6 +166,13 @@ namespace TheEngine
 
 
 
+	}
+
+
+	RenderSystem& EngineCore::getRenderSystem()
+	{
+
+		return m_renderSystem;
 	}
 
 
