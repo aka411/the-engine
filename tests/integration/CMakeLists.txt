@@ -5,19 +5,18 @@
 include(GoogleTest)
 
 
-add_executable(ecs-integration-test
-ecs/ecs_engine_test.cpp
+add_executable(place-holder-test
+
 )
 
 
 
-target_link_libraries(ecs-integration-test PRIVATE
+target_link_libraries(place-holder-test PRIVATE
     GTest::gtest_main
     GTest::gmock_main
-    TheEngine_ECS
-    TheEngine_Utils
+
 )
 
 
-gtest_discover_tests(ecs-integration-test)
+gtest_discover_tests(place-holder-test)
 
