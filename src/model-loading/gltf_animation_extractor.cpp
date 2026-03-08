@@ -265,8 +265,9 @@ namespace TheEngine
 			return boneAnimationData;
 		}
 
-		if (!(bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteLength == boneAnimationData.inverseBindMatrices.size() * sizeof(glm::mat4)))
+		if (!(bufferViews[accessors[tinygltfModel.skins[0].inverseBindMatrices].bufferView].byteLength == tinygltfModel.skins[0].joints.size() * sizeof(glm::mat4)))
 		{
+			assert(false && "GTLF Skin animation data mismatch detected");
 			boneAnimationData.isSkinned = false;
 			return boneAnimationData;
 		}

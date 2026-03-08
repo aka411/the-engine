@@ -345,6 +345,7 @@ namespace TheEngine
 
 		std::vector<IntermediateTexture> intermediateTextures;
 		intermediateTextures.reserve(tinygltfModel.textures.size());
+
 		for (auto& tinygltfTexture : tinygltfModel.textures)
 		{
 			IntermediateTexture intermediateTexture;
@@ -413,12 +414,12 @@ namespace TheEngine
 			const bool occulsionTexturePresent = texturePresent(occlusionTextureIndex); 
 			const bool emissiveTexturePresent = texturePresent(emissiveTextureIndex);
 
-			// Add checks for other potential textures if needed (e.g., clearcoat, transmission)
+	
 
 			intermediatePBRMetallicRoughnessMaterial.albedoTextureIndex = (albedoTexturePresent) ? baseColorTextureIndex : -1;
 			intermediatePBRMetallicRoughnessMaterial.metallicRoughnessTextureIndex = (metallicRoughnessPresent) ? metallicRoughnessTextureIndex : -1;
 			intermediatePBRMetallicRoughnessMaterial.normalTextureIndex = (normalTexturePresent) ? normalTextureIndex : -1;
-			intermediatePBRMetallicRoughnessMaterial.occlusionTextureIndex = (occulsionTexturePresent) ? occlusionTextureIndex : -1; // Corrected spelling and used checked variable
+			intermediatePBRMetallicRoughnessMaterial.occlusionTextureIndex = (occulsionTexturePresent) ? occlusionTextureIndex : -1; 
 			intermediatePBRMetallicRoughnessMaterial.emissiveTextureIndex = (emissiveTexturePresent) ? emissiveTextureIndex : -1;
 
 
