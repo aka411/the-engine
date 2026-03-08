@@ -563,7 +563,7 @@ const int emissiveTexCoordIndex  =  int((material.materialBitMask.x >> EMISSIVE_
    {
         vec2 uv = getTexCoord(mrTexCoordIndex);
         vec4 mrSample = texture2D(sampler2D(material.metallicRoughnessTextureHandle), uv);
-        
+
         // Gltf packs metallic into B and roughness into G channel
         metallic *= mrSample.b;
         roughness *= mrSample.g;

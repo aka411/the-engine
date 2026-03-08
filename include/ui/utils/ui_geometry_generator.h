@@ -29,7 +29,9 @@ public:
 		const float width,
 		const glm::vec3& startOffset,
 		const glm::vec4& lineColour,
-		const glm::vec4& baseColour);
+		const glm::vec4& baseColour,
+		bool yAxisUp
+	);
 
 
 
