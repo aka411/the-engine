@@ -6,7 +6,6 @@
 #include "low-level/rendering_system_data_types.h"
 #include "low-level/gpu_texture_manager.h"
 #include "glad/glad.h"
-#include <iostream>
 #include "rendering-engine/opengl-backend/opengl_texture_helper.h"
 
 
@@ -39,26 +38,13 @@ namespace TheEngine
 
 	}
 
-	static std::string GLErrorToString(GLenum error)
-	{
-		switch (error)
-		{
-		case GL_INVALID_ENUM: return "INVALID_ENUM";
-		case GL_INVALID_VALUE: return "INVALID_VALUE";
-		case GL_INVALID_OPERATION: return "INVALID_OPERATION";
-		case GL_STACK_OVERFLOW: return "STACK_OVERFLOW";
-		case GL_OUT_OF_MEMORY: return "OUT_OF_MEMORY";
-		case 0: return "NO_ERROR";
-		default: return "UNKNOWN_ERROR";
-		}
-	}
 
 
 	TextureInfo GPUTextureManager::createNewTexture(const TextureCreateInfo& textureCreateInfo)
 	{
 
 		//ToDo : add methods for 3D also
-
+		//Issue : We generate sampler per texture , we later implement method to reuse sampler
 		GLenum glInternalFormat = OpenGLBackend::toGLEnum(textureCreateInfo.internalFormat);
 		GLenum glSourceFormat = OpenGLBackend::toGLEnum(textureCreateInfo.textureSourcePixelFormat);
 		GLenum glSourceType = OpenGLBackend::toGLEnum(textureCreateInfo.textureSourceComponentType);
@@ -66,88 +52,88 @@ namespace TheEngine
 
 		GLenum target = OpenGLBackend::toGLEnum(textureCreateInfo.type);
 
-		SamplerSetting samplerSettings = textureCreateInfo.samplerSetting;
+		const SamplerSetting& samplerSettings = textureCreateInfo.samplerSetting;
 
 
 		GLuint glTextureId;
 		glCreateTextures(GL_TEXTURE_2D, 1, &glTextureId);
-		glBindTexture(target, glTextureId);
+	
+
+		GLuint samplerId;
+		glCreateSamplers(1, &samplerId);
+
+		glSamplerParameteri(samplerId, GL_TEXTURE_MIN_FILTER, OpenGLBackend::toGLEnum(textureCreateInfo.samplerSetting.minFilter));
+		glSamplerParameteri(samplerId, GL_TEXTURE_MAG_FILTER, OpenGLBackend::toGLEnum(textureCreateInfo.samplerSetting.magFilter));
+		glSamplerParameteri(samplerId, GL_TEXTURE_WRAP_S, OpenGLBackend::toGLEnum(textureCreateInfo.samplerSetting.wrapS));
+		glSamplerParameteri(samplerId, GL_TEXTURE_WRAP_T, OpenGLBackend::toGLEnum(textureCreateInfo.samplerSetting.wrapT));
 
 
 		/*
-		// Special handling for 1-channel textures (like R/Luminance) to prevent padding issues
-		if (textureCreateInfo.textureSourcePixelFormat == TextureSourcePixelFormat::R)
-		{
-			// OpenGL defaults to 4-byte alignment; this forces 1-byte alignment for R-only data.
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		}
-		else
-		{
-			// Restore default alignment for multi-channel data
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-		}
+		glTextureParameteri(glTextureId, GL_TEXTURE_MIN_FILTER, OpenGLBackend::toGLEnum(textureCreateInfo.samplerSetting.minFilter));
+		glTextureParameteri(glTextureId, GL_TEXTURE_MAG_FILTER, OpenGLBackend::toGLEnum(textureCreateInfo.samplerSetting.magFilter));
+		glTextureParameteri(glTextureId, GL_TEXTURE_WRAP_S, OpenGLBackend::toGLEnum(textureCreateInfo.samplerSetting.wrapS));
+		glTextureParameteri(glTextureId, GL_TEXTURE_WRAP_T, OpenGLBackend::toGLEnum(textureCreateInfo.samplerSetting.wrapT));
+		//glTextureParameterf(glTextureId, GL_TEXTURE_MAX_ANISOTROPY, 16.0f);
+
 		*/
 
+		bool hasMipmaps = OpenGLBackend::requiresMipmaps(textureCreateInfo.samplerSetting.minFilter);
+		//int levels = hasMipmaps ? static_cast<int>(std::floor(std::log2(std::max(textureCreateInfo.width, textureCreateInfo.height)))) + 1 : 1;
+		int levels = 1;
+		if (hasMipmaps)
+		{
+			levels = 0;
+			int s = std::max(textureCreateInfo.width, textureCreateInfo.height);
+			while (s > 0) { s >>= 1; levels++; }
+		}
 
-		// 4. **Upload Data (The core GL call)**
-		// This single call handles all formats/types using the mapped enums
-		glTexImage2D(
-			target,
-			0,                                 // Mipmap level
-			glInternalFormat,                  // e.g., GL_RGBA8 (GPU Storage)
-			textureCreateInfo.width,
-			textureCreateInfo.height,
-			0,                                 // Border (must be 0)
-			glSourceFormat,                    // e.g., GL_RGB (CPU Data Layout)
-			glSourceType,                      // e.g., GL_UNSIGNED_BYTE (CPU Component Type)
-			(void*)textureCreateInfo.data             // Raw pixel data
-		);
+		glTextureStorage2D(glTextureId, levels, glInternalFormat, textureCreateInfo.width, textureCreateInfo.height);
 
 
-		GLErrorToString(glGetError());
-
-
-		bool hasMipmaps = OpenGLBackend::requiresMipmaps(samplerSettings.minFilter);
-
-		//if (hasMipmaps)
-		//{
-		glGenerateMipmap(target);
-		//}
-
-		//void glGenerateMipmap(GLenum target);
-
-		//void glGenerateTextureMipmap(GLuint texture);
+		if (textureCreateInfo.data != nullptr)
+		{
+			glTextureSubImage2D(
+				glTextureId,
+				0,              // Level 0
+				0, 0,           // Offset X, Y
+				textureCreateInfo.width,
+				textureCreateInfo.height,
+				glSourceFormat,
+				glSourceType,
+				textureCreateInfo.data
+			);
+		}
 
 
 
 
-		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, OpenGLBackend::toGLEnum(samplerSettings.minFilter));
-		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, OpenGLBackend::toGLEnum(samplerSettings.magFilter));
-		glTexParameteri(target, GL_TEXTURE_WRAP_S, OpenGLBackend::toGLEnum(samplerSettings.wrapS));
-		glTexParameteri(target, GL_TEXTURE_WRAP_T, OpenGLBackend::toGLEnum(samplerSettings.wrapT));
+		if (hasMipmaps)
+		{
+			glGenerateTextureMipmap(glTextureId);
+		}
 
+
+		//Not supported by renderDoc!!
+		GLuint64 residentHandle = glGetTextureSamplerHandleARB(glTextureId, samplerId);
 		
-
-
-
-		GLuint64 residentHandle = 0;
-
-
-		residentHandle = glGetTextureHandleARB(glTextureId);
-
 		assert(residentHandle != 0);
 		glMakeTextureHandleResidentARB(residentHandle);
 
-		//std::cout<<GLErrorToString(glGetError())<<std::endl;
+		
+	
 
 
+		//residentHandle = glGetTextureHandleARB(glTextureId);
+		//glMakeTextureHandleResidentARB(residentHandle);
+
+	
 	//m_allotedGLTextureIDs.push_back(glTextureId); // For destruction tracking
 
 
 
 
 		TextureInfo info;
-		//info.textureHandle = glTextureId;
+		
 		info.resisdentHandle = residentHandle;
 		info.type = textureCreateInfo.type;
 		info.width = textureCreateInfo.width;
@@ -177,7 +163,7 @@ namespace TheEngine
 
 		GLenum target = OpenGLBackend::toGLEnum(bufferTextureCreateInfo.type);
 
-		//SamplerSetting samplerSettings = bufferTextureCreateInfo.
+	
 
 
 		GLuint glTextureId;
@@ -201,10 +187,10 @@ namespace TheEngine
 		GLuint64 residentHandle = 0;
 
 
-		residentHandle = glGetTextureHandleARB(glTextureId);
+		//residentHandle = glGetTextureHandleARB(glTextureId);
 
-		assert(residentHandle != 0);
-		glMakeTextureHandleResidentARB(residentHandle);
+		//assert(residentHandle != 0);
+		//glMakeTextureHandleResidentARB(residentHandle);
 
 		//std::cout<<GLErrorToString(glGetError())<<std::endl;
 

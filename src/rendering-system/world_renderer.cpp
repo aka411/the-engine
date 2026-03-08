@@ -119,6 +119,8 @@ namespace TheEngine
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_animationSystem.getSkeletalAnimationManager().getJointMatrixSSBO().bufferHandle);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_gpuMaterialSystem.getGPUBufferInfo(MaterialType::PBR_METALLIC_ROUGHNESS).bufferHandle);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_lightSystem.getLightSSBO().bufferHandle);
+
+
 		
 	}
 

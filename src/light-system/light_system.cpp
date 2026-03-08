@@ -28,11 +28,11 @@ namespace TheEngine
 		sampleLight.intensity = 1.0f;
 		sampleLight.lightType = Light::LightType::Directional;
 		sampleLight.direction = glm::vec4(-0.5f, -1.0f, -0.5f, 0.0f);
-		addLight(sampleLight);
+		//addLight(sampleLight);
 
 
 		Light sampleLight2{};
-		sampleLight2.color = glm::vec4(0.0f / 255.0f, 228.0f / 255.0f, 0.0f / 255.0f, 1.0f);
+		sampleLight2.color = glm::vec4(255.0f/255.0f, 255.0f/255.0f, 255.0f/255.0f, 1.0f);
 		sampleLight2.intensity = 1.0f;
 		sampleLight2.lightType = Light::LightType::Directional;
 		sampleLight2.direction = glm::vec4(-0.5f, -1.0f, -0.5f, 0.0f);
