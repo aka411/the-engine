@@ -22,7 +22,14 @@ UIGeometryGenerator::MeshData UIGeometryGenerator::generateRectangle(const float
 {
 
 
+
+
+
+
+
 	std::array<glm::vec2, 6> rectangle = GeometryGenerator::generateRectangle(width, height);
+
+
 
 	MeshData meshData;
 	meshData.numOfVertex = 6;
@@ -47,12 +54,20 @@ UIGeometryGenerator::MeshData UIGeometryGenerator::generateShadedLineGraph(
 	const float width,
 	const glm::vec3& startOffset,
 	const glm::vec4& lineColour,
-	const glm::vec4& baseColour)
+	const glm::vec4& baseColour,
+	bool yAxisUp
+
+)
 {
 
+	glm::vec3 modifiedStartOffset = startOffset;
 
+	if (!yAxisUp)
+	{
+		modifiedStartOffset.y = modifiedStartOffset.y * -1.0f;
+	}
 
-
+	const float yFlipFactor = (yAxisUp)? 1.0f : -1.0f;
 
 	GeometryGenerator::ShapeTrapezium shapeTrapezium = GeometryGenerator::generateTrapezium(pointA, pointB, width);
 
@@ -74,28 +89,24 @@ UIGeometryGenerator::MeshData UIGeometryGenerator::generateShadedLineGraph(
 	//LINE
 	for (int i = 0; i < 6; ++i)
 	{
-		vertex[i].position= glm::vec4(shapeTrapezium.slopedRectangleLine[i].x + startOffset.x, shapeTrapezium.slopedRectangleLine[i].y + startOffset.y, 0.0 + startOffset.z, 1.0);
+		vertex[i].position= glm::vec4(shapeTrapezium.slopedRectangleLine[i].x + modifiedStartOffset.x, yFlipFactor*( shapeTrapezium.slopedRectangleLine[i].y + modifiedStartOffset.y), 0.0 + modifiedStartOffset.z, 1.0);
 		vertex[i].colour = lineColour;
 	}
 
 	//Triangle Cap
 	for (int i = 0; i < 3; ++i)
 	{
-		vertex[i + 6].position = glm::vec4(shapeTrapezium.triangle[i].x + startOffset.x, shapeTrapezium.triangle[i].y + startOffset.y, 0.0 + startOffset.z, 1.0);
-		vertex[i+ 6].colour = baseColour;
-		vertex[i + 6].colour.x = 1;
-		vertex[i + 6].colour.y = 1;
-		vertex[i + 6].colour.z = 1;
+		vertex[i + 6].position = glm::vec4(shapeTrapezium.triangle[i].x + modifiedStartOffset.x, yFlipFactor * (shapeTrapezium.triangle[i].y + modifiedStartOffset.y), 0.0 + modifiedStartOffset.z, 1.0);
+		vertex[i + 6].colour = baseColour;
+
 	}
 
 	//Base Rectangle (Area Under Line)
 	for (int i = 0; i < 6; ++i)
 	{
-		vertex[i + 9].position = glm::vec4(shapeTrapezium.baseRectangle[i].x + startOffset.x, shapeTrapezium.baseRectangle[i].y + startOffset.y, 0.0 + startOffset.z, 1.0);
+		vertex[i + 9].position = glm::vec4(shapeTrapezium.baseRectangle[i].x + modifiedStartOffset.x, yFlipFactor * (shapeTrapezium.baseRectangle[i].y + modifiedStartOffset.y), 0.0 + modifiedStartOffset.z, 1.0);
 		vertex[i + 9].colour = baseColour;
-		vertex[i + 9].colour.x = 0.9;
-		vertex[i + 9].colour.y = 0.9;
-		vertex[i + 9].colour.z = 0.9;
+
 
 	}
 

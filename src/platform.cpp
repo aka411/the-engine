@@ -76,7 +76,7 @@ namespace TheEngine
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
 			m_window = SDL_CreateWindow(
-				"Opengl Rendering Engine(openGL 4.6)",
+				"TheEngine(openGL 4.6)",
 				width, height,
 				SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL
 			);
@@ -107,7 +107,7 @@ namespace TheEngine
 			////TODO : completed this later
 
 			m_window = SDL_CreateWindow(
-				"Vukan Rendering Engine(Vulkan 1.3)",
+				"TheEngine(Vulkan 1.3)",
 				width, height,
 				SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN
 			);

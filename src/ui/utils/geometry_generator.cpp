@@ -119,8 +119,8 @@ GeometryGenerator::ShapeTrapezium GeometryGenerator::generateTrapezium(const flo
 
 
 
-	const float maxHeight = (pointA >= pointB) ? pointA : pointB;
-	const float minHeight = (pointA <= pointB) ? pointA : pointB;
+	const float maxHeight = std::max(pointA , pointB);
+	const float minHeight = std::min(pointA, pointB);
 
 
 	/* 
@@ -136,7 +136,7 @@ GeometryGenerator::ShapeTrapezium GeometryGenerator::generateTrapezium(const flo
 	const float quadrant = (pointA <= pointB) ? 1.0 : -1.0f;
 	const float lineThickness = 2.0;
 	//there is issue like A > B or B >A
-	std::array<glm::vec2, 6> slopedRectangleLine = generateLine(glm::vec2{ width, quadrant * (maxHeight-minHeight)}, lineThickness);
+	std::array<glm::vec2, 6> slopedRectangleLine = generateLine(glm::vec2{ width,quadrant*(maxHeight - minHeight)}, lineThickness);
 
 	if (quadrant < 0)
 	{
@@ -152,40 +152,51 @@ GeometryGenerator::ShapeTrapezium GeometryGenerator::generateTrapezium(const flo
 
 
 	//Calculation for middle triangle
-	float h = maxHeight - minHeight;//what if its zero
+	const float h = maxHeight- minHeight;//what if its zero
 	
-	glm::vec2 a = { 0,0 };
-	glm::vec2 b = { width,0 };
+	glm::vec2 a = { 0, 0 };          // Bottom Left (local to the top section)
+	glm::vec2 b = { width, 0 };      // Bottom Right
+	glm::vec2 c = (pointA < pointB) ? glm::vec2(width, h) : glm::vec2(0, h);
 
-	if (abs(pointA) > abs(pointB))
-	{
-		a = { 0,h };
-	}
-	else
-	{
-		b = { h,width };
-	}
 
 	//Middle triangle
+
+	/* 
+		 |
+		 |
+	  --a|-------b------>x
+		 |
+		 |
+
+	*/
+
 	std::array<glm::vec2, 3> triangle;
 
-	triangle[0] = glm::vec2{ 0.0f, 0.0f };
-
+	triangle[0] = a;
 	triangle[1] = b;
-	triangle[2] = a;
+	triangle[2] = c;
 
 
-	//Now correct offsets
+
+
+
+
+	//APPLYING OFFSETS 
+
+	
 	//for Middle Triangle
+
 	for (int i = 0; i < 3; ++i)
 	{
 		triangle[i].y = triangle[i].y + minHeight;
 	}
 
+
+	//This needs more fine tuning
 	//for Sloped Rectangle (Line)
 	for (int i = 0; i < 6; ++i)
 	{
-		slopedRectangleLine[i].y = slopedRectangleLine[i].y + minHeight;
+		slopedRectangleLine[i].y = slopedRectangleLine[i].y + minHeight ;
 	}
 
 	ShapeTrapezium shapeTrapezium;
@@ -197,113 +208,6 @@ GeometryGenerator::ShapeTrapezium GeometryGenerator::generateTrapezium(const flo
 
 
 }
-
-
-
-
-
-
-/*
-GeometryGenerator::MeshData GeometryGenerator::getColouredTrapeziumWithOffset(const float pointA, const float pointB, const float width, const glm::vec3 startOffset, const glm::vec4& lineColour, const glm::vec4& baseColour)
-{ /*      B
-       . |
-	 .   |   winding order : anti-clockwise
-    A....|
-	|    |
-    |    |
-    |    |
-	------
-
-	
-
-
-
-	const float maxHeight = (pointA >= pointB) ? pointA : pointB;
-	const float minHeight = (pointA <= pointB) ? pointA : pointB;
-
-
-	/*  ^
-	    |
-   A\   |   /B
-	 \  |  /
-	  \ | /
-	  B\|/A
-	
-	
-
-	const float quadrant = (pointA <= pointB) ? 1.0 : -1.0f;
-	const float lineThickness = 3;
-	//there is issue like A > B or B >A 
-    std::array<glm::vec2, 6> slopedRectangleLine = generateLine(glm::vec2{ width, quadrant * (maxHeight)}, lineThickness);
-
-
-
-	const std::array<glm::vec2, 6> baseRectangle = generateRectangle(minHeight, width);
-
-
-
-
-	//Calculation for middle triangle
-	float h = maxHeight - minHeight;//what if its zero
-	float w = 0;
-	
-	if (pointA > pointB)
-	{
-		w = 0;
-	}
-	else
-	{
-		w = width;
-	}
-
-	//Middle triangle
-	glm::vec2 triangle[3];
-	triangle[0] = glm::vec2{ 0.0f, 0.0f };
-	triangle[1] = glm::vec2{ 0.0f, width };
-	triangle[2] = glm::vec2{ h, w };
-
-
-	//Now correct offsets
-	//for Middle Triangle
-	for (int i = 0; i < 3; ++i)
-	{
-		triangle[i].y = triangle[i].y + minHeight;
-    }
-
-	//for Sloped Rectangle (Line)
-	for (int i = 0; i < 6; ++i)
-	{
-		slopedRectangleLine[i].y = slopedRectangleLine[i].y + minHeight;
-	}
-
-
-
-	//combine all
-
-	std::array<glm::vec2, 15> trapezium;
-
-	for (int i = 0; i < 6; ++i)
-	{
-		trapezium[i] = baseRectangle[i];
-	}
-
-	for (int i = 6; i < 6+3; ++i)//till 9
-	{
-		trapezium[i] = triangle[i-6];
-	}
-
-	for (int i = 9; i < 9 + 6; ++i)//till 15
-	{
-		trapezium[i] = slopedRectangleLine[i-9];
-	}
-
-
-
-	//return trapezium;
-	return MeshData();
-
-}
-*/
 
 
 

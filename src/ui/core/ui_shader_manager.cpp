@@ -107,6 +107,7 @@ namespace TheEngine::UI
 
 	GLuint UIShaderManager::getTextVAO()
 	{
+
 		return m_textVAO;
 	}
 

@@ -46,8 +46,9 @@ void PerformanceMonitorSystem::UpdateFPSMeter(const float deltaTime)
 	float offset = 0;//x axis
 
 	std::vector<std::byte> resultMesh;
+	resultMesh.reserve(uiGraphComponentPtr->buffer.size() * (4 * 2) * sizeof(float));//bad ,allocation per frame
+	//i know its bad but i am just getting stuff tested and seeing it all work, premature optimization is the root of all evil
 
-	resultMesh.reserve(uiGraphComponentPtr->buffer.size() * (4 * 2) * sizeof(float));
 	/*
 	uiRenderMeshComponent->vertexCount = 0;
 	for (float dataPoint : data)
@@ -96,16 +97,15 @@ void PerformanceMonitorSystem::UpdateFPSMeter(const float deltaTime)
 
 
 	uiRenderMeshComponent->vertexCount = 0;
-	for (int i = 0 ; i < data.size()-1 ; i+=2)
+	for (int i = 0 ; i < data.size()-1 ; ++i)
 	{
 		//100 px = 500 fps
-		//if (dataPoint < 0.0001) continue;
+	//Note : TO fix aliasing we can interpolate and create more smooth data points between two points
 		float scaledHeightA = (data[i] / 500.0f) * 100.0f;
-		float scaledHeightB = scaledHeightA;
-		if (data.size() >= 2)
-		{
-			 scaledHeightB = (data[i + 1] / 500.0f) * 100.0f;
-		}
+		float scaledHeightB =  (data[i + 1] / 500.0f) * 100.0f;
+	
+
+
 		if (scaledHeightA > uiRectDimensionsComponentPtr->height)
 		{
 			//cap it to the max height of the graph rect
@@ -117,14 +117,15 @@ void PerformanceMonitorSystem::UpdateFPSMeter(const float deltaTime)
 			scaledHeightB = uiRectDimensionsComponentPtr->height - 1;
 		}
 
-		//NOTE : The scaledHeight is negated cause the 
-		//geometry generates the rectangles with Y axis up but our UI coordinate system has Y axis down
-
-		UIGeometryGenerator::MeshData mesh = UIGeometryGenerator::generateShadedLineGraph(-scaledHeightA, -scaledHeightB,12, { offset ,100,0 }, { 0.0,1.0,0.0,1.0 }/*uiGraphComponentPtr->color*/, {1.0,0.0,0.0,0.3});
-
-		offset += 13;
+		//NOTE : UI coordinate system is Y down
+		
+		const float width = uiRectDimensionsComponentPtr->width / (data.size()/2.0f);
+		UIGeometryGenerator::MeshData mesh = UIGeometryGenerator::generateShadedLineGraph(scaledHeightA, scaledHeightB , width, { offset ,uiRectDimensionsComponentPtr->height,0 }, { 0.176f, 0.608f, 0.941f, 1.0f }/*uiGraphComponentPtr->color*/, { 0.176f, 0.608f, 0.941f, 0.3f },false);
+		//12, 13
+		offset += width;
 
 		if (uiRectDimensionsComponentPtr->width < offset) break;
+
 		uiRenderMeshComponent->vertexCount += mesh.numOfVertex;
 
 		resultMesh.insert(
@@ -133,6 +134,7 @@ void PerformanceMonitorSystem::UpdateFPSMeter(const float deltaTime)
 			mesh.data.end()
 		);
 	}
+
 	const auto vertexFormat = uiRenderMeshComponent->vertexFormat;
 	const auto bufferType = uiRenderMeshComponent->bufferType;
 
