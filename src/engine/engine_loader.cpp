@@ -6,7 +6,7 @@ namespace TheEngine
 
 
 
-	EngineLoader::EngineLoader(ECS::ECSEngine& ecsEngine, GPUTextureManager& gpuTextureManager, GPUMaterialSystem& gpuMaterialSystem, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, Animation::AnimationSystem& animationSystem):
+	EngineLoader::EngineLoader(ECS::ECSEngine& ecsEngine, GPUTextureManager& gpuTextureManager, GPUMaterialSystem& gpuMaterialSystem, WorldVertexBufferManagementSystem& worldVertexBufferManagementSystem, Animation::AnimationSystem& animationSystem) :
 		m_ecsEngine(ecsEngine),
 		m_gpuTextureManager(gpuTextureManager),
 		m_gpuMaterialSystem(gpuMaterialSystem),
@@ -31,20 +31,29 @@ namespace TheEngine
 
 		//upload images and get id 
 		std::vector<uint64_t> localImageIndexToImageHandle;
+
 		localImageIndexToImageHandle.reserve(engineIntermediateModel.intermediateImage.size());
-		for (auto& image : engineIntermediateModel.intermediateImage)
+
+		for (size_t i = 0; i < engineIntermediateModel.intermediateTextures.size(); ++i)
 		{
+
+			auto& textureSettings = engineIntermediateModel.intermediateTextures[i];
+			auto& image = engineIntermediateModel.intermediateImage[textureSettings.imageIndex];
+			auto& samplerSettings = engineIntermediateModel.samplerSettings[textureSettings.samplerSettingsIndex];
+
+
 			TextureCreateInfo textureCreateInfo;
+
 			textureCreateInfo.width = image.width;
 			textureCreateInfo.height = image.height;
 			textureCreateInfo.textureSourceComponentType = image.textureSourceComponentType;
 			textureCreateInfo.textureSourcePixelFormat = image.textureSourcePixelFormat;
 			textureCreateInfo.internalFormat = image.internalFormat;
-
+			textureCreateInfo.samplerSetting = samplerSettings;
 
 			textureCreateInfo.type = TextureType::TEXTURE_2D;
 
-			//textureCreateInfo.samplerSetting =;
+
 
 			textureCreateInfo.data = image.data.data();
 
@@ -56,15 +65,15 @@ namespace TheEngine
 
 
 
-		std::vector<uint64_t> localTextureToEngineTexture;
-		localTextureToEngineTexture.reserve(engineIntermediateModel.intermediateTextures.size());
+		//std::vector<uint64_t> localTextureToEngineTexture;
+		//localTextureToEngineTexture.reserve(engineIntermediateModel.intermediateTextures.size());
 
-		for (auto& texture : engineIntermediateModel.intermediateTextures)
-		{
+		//for (auto& texture : engineIntermediateModel.intermediateTextures)
+		//{
 
-			localTextureToEngineTexture.push_back(localImageIndexToImageHandle[texture.imageIndex]);
+		//	localTextureToEngineTexture.push_back(localImageIndexToImageHandle[texture.imageIndex]);
 
-		}
+		//}
 
 
 		std::vector<MaterialId> localToEnginePBRMaterial;
@@ -81,11 +90,11 @@ namespace TheEngine
 		{
 			PBRMetallicRoughnessMaterial pbrMetallicRoughnessMaterial;
 
-			pbrMetallicRoughnessMaterial.albedoTextureHandle = getCorrectTextureIndex(material.albedoTextureIndex, localTextureToEngineTexture);
-			pbrMetallicRoughnessMaterial.metallicRoughnessTextureHandle = getCorrectTextureIndex(material.metallicRoughnessTextureIndex, localTextureToEngineTexture);
-			pbrMetallicRoughnessMaterial.normalTextureHandle = getCorrectTextureIndex(material.normalTextureIndex, localTextureToEngineTexture);
-			pbrMetallicRoughnessMaterial.emissiveTextureHandle = getCorrectTextureIndex(material.emissiveTextureIndex, localTextureToEngineTexture);
-			pbrMetallicRoughnessMaterial.occlusionTextureHandle = getCorrectTextureIndex(material.occlusionTextureIndex, localTextureToEngineTexture);
+			pbrMetallicRoughnessMaterial.albedoTextureHandle = getCorrectTextureIndex(material.albedoTextureIndex, localImageIndexToImageHandle);
+			pbrMetallicRoughnessMaterial.metallicRoughnessTextureHandle = getCorrectTextureIndex(material.metallicRoughnessTextureIndex, localImageIndexToImageHandle);
+			pbrMetallicRoughnessMaterial.normalTextureHandle = getCorrectTextureIndex(material.normalTextureIndex, localImageIndexToImageHandle);
+			pbrMetallicRoughnessMaterial.emissiveTextureHandle = getCorrectTextureIndex(material.emissiveTextureIndex, localImageIndexToImageHandle);
+			pbrMetallicRoughnessMaterial.occlusionTextureHandle = getCorrectTextureIndex(material.occlusionTextureIndex, localImageIndexToImageHandle);
 
 
 			pbrMetallicRoughnessMaterial.baseColorFactor = material.baseColorFactor;
@@ -95,7 +104,7 @@ namespace TheEngine
 
 			pbrMetallicRoughnessMaterial.materialBitMask = material.materialBitMask;
 
-
+			//In  reinterpret_cast<std::byte*>(&pbrMetallicRoughnessMaterial) what if PBRMetallicRoughnessMaterial has pading added by compiler in some cpu  ? 
 			MaterialId materialId = m_gpuMaterialSystem.uploadMaterial(MaterialType::PBR_METALLIC_ROUGHNESS, reinterpret_cast<std::byte*>(&pbrMetallicRoughnessMaterial), sizeof(pbrMetallicRoughnessMaterial));
 
 			localToEnginePBRMaterial.push_back(materialId);

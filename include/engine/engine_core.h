@@ -24,11 +24,12 @@ struct GPUMemoryUsageStats
 
 namespace TheEngine
 {
+
 	class EngineCore
 	{
 	private:
 
-		/**Owner Of Most SubSystems**/
+	
 
 
 		ECS::ECSEngine m_ecsEngine;//owner
@@ -47,11 +48,12 @@ namespace TheEngine
 
 
 
-		/***MODEL RENDERING SYSTEMS***/
+		/***OTHER SYSTEMS***/
 
 
 		TransformationSystem m_transformationSystem;
 
+		Animation::AnimationSystem m_animationSystem;
 
 
 
@@ -63,11 +65,10 @@ namespace TheEngine
 
 		RenderSystem m_renderSystem;// contains both world renderer and ui renderer
 
-		Animation::AnimationSystem m_animationSystem;
 
-		UI::UIBuilder m_uiBuilder;
+		UI::UIBuilder m_uiBuilder;//requires ecs engine
 
-		ECS::NullFatalErrorHandler m_nullFatalErrorHandler;
+		ECS::NullFatalErrorHandler m_nullFatalErrorHandler;//for ecs engine
 
 
 		/*Light System*/
