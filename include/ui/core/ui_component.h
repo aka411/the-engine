@@ -158,13 +158,22 @@ namespace TheEngine::UI
 			if (currentIndex == 40)
 			{
 				
-				const size_t totalSize = buffer.size();
-				std::vector<float> linearData(totalSize);
+				/**const size_t totalSize = buffer.size();
+				std::vector<float> linearData(totalSize);//bad, dynamic allocation per frame
+				//hey what happens i copy data from and to same buffer
 				memcpy(linearData.data(), &buffer[1], (totalSize-1) * sizeof(float));
 			
 				currentIndex--;
 				buffer = std::move(linearData);
-				
+				*/
+
+				std::memmove(buffer.data(), &buffer[1], (buffer.size() - 1) * sizeof(float));
+
+
+				currentIndex--;
+
+
+
 			}
 		}
 
