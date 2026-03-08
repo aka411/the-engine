@@ -2,15 +2,12 @@
 
 A lightweight, modular game engine being built from the ground up with a focus on **Data-Oriented Design (DOD)** and high-performance rendering.
 
----
-
 ## Core Philosophy: Data-Oriented Design
 
 Unlike traditional **OOP** based engines, TheEngine prioritizes memory layout and cache efficiency. By utilizing **Data-Oriented Design (DOD)** patterns, the engine organizes data in contiguous arrays to maximize cache locality and CPU throughput.
 * **Custom ECS System:** [aka411/ecs-engine](https://github.com/aka411/ecs-engine)
 * **Memory Layout:** Contiguous component arrays for minimal cache misses.
 
----
 
 ##  Current Feature Set
 
@@ -32,7 +29,7 @@ Unlike traditional **OOP** based engines, TheEngine prioritizes memory layout an
 * **Custom UI System:** A lightweight, UI framework built to integrate directly with the engine's data flow.
 * **Lighting:** Simple single-light implementation.
 
----
+
 
 ## Demo
 
@@ -43,7 +40,7 @@ https://github.com/user-attachments/assets/4fefce97-4bf6-4443-8949-c109522d898b
 * **License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 * *Note: This asset is not included in this repository. It is showcased for demonstration purposes only.*
 
----
+
 
 ## Project Status: Active Redesign
 
@@ -51,7 +48,6 @@ https://github.com/user-attachments/assets/4fefce97-4bf6-4443-8949-c109522d898b
 * **Current State:** The main branch may not be in an easily buildable state as focus has shifted to the new design in a separate development branch.
 * **Goal:** A more robust modular design with clean code that expands on the existing DOD principles while adding new features.
 
----
 
 ## Building & Requirements
 
@@ -61,8 +57,6 @@ https://github.com/user-attachments/assets/4fefce97-4bf6-4443-8949-c109522d898b
 * **Compiler:** C++20 or higher (MSVC, Clang, or GCC).
 * **Build System:** CMake 3.17+.
 * **Graphics:** OpenGL 4.6 with **Bindless Texture** extension support.
-
----
 
 ## License
 
