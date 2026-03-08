@@ -142,12 +142,11 @@ add_library(TheEngine STATIC
  "src/rendering-engine/opengl-backend/opengl_texture_helper.cpp"
 
  "src/light-system/light_system.cpp"
- "src/rendering-system/post_processing_manager.cpp"
+ 
 
- "src/rendering-system/shadow_manager.cpp"
+ 
 
  "src/ui/utils/ui_geometry_generator.cpp"
-
 
 
 )
@@ -185,7 +184,7 @@ FetchContent_MakeAvailable(SDL3)
 FetchContent_Declare(
 	glm
 	GIT_REPOSITORY	https://github.com/g-truc/glm.git
-	GIT_TAG 	1.0.1 #refs/tags/1.0.1
+	GIT_TAG 	1.0.1 
 )
 
 FetchContent_MakeAvailable(glm)

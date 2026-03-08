@@ -208,6 +208,7 @@ namespace TheEngine::Animation
 
 		if (it == animationCPUComponent.animationsMap.end())
 		{
+			animationStateComponent.isPlayingAnimation = false;
 			return;
 		}
 
