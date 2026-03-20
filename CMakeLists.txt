@@ -27,9 +27,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 
 
-add_subdirectory(external/ecs-engine)
-
-
 
 add_library(TheEngine STATIC
 
@@ -195,11 +192,10 @@ target_link_libraries(TheEngine PUBLIC
   SDL3::SDL3-static
   #SDL3::SDL3
   glm::glm
-  TheEngine_ECS
 )
 
 
-add_subdirectory(demo)
+
 
 
   #add_custom_command(TARGET TheEngine POST_BUILD
