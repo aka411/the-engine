@@ -30,122 +30,86 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 add_library(TheEngine STATIC
 
+"external/glad/glad.c"
 
+"src/rendering-system/gpu-resource-system/gpu_mesh_system.cpp"
+"src/rendering-system/gpu-resource-system/gpu_material_manager.cpp"
+"src/rendering-system/gpu-resource-system/gpu_animation_manager.cpp"
+"src/rendering-system/gpu-resource-system/gpu_light_manager.cpp"
+"src/rendering-system/gpu-resource-system/gpu_resource_system.cpp"
 
- "external/glad/glad.c"
-
-
- "src/common_header_imp.cpp"
- "src/camera.cpp"
-
- "src/model-loading/gltf_intermediate_mapper.cpp"
- "src/model-loading/data_convertor.cpp"
- "src/model-loading/gltf_animation_extractor.cpp"
- "src/model-loading/vertex_attributes_repacker.cpp"
- "src/model-loading/gltf_attribute_extractor.cpp"
-
- "src/engine/engine_core.cpp"
- "src/engine/engine_loader.cpp"
-
- "src/low-level/vertex_format_helper.cpp"
- "src/low-level/vertex_format_manager.cpp"
-
- "src/memory-management/gpu_buffer_manager.cpp"
- "src/memory-management/gpu_buffer_sub_bump_allocator.cpp"
-
- "src/low-level/gpu_texture_manager.cpp"
- "src/low-level/gpu_material_system.cpp"
-
- "src/low-level/shader_code_generator.cpp"
- "src/low-level/shader_manager.cpp"
-
- "src/low-level/world_vertex_buffer_management_system.cpp"
+"src/rendering-system/low-level-gpu-systems/gpu_buffer_manager.cpp"
+"src/rendering-system/low-level-gpu-systems/gpu_texture_manager.cpp"
+"src/rendering-system/low-level-gpu-systems/gpu_sampler_manager.cpp" 
+"src/rendering-system/low-level-gpu-systems/gpu_shader_manager.cpp" 
+"src/rendering-system/low-level-gpu-systems/low_level_gpu_system.cpp" 
 
 
 
 
+"src/rendering-system/low-level-gpu-systems/memory-management/gpu_buffer_transfer_manager.cpp"
+
+"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/i_gpu_buffer_suballocator.cpp"
+"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_tlsf_suballocator.cpp"
+"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_per_frame_suballocator.cpp"
+"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_fixed_size_suballocator.cpp"
+"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_circular_suballocator.cpp"
+"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_bump_suballocator.cpp"
 
 
 
- "src/rendering-system/render_system.cpp"
- "src/rendering-system/world_renderer.cpp"
+"include/rendering-system/low-level-gpu-systems/data-structures/gpu_texture_data_structures.h"
+"include/rendering-system/low-level-gpu-systems/low_level_gpu_system.h" 
+
+"src/rendering-system/renderer/rendering_context.cpp"
+
+"src/rendering-system/renderer/rendering_system.cpp"
 
 
+"src/rendering-system/renderer/render-pass/i_render_pass.cpp"
+"src/rendering-system/renderer/render-pass/gbuffer_render_pass.cpp"
+
+"src/animation-system/animation_system.cpp"
 
 
- "src/ecs_hierarchy_traverser.cpp"
- "src/transformation_system.cpp"
-
- # UI SOURCE FILES
-
- "src/ui/core/ui_system.cpp"
-
-
- "src/ui/builder/ui_element.cpp"
- "src/ui/builder/ui_text_label_builder.cpp"
- "src/ui/builder/ui_graph_builder.cpp"
- "src/ui/builder/ui_builder.cpp"
- "src/ui/builder/ui_base_builder.cpp"
- "src/ui/builder/ui_panel_builder.cpp"
+"src/asset-system/material_system.cpp"
+"src/asset-system/animation_resource_system.cpp"
+"src/asset-system/light_system.cpp"
+"src/asset-system/mesh_system.cpp"
+"src/asset-system/texture_system.cpp"
+"src/asset-system/asset_system.cpp"
 
 
- "src/ui/systems/ui_vertex_buffer_management_system.cpp"
- "src/ui/systems/ui_mesh_system.cpp"
- "src/ui/systems/ui_transformation_system.cpp"
- "src/ui/systems/performance_monitor_system.cpp"
- "src/ui/systems/ui_layout_system.cpp"
-
- "src/ui/text/ui_text_system.cpp"
- "src/ui/text/json_font_parser.cpp"
- "src/ui/text/ui_text_generation_system.cpp"
-  "src/ui/text/ui_font_manager.cpp"
-
- "src/ui/core/ui_shader_manager.cpp"
- "src/ui/core/ui_core_system.cpp"
-
- "src/ui/ui_renderer.cpp"
-
- "src/ui/utils/interleaver.cpp"
- "src/ui/utils/geometry_generator.cpp"
-
- "src/ui/builder/ui_window_builder.cpp"
+"include/asset-system/asset_system.h"
 
 
+"src/engine/engine.cpp" 
+#"include/rendering-system/renderer/render-pass/gbuffer_render_pass.h" 
 
- "src/animation/animation_system.cpp"
+"include/rendering-system/api-backend/opengl/opengl_texture_helper.h"
+"include/rendering-system/api-backend/opengl/opengl_utils.h" 
 
- "src/animation/keyframe_animation_manager.cpp"
- "src/animation/skeletal_animation_manager.cpp"
-
- "src/animation/keyframe_animation_interpolator.cpp"
- "src/animation/skeletal_animation_solver.cpp"
-
-
- "src/memory-management/gpu_buffer_per_frame_allocator.cpp"
+"src/rendering-system/api-backend/opengl/opengl_texture_helper.cpp"
+"src/rendering-system/api-backend/opengl/opengl_utils.cpp"
+"src/rendering-system/api-backend/opengl/opengl_buffer_helper.cpp"
 
 
- "src/rendering-system/object_data_buffer_manager.cpp"
- "src/rendering-system/render_command_buffer_manager.cpp"
+"src/platform/platform.cpp"
+"src/platform/file_system.cpp"
+"src/platform/input_system.cpp"
+"src/platform/window_system.cpp"
 
+"include/engine/engine_core_data_types.h"
 
-"src/platform.cpp" 
-"src/rendering-engine/opengl-backend/opengl_utils.cpp" 
+"src/rendering-system/api-backend/opengl/opengl_shader_compiler.cpp"  
 
+"src/rendering-system/renderer/render-pass/forward_render_pass.cpp" 
+"src/rendering-system/low-level-gpu-systems/gpu_pipeline_manager.cpp"
+"include/rendering-system/low-level-gpu-systems/data-structures/gpu_pipeline_state_data_types.h"
 
- "src/utils/file-decoders/image_decoder.cpp"
+"src/rendering-system/api-backend/opengl/opengl_pipeline_helper.cpp"
 
- "src/memory-management/gpu_buffer_circular_allocator.cpp"
-
- "src/rendering-engine/opengl-backend/opengl_texture_helper.cpp"
-
- "src/light-system/light_system.cpp"
- "src/rendering-system/post_processing_manager.cpp"
-
- "src/rendering-system/shadow_manager.cpp"
-
- "src/ui/utils/ui_geometry_generator.cpp"
-
-
+"src/rendering-system/api-backend/opengl/opengl_pipeline_state_object.cpp"
 
 )
 
@@ -162,19 +126,23 @@ ${CMAKE_CURRENT_SOURCE_DIR}/external/
 
 ${CMAKE_CURRENT_SOURCE_DIR}/external/ecs-engine/include
 
-#${CMAKE_CURRENT_SOURCE_DIR}/ui/include
+
 
 )
 
 #target_include_directories(opengl-rendering-engine PUBLIC ${glm_INCLUDE_DIR})
-set(SDL_STATIC ON CACHE BOOL "" FORCE)
-set(SDL_SHARED OFF CACHE BOOL "" FORCE)
-set(SDL_LIBC ON CACHE BOOL "" FORCE)
+
+# SDL is used for input handling and window management, in vulkan we also use it for surface creation
+# I can switch to glfw also if i want cause the way the engine is designed is very modular 
 FetchContent_Declare(
   SDL3
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
   GIT_TAG        release-3.2.20
 )
+
+set(SDL_STATIC ON CACHE BOOL "" FORCE)
+set(SDL_SHARED OFF CACHE BOOL "" FORCE)
+set(SDL_LIBC ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(SDL3)
 
@@ -182,7 +150,7 @@ FetchContent_MakeAvailable(SDL3)
 FetchContent_Declare(
 	glm
 	GIT_REPOSITORY	https://github.com/g-truc/glm.git
-	GIT_TAG 	1.0.1 #refs/tags/1.0.1
+	GIT_TAG 	1.0.1 
 )
 
 FetchContent_MakeAvailable(glm)
