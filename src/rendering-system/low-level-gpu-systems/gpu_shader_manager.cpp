@@ -2,14 +2,15 @@
 #include <assert.h>
 #include <glad/glad.h>
 #include <rendering-system/api-backend/opengl/opengl_shader_compiler.h>
-
+#include <platform/platform.h>
 
 namespace TheEngine::RenderingSystem
 {
 
 
 
-	GPUShaderManager::GPUShaderManager()
+	GPUShaderManager::GPUShaderManager(TheEngine::Platform::Platform& platform):
+		m_platform(platform)
 	{
 
 
@@ -50,6 +51,28 @@ namespace TheEngine::RenderingSystem
 		return ShaderProgram{ shaderProgramOpenglHandle };
 	}
 
+
+
+
+
+
+
+	ShaderProgram GPUShaderManager::loadCreateAndStoreShader(const std::string& shaderName, const TheEngine::Platform::Path& vertexShaderPath, const TheEngine::Platform::Path& fragmentShaderPath)
+	{
+
+		TheEngine::Platform::File vertexShaderfile =m_platform.getFileSystem().open(vertexShaderPath);
+		TheEngine::Platform::File fragmentShaderfile = m_platform.getFileSystem().open(fragmentShaderPath);
+
+		ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderString = std::string(reinterpret_cast<char*>(vertexShaderfile.data()), vertexShaderfile.size()) ;
+		shaderCreateInfo.fragmentShaderString = std::string(reinterpret_cast<char*>(fragmentShaderfile.data()), fragmentShaderfile.size());
+
+
+
+		return createAndStoreShader(shaderName,shaderCreateInfo);
+
+
+	}
 
 
 }

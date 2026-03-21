@@ -2,7 +2,9 @@
 #include <rendering-system/gpu-resource-system/gpu_mesh_system.h>
 #include <rendering-system/gpu-resource-system/gpu_material_manager.h>
 #include <rendering-system/gpu-resource-system/gpu_animation_manager.h>
-#include <rendering-system//gpu-resource-system/gpu_light_manager.h>
+#include <rendering-system/gpu-resource-system/gpu_light_manager.h>
+
+
 #include <rendering-system/low-level-gpu-systems/low_level_gpu_system.h>
 
 
@@ -11,11 +13,9 @@ namespace TheEngine::RenderingSystem
 
 
 
-        GPUResourceSystem::GPUResourceSystem(
-            LowLevelGPUSystem& lowLevelGPUSystem)
+        GPUResourceSystem::GPUResourceSystem(LowLevelGPUSystem& lowLevelGPUSystem) :
 
-            :
-            
+            m_lowLevelGPUSystem(lowLevelGPUSystem),
             m_gpuBufferManager(lowLevelGPUSystem.getGPUBufferManager()),
             m_gpuBufferTransferManager(lowLevelGPUSystem.getGPUBufferTransferManager()),
 
@@ -24,7 +24,6 @@ namespace TheEngine::RenderingSystem
             m_gpuMaterialManager(std::make_unique<GPUMaterialManager>(m_gpuBufferManager, m_gpuBufferTransferManager)),
             m_gpuLightManager(std::make_unique<GPULightManager>(lowLevelGPUSystem)),
             m_gpuAnimationManager(std::make_unique<GPUAnimationManager>(m_gpuBufferManager, m_gpuBufferTransferManager))
-
         {
 
 
@@ -55,7 +54,10 @@ namespace TheEngine::RenderingSystem
         }
 
 
-
+        GPUTextureManager& GPUResourceSystem::getGPUTextureManager()
+        {
+            return m_lowLevelGPUSystem.getGPUTextureManager();
+        }
 
 
 

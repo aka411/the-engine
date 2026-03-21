@@ -47,14 +47,14 @@ add_library(TheEngine STATIC
 
 
 
-"src/rendering-system/low-level-gpu-systems/memory-management/gpu_buffer_transfer_manager.cpp"
+"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_buffer_transfer_manager.cpp"
 
-"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/i_gpu_buffer_suballocator.cpp"
-"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_tlsf_suballocator.cpp"
-"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_per_frame_suballocator.cpp"
-"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_fixed_size_suballocator.cpp"
-"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_circular_suballocator.cpp"
-"src/rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_bump_suballocator.cpp"
+"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/i_gpu_buffer_suballocator.cpp"
+"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_tlsf_suballocator.cpp"
+"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_per_frame_suballocator.cpp"
+"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_fixed_size_suballocator.cpp"
+"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_circular_suballocator.cpp"
+"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_bump_suballocator.cpp"
 
 
 
@@ -100,11 +100,11 @@ add_library(TheEngine STATIC
 
 "src/rendering-system/renderer/render-pass/forward_render_pass.cpp" 
 "src/rendering-system/low-level-gpu-systems/gpu_pipeline_manager.cpp"
-"include/rendering-system/low-level-gpu-systems/data-structures/gpu_pipeline_state_data_types.h"
 
 
 
 "src/rendering-system/api-backend/opengl/opengl_pipeline_helper.cpp"
+"src/rendering-system/api-backend/opengl/opengl_pipeline_state_object.cpp"
 
 
 
@@ -112,10 +112,14 @@ add_library(TheEngine STATIC
 "src/platform/file.cpp"
 
 
+"src/memory-management/memory_block.cpp"
+
+"src/image_loader.cpp"
+
 )
 
 
- set_target_properties(TheEngine PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set_target_properties(TheEngine PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 
 
@@ -124,9 +128,6 @@ target_include_directories(TheEngine PUBLIC
 ${CMAKE_CURRENT_SOURCE_DIR}/include
 
 ${CMAKE_CURRENT_SOURCE_DIR}/external/
-
-${CMAKE_CURRENT_SOURCE_DIR}/external/ecs-engine/include
-
 
 
 )

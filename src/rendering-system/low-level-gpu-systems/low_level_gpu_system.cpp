@@ -6,12 +6,12 @@
 #include "rendering-system/low-level-gpu-systems/gpu_texture_manager.h"
 #include <rendering-system/low-level-gpu-systems/gpu_pipeline_manager.h>
 
-#include "rendering-system/low-level-gpu-systems/memory-management/gpu_buffer_transfer_manager.h"
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_buffer_transfer_manager.h>
 
 
 namespace TheEngine::RenderingSystem
 {
-    LowLevelGPUSystem::LowLevelGPUSystem()
+    LowLevelGPUSystem::LowLevelGPUSystem(TheEngine::Platform::Platform& platform)
         :
 
         m_gpuBufferManager(std::make_unique<GPUBufferManager>()),
@@ -19,7 +19,7 @@ namespace TheEngine::RenderingSystem
 
         m_gpuSamplerManager(std::make_unique<GPUSamplerManager>()),
         m_gpuTextureManager(std::make_unique<GPUTextureManager>(*m_gpuSamplerManager.get())),
-        m_gpuShaderManager(std::make_unique<GPUShaderManager>()),
+        m_gpuShaderManager(std::make_unique<GPUShaderManager>(platform)),//BAD !!!!!
         m_gpuPipelineManager(std::make_unique<GPUPipelineManager>())
    
 

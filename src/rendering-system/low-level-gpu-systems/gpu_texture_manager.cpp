@@ -72,7 +72,7 @@ namespace  TheEngine::RenderingSystem
 		glTextureStorage2D(glTextureId, levels, glInternalFormat, textureCreateInfo.width, textureCreateInfo.height);
 
 
-		if (textureCreateInfo.data != nullptr)
+		if (textureCreateInfo.memoryBlock.getData() != nullptr)
 		{
 			glTextureSubImage2D(
 				glTextureId,
@@ -82,7 +82,7 @@ namespace  TheEngine::RenderingSystem
 				textureCreateInfo.height,
 				glSourceFormat,
 				glSourceType,
-				textureCreateInfo.data.get()
+				textureCreateInfo.memoryBlock.getData()
 			);
 		}
 

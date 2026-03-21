@@ -2,8 +2,8 @@
 #include <vector>
 #include <memory>
 #include <cstddef>
-#include "rendering-system\low-level-gpu-systems\memory-management\memory_system_data_types.h"
-#include <memory-management\memory_data_types.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
+#include <memory-management/memory_data_types.h>
 
 namespace TheEngine::RenderingSystem
 {
@@ -18,7 +18,7 @@ namespace TheEngine::RenderingSystem
 
 	struct GPUBufferTransferRequest
 	{
-		MemoryBlock memoryblock;
+		Memory::MemoryBlock memoryblock;
 
 		const GPUBufferInfo targetBuffer;
 		const TransferPriority transferPriority;
@@ -28,7 +28,7 @@ namespace TheEngine::RenderingSystem
 
 
 		GPUBufferTransferRequest(
-			MemoryBlock memoryblock,
+			Memory::MemoryBlock memoryblock,
 			const GPUBufferInfo& targetBuffer,
 			const size_t targetOffset,
 			const TransferPriority transferPriority

@@ -4,6 +4,12 @@
 #include  <rendering-system/renderer/rendering_context.h>
 #include <rendering-system/renderer/rendering_system_data_types.h>
 
+
+namespace TheEngine::Platform
+{
+	class Platform;
+}
+
 namespace TheEngine::RenderingSystem
 {
 
@@ -35,7 +41,7 @@ namespace TheEngine::RenderingSystem
 		std::unique_ptr <DrawCallBucket> m_drawCallBucket;
 	public:
 
-		RenderingSystem();
+		RenderingSystem(TheEngine::Platform::Platform& platform);//ToDo : Remove this dependency in some way later
 		~RenderingSystem();
 
 		GPUResourceSystem& getGPUResourceSystem();

@@ -37,12 +37,12 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
                 m_vaoID,
                 attr.location,
                 attr.numOfComponents,
-                GL_FLOAT, // Hardcoded for now based on your enum logic
+                GL_FLOAT, // Hardcoded for now 
                 attr.normalize ? GL_TRUE : GL_FALSE,
                 attr.offset
             );
 
-            // Bind the attribute to binding point 0 (assuming interleaved buffer)
+          
             glVertexArrayAttribBinding(m_vaoID, attr.location, 0);
         }
 
@@ -63,7 +63,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
         glUseProgram(desc.shader.shaderApiHandle);
 
-        // 2. Rasterizer State
+        //  Rasterizer State
         if (desc.rasterizer.cullMode == CullMode::NONE)
         {
             glDisable(GL_CULL_FACE);
@@ -77,7 +77,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
       //  glPolygonMode(GL_FRONT_AND_BACK, ToGLFillMode(desc.rasterizer.fillMode));
        // glLineWidth(desc.rasterizer.lineWidth);
 
-        // 3. Depth & Stencil State
+        //  Depth & Stencil State
         if (desc.depthStencil.depthTestEnable)
         {
             //depth test has problem of needing to be cleared
@@ -100,7 +100,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
             glDisable(GL_STENCIL_TEST);
         }
 
-        // 4. Blend State
+        //  Blend State
         if (desc.blend.enabled)
         {
             glEnable(GL_BLEND);

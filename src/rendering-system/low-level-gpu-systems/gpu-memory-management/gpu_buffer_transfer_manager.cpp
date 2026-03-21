@@ -1,5 +1,5 @@
 #pragma once
-#include "rendering-system/low-level-gpu-systems/memory-management/gpu_buffer_transfer_manager.h"
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_buffer_transfer_manager.h>
 #include <rendering-system/low-level-gpu-systems/gpu_buffer_manager.h>
 #include <assert.h>
 

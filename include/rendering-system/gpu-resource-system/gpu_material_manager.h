@@ -2,10 +2,12 @@
 #include <map>
 #include <memory>
 #include <cstddef>
-#include "rendering-system/low-level-gpu-systems/memory-management/memory_system_data_types.h"
-#include "rendering-system/gpu-resource-system/data-structures/gpu_material_system_data_structures.h"
-#include "rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/i_gpu_buffer_suballocator.h"
-#include <memory-management/memory_data_types.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
+#include <rendering-system/gpu-resource-system/data-structures/gpu_material_system_data_structures.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/i_gpu_buffer_suballocator.h>
+
+#include <memory-management/memory_block.h>
+
 
 
 namespace TheEngine::RenderingSystem
@@ -34,7 +36,7 @@ namespace TheEngine::RenderingSystem
 		bool m_gpuUploadComplete = true;
 
 
-		MaterialId uploadMaterial(const ShadingModel shadingModel, MemoryBlock& memoryBlock);
+		MaterialId uploadMaterial(const ShadingModel shadingModel, TheEngine::Memory::MemoryBlock& memoryBlock);
 		
 
 	public:
@@ -50,7 +52,7 @@ namespace TheEngine::RenderingSystem
 		template<typename T>
 		MaterialId uploadStruct(const ShadingModel model, const T& structData) {
 
-			MemoryBlock memoryBlock(reinterpret_cast<const std::byte*>(&structData), sizeof(T));
+			TheEngine::Memory::MemoryBlock memoryBlock(reinterpret_cast<const std::byte*>(&structData), sizeof(T));
 
 			return uploadMaterial(model, memoryBlock);
 		};

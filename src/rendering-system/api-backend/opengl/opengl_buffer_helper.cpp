@@ -1,5 +1,5 @@
 #include <rendering-system/api-backend/opengl/opengl_buffer_helper.h>
-
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
 
 
 namespace TheEngine::RenderingSystem::OpenGLBackend

@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <glm/ext/matrix_float4x4.hpp>
-#include <rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/i_gpu_buffer_suballocator.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/i_gpu_buffer_suballocator.h>
 #include <memory>
 
 namespace TheEngine::RenderingSystem

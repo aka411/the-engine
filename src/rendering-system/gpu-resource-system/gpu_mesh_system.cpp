@@ -1,13 +1,13 @@
 
-#include "rendering-system/gpu-resource-system/gpu_mesh_system.h"
-#include "rendering-system/low-level-gpu-systems/memory-management/gpu_buffer_transfer_manager.h"
-#include "rendering-system/low-level-gpu-systems/gpu_buffer_manager.h"
-#include "rendering-system/low-level-gpu-systems/memory-management/memory_system_data_types.h"
+#include <rendering-system/gpu-resource-system/gpu_mesh_system.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_buffer_transfer_manager.h>
+#include <rendering-system/low-level-gpu-systems/gpu_buffer_manager.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
 
 
 #include <assert.h>
-#include <rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_bump_suballocator.h>
-#include <rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_circular_suballocator.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_bump_suballocator.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_circular_suballocator.h>
 
 
 namespace TheEngine::RenderingSystem

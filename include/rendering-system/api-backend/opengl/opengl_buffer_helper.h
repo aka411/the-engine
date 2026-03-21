@@ -1,8 +1,8 @@
 #pragma once
 #include <glad/glad.h>
-#include <rendering-system/low-level-gpu-systems/memory-management/memory_system_data_types.h>
-#include <assert.h>
 
+#include <assert.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
 
 namespace TheEngine::RenderingSystem::OpenGLBackend
 {

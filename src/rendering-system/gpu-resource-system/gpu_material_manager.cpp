@@ -2,13 +2,14 @@
 #include <assert.h>
 
 #include "rendering-system/gpu-resource-system/gpu_material_manager.h"
-#include "rendering-system/low-level-gpu-systems/memory-management/gpu_buffer_transfer_manager.h"
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_buffer_transfer_manager.h>
 #include <rendering-system/low-level-gpu-systems/gpu_buffer_manager.h>
-#include <rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_fixed_size_suballocator.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_fixed_size_suballocator.h>
+
 
 namespace TheEngine::RenderingSystem
 {
-
+	using namespace TheEngine::Memory;
 
 
 	GPUMaterialManager::GPUMaterialManager(GPUBufferManager& gpuBufferManager, GPUBufferTransferManager& gpuBufferTransferManager) :

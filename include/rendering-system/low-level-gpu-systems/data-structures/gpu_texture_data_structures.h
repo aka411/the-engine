@@ -4,6 +4,7 @@
 #include "gpu_sampler_data_structures.h"
 #include <functional>
 #include <memory>
+#include <memory-management/memory_block.h>
 
 
 namespace TheEngine::RenderingSystem
@@ -80,7 +81,9 @@ namespace TheEngine::RenderingSystem
 		TextureType type = TextureType::UNKNOWN;
 
 		// --- Data Source ---
-		std::unique_ptr<std::byte[], std::function<void(void*)>> data;
+		//std::unique_ptr<std::byte[], std::function<void(void*)>> data;//Repalce with Memory block
+		Memory::MemoryBlock memoryBlock;
+
 
 		// --- Dimensions ---
 		int width = 0;

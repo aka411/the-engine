@@ -1,4 +1,4 @@
-#include "rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/gpu_buffer_circular_suballocator.h"
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_circular_suballocator.h>
 #include <assert.h>
 
 namespace TheEngine::RenderingSystem

@@ -1,7 +1,8 @@
 #pragma once
 #include <assert.h>
-#include <memory-management/memory_data_types.h>
 #include <cstdint>
+#include <memory-management/memory_block.h>
+
 
 namespace TheEngine::RenderingSystem
 {
@@ -39,7 +40,7 @@ namespace TheEngine::RenderingSystem
 		VertexFormat vertexFormat;
 		BufferUsage bufferUsage;
 
-		MemoryBlock meshData;
+		TheEngine::Memory::MemoryBlock meshData;
 		//size_t meshDataSizeInBytes = 0;
 		size_t vertexCount;
 
@@ -47,7 +48,7 @@ namespace TheEngine::RenderingSystem
 		bool hasIndex = false;
 
 		IndexFormat indexFormat;
-		MemoryBlock indexData;
+		TheEngine::Memory::MemoryBlock indexData;
 		size_t indexCount;
 		//size_t indexDataSizeInBytes = 0;
 

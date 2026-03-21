@@ -2,7 +2,10 @@
 #include <memory>
 
 
-
+namespace TheEngine::Platform
+{
+	class Platform;
+}
 
 namespace TheEngine::RenderingSystem
 {
@@ -38,7 +41,7 @@ namespace TheEngine::RenderingSystem
 	public:
 
 
-		LowLevelGPUSystem();
+		LowLevelGPUSystem(TheEngine::Platform::Platform& platform);
 		~LowLevelGPUSystem(); 
 
 

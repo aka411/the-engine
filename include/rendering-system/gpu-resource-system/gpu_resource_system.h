@@ -11,6 +11,8 @@ namespace TheEngine::RenderingSystem
 	class GPULightManager;
 	class GPUAnimationManager;
 
+	class GPUTextureManager;
+
 	class LowLevelGPUSystem;
 
 
@@ -21,7 +23,7 @@ namespace TheEngine::RenderingSystem
 	private:
 
 
-
+		LowLevelGPUSystem& m_lowLevelGPUSystem;
 
 		GPUBufferManager& m_gpuBufferManager;
 		GPUBufferTransferManager& m_gpuBufferTransferManager;
@@ -46,6 +48,7 @@ namespace TheEngine::RenderingSystem
 
 		GPUAnimationManager& getGPUAnimationManager();
 
+		GPUTextureManager& getGPUTextureManager();
 
 
 	};

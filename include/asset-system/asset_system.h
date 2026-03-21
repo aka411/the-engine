@@ -11,6 +11,10 @@ namespace TheEngine::RenderingSystem
 {
 	class GPUResourceSystem;
 }
+namespace TheEngine::Platform
+{
+	class Platform;
+}
 
 
 namespace TheEngine::AssetSystem
@@ -28,7 +32,7 @@ namespace TheEngine::AssetSystem
 		LightSystem m_lightSystem;
 		MaterialSystem m_materialSystem;
 		MeshSystem m_meshSystem;
-		//TextureSystem m_textureSystem; //need more thouught ,
+		TextureSystem m_textureSystem; 
 
 
 
@@ -36,13 +40,13 @@ namespace TheEngine::AssetSystem
 
 
 
-		AssetSystem(RenderingSystem::GPUResourceSystem& gpuResourceSystem);
+		AssetSystem(TheEngine::Platform::Platform& platform, RenderingSystem::GPUResourceSystem& gpuResourceSystem);
 
 
 
 		MeshSystem& getMeshSystem();
 		MaterialSystem& getMaterialSystem();
-		//TextureSystem& getTextureSystem();
+		TextureSystem& getTextureSystem();
 
 		LightSystem& getLightSystem();
 		AnimationResourceSystem& getAnimationResourceSystem();

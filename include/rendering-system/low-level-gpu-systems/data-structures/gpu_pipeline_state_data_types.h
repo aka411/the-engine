@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <rendering-system/low-level-gpu-systems/gpu_shader_manager.h>
-#include <rendering-system/low-level-gpu-systems/memory-management/memory_system_data_types.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
 
 
 

@@ -2,9 +2,10 @@
 #include <map>
 #include <vector>
 #include <memory.h>
-#include "rendering-system/gpu-resource-system/data-structures/gpu_mesh_system_data_structures.h"
-#include "rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/i_gpu_buffer_suballocator.h"
-#include "rendering-system/low-level-gpu-systems/memory-management/gpu_buffer_transfer_manager.h" // only for Transfer Priority enum
+#include <rendering-system/gpu-resource-system/data-structures/gpu_mesh_system_data_structures.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/i_gpu_buffer_suballocator.h>
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_buffer_transfer_manager.h> // only for Transfer Priority enum
+#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
 
 
 

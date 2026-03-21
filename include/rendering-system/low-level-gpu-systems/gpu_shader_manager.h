@@ -2,7 +2,11 @@
 #include <string>
 #include <unordered_map>
 
-
+namespace TheEngine::Platform
+{
+	class Platform;
+	class Path;
+}
 
 namespace TheEngine::RenderingSystem
 {
@@ -24,15 +28,19 @@ namespace TheEngine::RenderingSystem
 	private:
 
 		std::unordered_map<std::string, ShaderProgram> m_shaderPrograms;
+		TheEngine::Platform::Platform& m_platform;
 
 	public:
 
 
-		GPUShaderManager();
+		GPUShaderManager(TheEngine::Platform::Platform& platform);//ToDo : Remove this dependency
 		~GPUShaderManager();
 
 		ShaderProgram getShader(const std::string& shaderName);
 		ShaderProgram createAndStoreShader(const std::string& shaderName, ShaderCreateInfo shaderCreateInfo);
+
+		//This method is temporary and will later need to be removed to remove dependency on TheEngine::Platform::Platform
+		ShaderProgram loadCreateAndStoreShader(const std::string& shaderName, const TheEngine::Platform::Path& vertexShaderPath, const TheEngine::Platform::Path& fragmentShaderPath);
 
 	};
 

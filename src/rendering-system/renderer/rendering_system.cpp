@@ -9,9 +9,9 @@ namespace TheEngine::RenderingSystem
 {
 
 
-	RenderingSystem::RenderingSystem():
+	RenderingSystem::RenderingSystem(TheEngine::Platform::Platform& platform):
 
-		m_lowLevelGPUSystem(std::make_unique<LowLevelGPUSystem>()),
+		m_lowLevelGPUSystem(std::make_unique<LowLevelGPUSystem>(platform)),
 		m_gpuResourceSystem(std::make_unique<GPUResourceSystem>(*m_lowLevelGPUSystem.get())),
 		
 		m_renderingContext(*m_lowLevelGPUSystem.get(), *m_gpuResourceSystem.get())

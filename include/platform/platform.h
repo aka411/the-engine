@@ -9,6 +9,7 @@ namespace TheEngine
     struct EngineConfiguration;
 }
 
+
 namespace TheEngine::Platform
 {
 

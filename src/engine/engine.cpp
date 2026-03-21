@@ -10,8 +10,8 @@ namespace TheEngine
 
 	Engine::Engine(const EngineConfiguration& engineConfiguration) :
 		m_platform(engineConfiguration),
-		m_renderingSystem(),
-		m_assetSystem(m_renderingSystem.getGPUResourceSystem())
+		m_renderingSystem(m_platform),//ToDo : Remove this dependency in some way later
+		m_assetSystem(m_platform, m_renderingSystem.getGPUResourceSystem())// currently uses fileSystem
 	{
 
 	}
