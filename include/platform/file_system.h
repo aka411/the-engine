@@ -1,23 +1,23 @@
 #pragma once
-#include <memory>
-#include <string>
+#include <platform/file.h>
 
 
 
+
+namespace TheEngine
+{
+	struct EngineConfiguration;
+}
 
 namespace TheEngine::Platform
 {
-	//Yeah there is still lots design to hash out
 
-	struct FileData
-	{
-		//for taking ownership of data from external libriaries heap
-		//need more thought here , seems very brittle though
-		std::unique_ptr < std::byte[], void(*)(void*) > data = { nullptr,nullptr };
-		size_t size = 0;// size in bytes
 
-	};
 
+
+
+
+	class Path;
 
 	class FileSystem
 	{
@@ -25,14 +25,18 @@ namespace TheEngine::Platform
 	private:
 
 
+
+
+		File mapToMemory(const Path& path);
+
 	public:
 
-		FileSystem();
 
-		FileData readFile(const std::string& pathToFile);
-		//methods for stream reading etc
+		FileSystem(const TheEngine::EngineConfiguration& engineConfiguration);
 
+		File open(const Path& path, const FileAccessStrategy strategy = FileAccessStrategy::AUTO);
 
+		//we also need a method or object class to stream data and not load all data into RAM at once
 	};
 
 

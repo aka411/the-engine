@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <array>
 
 namespace TheEngine
 {
@@ -21,6 +22,10 @@ namespace TheEngine
 
 		//window name 
 		std::string windowName;
+
+
+
+		std::array<std::string, 3> mountPaths;
 
 		//Window mode maybe
 		//maybe even number of swapchains

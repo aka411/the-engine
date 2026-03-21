@@ -58,8 +58,7 @@ add_library(TheEngine STATIC
 
 
 
-"include/rendering-system/low-level-gpu-systems/data-structures/gpu_texture_data_structures.h"
-"include/rendering-system/low-level-gpu-systems/low_level_gpu_system.h" 
+
 
 "src/rendering-system/renderer/rendering_context.cpp"
 
@@ -80,14 +79,10 @@ add_library(TheEngine STATIC
 "src/asset-system/asset_system.cpp"
 
 
-"include/asset-system/asset_system.h"
-
 
 "src/engine/engine.cpp" 
-#"include/rendering-system/renderer/render-pass/gbuffer_render_pass.h" 
 
-"include/rendering-system/api-backend/opengl/opengl_texture_helper.h"
-"include/rendering-system/api-backend/opengl/opengl_utils.h" 
+
 
 "src/rendering-system/api-backend/opengl/opengl_texture_helper.cpp"
 "src/rendering-system/api-backend/opengl/opengl_utils.cpp"
@@ -99,7 +94,7 @@ add_library(TheEngine STATIC
 "src/platform/input_system.cpp"
 "src/platform/window_system.cpp"
 
-"include/engine/engine_core_data_types.h"
+
 
 "src/rendering-system/api-backend/opengl/opengl_shader_compiler.cpp"  
 
@@ -107,9 +102,15 @@ add_library(TheEngine STATIC
 "src/rendering-system/low-level-gpu-systems/gpu_pipeline_manager.cpp"
 "include/rendering-system/low-level-gpu-systems/data-structures/gpu_pipeline_state_data_types.h"
 
+
+
 "src/rendering-system/api-backend/opengl/opengl_pipeline_helper.cpp"
 
-"src/rendering-system/api-backend/opengl/opengl_pipeline_state_object.cpp"
+
+
+"src/platform/path.cpp"
+"src/platform/file.cpp"
+
 
 )
 

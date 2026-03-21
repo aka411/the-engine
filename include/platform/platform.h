@@ -4,11 +4,17 @@
 #include "window_system.h"
 
 
+namespace TheEngine
+{
+    struct EngineConfiguration;
+}
+
 namespace TheEngine::Platform
 {
 
 
 
+  
     class Platform
     {
 
@@ -23,7 +29,7 @@ namespace TheEngine::Platform
     public:
 
 
-        Platform(const EngineConfiguration& engineConfiguration);
+        Platform(const TheEngine::EngineConfiguration& engineConfiguration);
 
         WindowSystem& getWindowSystem();
 

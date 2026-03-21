@@ -6,8 +6,8 @@ namespace TheEngine::Platform
 
 
 
-    Platform::Platform(const EngineConfiguration& engineConfiguration) :
-        m_fileSystem(),
+    Platform::Platform(const TheEngine::EngineConfiguration& engineConfiguration) :
+        m_fileSystem(engineConfiguration),
         m_inputSystem(),
 
         m_windowSystem(engineConfiguration)
