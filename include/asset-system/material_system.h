@@ -77,6 +77,8 @@ namespace TheEngine::AssetSystem
 
 	public:
 
+		void createDefaultInternalPBRMaterial(const PBRMRCreateInfo& createInfo);
+
 		MaterialSystem(RenderingSystem::GPUMaterialManager& gpuMaterialManager);
 
 		

@@ -7,6 +7,15 @@ namespace TheEngine::AssetSystem
 
 
 
+    void MaterialSystem::createDefaultInternalPBRMaterial(const PBRMRCreateInfo& createInfo)
+    {
+        m_nameToMaterialCreateInfoMap["Engine_Internal_Default_PBR_Material"] = createInfo;
+    }
+
+
+
+
+
     MaterialSystem::MaterialSystem(RenderingSystem::GPUMaterialManager& gpuMaterialManager) :
 
         m_gpuMaterialManager(gpuMaterialManager)
@@ -23,12 +32,56 @@ namespace TheEngine::AssetSystem
        
         TheEngine::RenderingSystem::GPUPBRMaterial gpuPBRMaterial;
 
+
+        /*
         // Textures
         gpuPBRMaterial.albedoTextureHandle = createInfo.albedoTextureInfo.resisdentHandle;
         gpuPBRMaterial.emissiveTextureHandle = createInfo.emissiveTextureInfo.resisdentHandle;
         gpuPBRMaterial.normalTextureHandle = createInfo.normalTextureInfo.resisdentHandle;
         gpuPBRMaterial.metallicRoughnessTextureHandle = createInfo.metallicRoughnessTextureInfo.resisdentHandle;
         gpuPBRMaterial.occlusionTextureHandle = createInfo.occlusionTextureInfo.resisdentHandle;
+        */
+
+
+        const auto& it = m_nameToMaterialCreateInfoMap.find("Engine_Internal_Default_PBR_Material");
+
+
+
+
+        if (it == m_nameToMaterialCreateInfoMap.end())
+
+        {
+
+            assert(false && "Material System : No default PBR material found");
+
+        }
+
+
+
+        const auto& defaultMaterial = it->second;
+
+
+
+        gpuPBRMaterial.albedoTextureHandle = (createInfo.albedoTextureInfo.residentHandle != 0)
+            ? createInfo.albedoTextureInfo.residentHandle
+            : defaultMaterial.albedoTextureInfo.residentHandle;
+
+        gpuPBRMaterial.metallicRoughnessTextureHandle = (createInfo.metallicRoughnessTextureInfo.residentHandle != 0)
+            ? createInfo.metallicRoughnessTextureInfo.residentHandle
+            : defaultMaterial.metallicRoughnessTextureInfo.residentHandle;
+
+        gpuPBRMaterial.normalTextureHandle = (createInfo.normalTextureInfo.residentHandle != 0)
+            ? createInfo.normalTextureInfo.residentHandle
+            : defaultMaterial.normalTextureInfo.residentHandle;
+
+        gpuPBRMaterial.occlusionTextureHandle = (createInfo.occlusionTextureInfo.residentHandle != 0)
+            ? createInfo.occlusionTextureInfo.residentHandle
+            : defaultMaterial.occlusionTextureInfo.residentHandle;
+
+        gpuPBRMaterial.emissiveTextureHandle = (createInfo.emissiveTextureInfo.residentHandle != 0)
+            ? createInfo.emissiveTextureInfo.residentHandle
+            : defaultMaterial.emissiveTextureInfo.residentHandle;
+
 
         // Factors 
         gpuPBRMaterial.baseColorFactor = createInfo.baseColorFactor;
@@ -38,6 +91,10 @@ namespace TheEngine::AssetSystem
      
         m_nameToMaterialCreateInfoMap[materialName] = createInfo;
    
+
+
+
+
         RenderingSystem::MaterialId materialId = m_gpuMaterialManager.
             uploadStruct<TheEngine::RenderingSystem::GPUPBRMaterial>
             (TheEngine::RenderingSystem::ShadingModel::PBR_METALLIC_ROUGHNESS, gpuPBRMaterial);

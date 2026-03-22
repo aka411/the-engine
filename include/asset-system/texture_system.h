@@ -40,6 +40,8 @@ namespace TheEngine::AssetSystem
 
 		RenderingSystem::TextureInfo createNewTexture(const RenderingSystem::TextureCreateInfo& textureCreateInfo);
 
+		//A helper method primarily created to help create default textures and materials
+		RenderingSystem::TextureCreateInfo createDefaultTexture(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		//Use Path
 		RenderingSystem::TextureInfo loadTexture(const TheEngine::Platform::Path& path);//allow sampler settings also?
 

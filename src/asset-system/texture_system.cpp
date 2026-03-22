@@ -23,6 +23,43 @@ namespace TheEngine::AssetSystem
 		return m_gpuTextureManager.createNewTexture(textureCreateInfo);
 	}
 
+
+
+    //Helper function
+    RenderingSystem::TextureCreateInfo TextureSystem::createDefaultTexture(uint8_t r, uint8_t g, uint8_t b, uint8_t a) 
+    {
+      
+        using namespace RenderingSystem;
+
+        RenderingSystem::TextureCreateInfo info;
+        info.width = 1;
+        info.height = 1;
+        info.type = TextureType::TEXTURE_2D;
+        info.internalFormat = TextureInternalFormat::RGBA8;
+        info.textureSourcePixelFormat = TextureSourcePixelFormat::RGBA;
+        info.textureSourceComponentType = TextureSourceComponentType::UNSIGNED_BYTE;
+
+
+        /*
+        info.samplerSetting.minFilter = TextureFilter::NEAREST;
+        info.samplerSetting.magFilter = TextureFilter::NEAREST;
+        info.samplerSetting.wrapS = TextureWrap::REPEAT;
+        info.samplerSetting.wrapT = TextureWrap::REPEAT;
+        */
+
+         uint8_t pixels[4] =  { r, g, b, a };
+
+        info.memoryBlock = TheEngine::Memory::MemoryBlock(
+            reinterpret_cast<std::byte*>(pixels),
+            4
+        );
+
+        return info;
+    }
+
+
+
+
 	RenderingSystem::TextureInfo TextureSystem::loadTexture(const TheEngine::Platform::Path& path)
 	{
 		return m_gpuTextureManager.createNewTexture(m_imageLoader.loadTextureFile(path));

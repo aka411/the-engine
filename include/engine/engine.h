@@ -20,7 +20,7 @@ namespace TheEngine
 		TheEngine::RenderingSystem::RenderingSystem m_renderingSystem;
 		TheEngine::AssetSystem::AssetSystem m_assetSystem;
 
-
+		void initializeMaterials();
 	public:
 
 		Engine(const EngineConfiguration& engineConfiguration);
