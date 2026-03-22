@@ -34,7 +34,7 @@ namespace TheEngine::RenderingSystem
 		float metallicFactor = 0.0f; //offset = 28
 		float roughnessFactor = 0.0f; //offset = 32
 
-		float padding = 0;//offset = 36
+		float padding0 = 0;//offset = 36
 
 		// Alignement : 2N , 2*4 = 8 
 		uint64_t albedoTextureHandle = 0; //offset = 40
@@ -43,9 +43,10 @@ namespace TheEngine::RenderingSystem
 		uint64_t normalTextureHandle = 0; //offset = 56
 		uint64_t occlusionTextureHandle = 0;// offset = 64
 		uint64_t emissiveTextureHandle = 0;//offset =  72
+		//end at 79
 
-
-		//offset = 80 , end of struct, multiple of 16
+		//next struct starts at 80 which is multiple of 16
+	
 	};
 
 
