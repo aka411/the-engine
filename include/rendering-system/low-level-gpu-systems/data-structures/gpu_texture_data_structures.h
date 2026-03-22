@@ -107,7 +107,7 @@ namespace TheEngine::RenderingSystem
 	{
 		TextureType type = TextureType::UNKNOWN;
 
-		uint64_t resisdentHandle = 0;
+		uint64_t residentHandle = 0;// invalid value
 
 		int width = 0;
 		int height = 0;

@@ -113,7 +113,7 @@ namespace  TheEngine::RenderingSystem
 
 		TextureInfo info;
 		//info.textureHandle = glTextureId;
-		info.resisdentHandle = residentHandle;
+		info.residentHandle = residentHandle;
 		info.type = textureCreateInfo.type;
 		info.width = textureCreateInfo.width;
 		info.height = textureCreateInfo.height;
@@ -183,7 +183,7 @@ namespace  TheEngine::RenderingSystem
 
 		TextureInfo info;
 		//info.textureHandle = glTextureId;
-		info.resisdentHandle = residentHandle;
+		info.residentHandle = residentHandle;
 		info.type = renderTargetCreateInfo.type;
 		info.width = renderTargetCreateInfo.width;
 		info.height = renderTargetCreateInfo.height;
@@ -205,7 +205,7 @@ namespace  TheEngine::RenderingSystem
 	void GPUTextureManager::destroyTexture(TextureInfo& textureInfo)
 	{
 
-		const uint64_t residentHandle = textureInfo.resisdentHandle;
+		const uint64_t residentHandle = textureInfo.residentHandle;
 		auto it = m_residentHandleToTextureApiHandle.find(residentHandle);
 
 		if (it == m_residentHandleToTextureApiHandle.end())
