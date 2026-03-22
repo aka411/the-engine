@@ -14,7 +14,7 @@ namespace TheEngine
 	ImageLoader::ImageLoader(TheEngine::Platform::FileSystem& fileSystem) :
 		m_fileSystem(fileSystem)
 	{
-
+		stbi_set_flip_vertically_on_load(true);
 	}
 
 	RenderingSystem::TextureCreateInfo ImageLoader::loadTextureFile(const TheEngine::Platform::Path& path)

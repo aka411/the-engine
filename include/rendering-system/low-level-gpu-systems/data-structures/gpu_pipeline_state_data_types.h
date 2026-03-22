@@ -136,7 +136,7 @@ namespace TheEngine::RenderingSystem
 	struct RasterizerState {
 		CullMode cullMode = CullMode::BACK;
 		FillMode fillMode = FillMode::SOLID;
-		float lineWidth = 1.0f;
+		//float lineWidth = 1.0f;
 	};
 
 	struct BlendState {
