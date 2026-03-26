@@ -59,7 +59,8 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 		case TextureInternalFormat::DEPTH_COMPONENT16: return GL_DEPTH_COMPONENT16;
 		case TextureInternalFormat::DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT24;
 		case TextureInternalFormat::DEPTH_COMPONENT32F: return GL_DEPTH_COMPONENT32F;
-		case TextureInternalFormat::DEPTH_STENCIL: return GL_DEPTH_STENCIL;
+		case TextureInternalFormat::DEPTH24_STENCIL8:   return GL_DEPTH24_STENCIL8; 
+		case TextureInternalFormat::DEPTH32F_STENCIL8:  return GL_DEPTH32F_STENCIL8;
 
 		case TextureInternalFormat::UNKNOWN:
 		default:
@@ -164,6 +165,15 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 		case TextureInternalFormat::RG32F:       return 8;
 		case TextureInternalFormat::RGB32F:      return 12;
 		case TextureInternalFormat::RGBA32F:     return 16;
+
+			// Depth/Stencil formats
+		case TextureInternalFormat::DEPTH_COMPONENT16:  return 2;
+		case TextureInternalFormat::DEPTH_COMPONENT24:  return 4; // Usually padded to 32-bit
+		case TextureInternalFormat::DEPTH_COMPONENT32F: return 4;
+		case TextureInternalFormat::DEPTH24_STENCIL8:   return 4; // 24 depth + 8 stencil = 32 bits
+		case TextureInternalFormat::DEPTH32F_STENCIL8:  return 8; // 32-bit float depth + 8-bit stencil (usually 64-bit padded)
+
+
 		default:
 			assert(false && "Unknown TextureInternalFormat in getBytesPerPixel");
 			return 0;
