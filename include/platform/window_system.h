@@ -11,60 +11,15 @@ namespace TheEngine::Platform
 
 
 
-    class IRenderingAPIContext
-    {
-    private:
-
-        RenderingAPI m_renderingAPI;
-        SDL_Window* m_window = nullptr;
-
-    public:
-
-        IRenderingAPIContext(const RenderingAPI renderingAPI) :m_renderingAPI(renderingAPI) {};
-        RenderingAPI getRenderingAPI() const { return m_renderingAPI; };
-
-        //Add specific context data later if needed
-
-    };
-
-
-
-
-    
- //Move to its own class
-    class OpenGLRenderingAPIContext : public IRenderingAPIContext
-    {
-    private:
-        SDL_GLContext m_sdlGLContext;
-    public:
-
-        OpenGLRenderingAPIContext(SDL_GLContext sdlGLContext) :IRenderingAPIContext(RenderingAPI::OPENGL_4_6)
-        {
-            m_sdlGLContext = sdlGLContext;
-        };
-
-        SDL_GLContext getSDLGLContext()
-        {
-            return m_sdlGLContext;
-
-        }
-
-    };
-
-
-
-
-
-
 	class WindowSystem
 	{
 
 	private:
 
-        std::unique_ptr<IRenderingAPIContext> m_iRenderingAPIContext;
+
         std::string m_gpuVendor = "Unknown GPU Vendor";
 
-
+		//use a smart pointer
         SDL_Window* m_window = nullptr;
 
         void enableOpenGLDebugging();

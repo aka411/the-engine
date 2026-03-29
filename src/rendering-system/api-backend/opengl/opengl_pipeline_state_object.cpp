@@ -4,18 +4,14 @@
 namespace TheEngine::RenderingSystem::OpenGLBackend
 {
   
-     GLenum toGLDataType(PrimitiveDataType type) {
-        switch (type) {
-        case PrimitiveDataType::FLOAT: return GL_FLOAT;
-        default: return GL_FLOAT;
-        }
-    }
 
 
 
 
-	OpenglPipelineStateObject::OpenglPipelineStateObject(PipelineDescriptor& pipelineDescriptor):
-		IGPUPipeline(pipelineDescriptor)
+
+	OpenglPipelineStateObject::OpenglPipelineStateObject(const RenderStateConfiguration& renderStateConfiguration) :
+
+        IPipelineStateObject(renderStateConfiguration)
 	{
 
 
@@ -50,72 +46,31 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 	}
 
 
 
 
-	void OpenglPipelineStateObject::bind()
+	virtual void OpenglPipelineStateObject::bind() override
 	{
 
-        const auto& desc = m_pipelineDescriptor;
+        //TODO : Check current cached state and change and also start refactor that has not started yet
+        //New design command buffer can bind so remove this method also its simple for command buffer to state track
 
 
-        glUseProgram(desc.shader.shaderApiHandle);
-
-        //  Rasterizer State
-        if (desc.rasterizer.cullMode == CullMode::NONE)
-        {
-            glDisable(GL_CULL_FACE);
-        }
-        else
-        {
-            glEnable(GL_CULL_FACE);
-            glCullFace(toGLCullMode(desc.rasterizer.cullMode));
-        }
-
-      //  glPolygonMode(GL_FRONT_AND_BACK, ToGLFillMode(desc.rasterizer.fillMode));
-       // glLineWidth(desc.rasterizer.lineWidth);
-
-        //  Depth & Stencil State
-        if (desc.depthStencil.depthTestEnable)
-        {
-            //depth test has problem of needing to be cleared
-            glEnable(GL_DEPTH_TEST);
-            glDepthFunc(toGLCompareOp(desc.depthStencil.depthCompareOp));
-        }
-        else
-        {
-            glDisable(GL_DEPTH_TEST);
-        }
-
-        glDepthMask(desc.depthStencil.depthWriteEnable ? GL_TRUE : GL_FALSE);
-
-        if (desc.depthStencil.stencilTestEnable)
-        {
-            glEnable(GL_STENCIL_TEST);
-        }
-        else
-        {
-            glDisable(GL_STENCIL_TEST);
-        }
-
-        //  Blend State
-        if (desc.blend.enabled)
-        {
-            glEnable(GL_BLEND);
-            glBlendEquation(toGLBlendOp(desc.blend.colorBlendOp));
-            glBlendFunc(
-                toGLBlendFactor(desc.blend.srcColorFactor),
-                toGLBlendFactor(desc.blend.dstColorFactor)
-            );
-        }
-        else
-        {
-            glDisable(GL_BLEND);
-        }
-
-       glBindVertexArray(m_vaoID);
     }
 
 

@@ -76,12 +76,14 @@ namespace TheEngine::Platform
 			SDL_GLContext  gl_context = SDL_GL_CreateContext(m_window);
 
 			SDL_GL_MakeCurrent(m_window, gl_context);
-			m_iRenderingAPIContext = std::make_unique<OpenGLRenderingAPIContext>(gl_context);
+	
 
 			gladLoadGL();
 			gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 
 			enableOpenGLDebugging();
+
+			//yeah whos gonna delete this? whats its lifetime
 			const GLubyte* rawString = glGetString(GL_RENDERER);
 
 			if (rawString != nullptr)
@@ -92,7 +94,7 @@ namespace TheEngine::Platform
 			break;
 		}
 
-		case RenderingAPI::VULKAN_1_3://also update to vulkan 1.4
+		case RenderingAPI::VULKAN_1_3://also update to vulkan 1.4 --> nope my card does not support so cant test it 
 		{
 			////TODO : completed this later
 
@@ -101,6 +103,11 @@ namespace TheEngine::Platform
 				engineConfiguration.windowWidth, engineConfiguration.windowHeight,
 				SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN
 			);
+
+
+
+
+
 
 
 			break;

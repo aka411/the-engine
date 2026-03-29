@@ -46,8 +46,8 @@ namespace TheEngine::AssetSystem
 
 		//for spot light
 		//Unit : in degrees
-		float innerConeAngle;
-		float outerConeAngle;
+		//float innerConeAngle;
+		//float outerConeAngle;
 
 
 		RenderingSystem::LightId lightId;

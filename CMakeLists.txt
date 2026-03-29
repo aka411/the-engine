@@ -30,91 +30,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 add_library(TheEngine STATIC
 
-"external/glad/glad.c"
-
-"src/rendering-system/gpu-resource-system/gpu_mesh_system.cpp"
-"src/rendering-system/gpu-resource-system/gpu_material_manager.cpp"
-"src/rendering-system/gpu-resource-system/gpu_animation_manager.cpp"
-"src/rendering-system/gpu-resource-system/gpu_light_manager.cpp"
-"src/rendering-system/gpu-resource-system/gpu_resource_system.cpp"
-
-"src/rendering-system/low-level-gpu-systems/gpu_buffer_manager.cpp"
-"src/rendering-system/low-level-gpu-systems/gpu_texture_manager.cpp"
-"src/rendering-system/low-level-gpu-systems/gpu_sampler_manager.cpp" 
-"src/rendering-system/low-level-gpu-systems/gpu_shader_manager.cpp" 
-"src/rendering-system/low-level-gpu-systems/low_level_gpu_system.cpp" 
-
-
-
-
-"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_buffer_transfer_manager.cpp"
-
-"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/i_gpu_buffer_suballocator.cpp"
-"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_tlsf_suballocator.cpp"
-"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_per_frame_suballocator.cpp"
-"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_fixed_size_suballocator.cpp"
-"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_circular_suballocator.cpp"
-"src/rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_bump_suballocator.cpp"
-
-
-
-
-
-"src/rendering-system/renderer/rendering_context.cpp"
-
-"src/rendering-system/renderer/rendering_system.cpp"
-
-
-"src/rendering-system/renderer/render-pass/i_render_pass.cpp"
-"src/rendering-system/renderer/render-pass/gbuffer_render_pass.cpp"
-
-"src/animation-system/animation_system.cpp"
-
-
-"src/asset-system/material_system.cpp"
-"src/asset-system/animation_resource_system.cpp"
-"src/asset-system/light_system.cpp"
-"src/asset-system/mesh_system.cpp"
-"src/asset-system/texture_system.cpp"
-"src/asset-system/asset_system.cpp"
-
-
-
-"src/engine/engine.cpp" 
-
-
-
-"src/rendering-system/api-backend/opengl/opengl_texture_helper.cpp"
-"src/rendering-system/api-backend/opengl/opengl_utils.cpp"
-"src/rendering-system/api-backend/opengl/opengl_buffer_helper.cpp"
-
-
-"src/platform/platform.cpp"
-"src/platform/file_system.cpp"
-"src/platform/input_system.cpp"
-"src/platform/window_system.cpp"
-
-
-
-"src/rendering-system/api-backend/opengl/opengl_shader_compiler.cpp"  
-
-"src/rendering-system/renderer/render-pass/forward_render_pass.cpp" 
-"src/rendering-system/low-level-gpu-systems/gpu_pipeline_manager.cpp"
-
-
-
-"src/rendering-system/api-backend/opengl/opengl_pipeline_helper.cpp"
-"src/rendering-system/api-backend/opengl/opengl_pipeline_state_object.cpp"
-
-
-
-"src/platform/path.cpp"
-"src/platform/file.cpp"
-
-
-"src/memory-management/memory_block.cpp"
-
-"src/image_loader.cpp"
 
 )
 
@@ -132,7 +47,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/external/
 
 )
 
-#target_include_directories(opengl-rendering-engine PUBLIC ${glm_INCLUDE_DIR})
+
 
 # SDL is used for input handling and window management, in vulkan we also use it for surface creation
 # I can switch to glfw also if i want cause the way the engine is designed is very modular 

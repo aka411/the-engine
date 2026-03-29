@@ -16,8 +16,8 @@ namespace TheEngine::RenderingSystem
 
 
 
-	class GPUBufferManager;
-	class GPUBufferTransferManager;
+	class IGPUBufferManager;
+	class IGPUBufferTransferManager;
 
 	class GPUMeshSystem
 	{
@@ -30,8 +30,8 @@ namespace TheEngine::RenderingSystem
 
 
 
-		GPUBufferManager& m_gpuBufferManager;
-		GPUBufferTransferManager& m_gpuBufferTransferManager;
+		IGPUBufferManager& m_iGPUBufferManager;
+		IGPUBufferTransferManager& m_iGPUBufferTransferManager;
 
 
 		//Vertex Format to Buffer
@@ -65,7 +65,7 @@ namespace TheEngine::RenderingSystem
 
 	public:
 
-		GPUMeshSystem(GPUBufferManager& gpuBufferManager, GPUBufferTransferManager& gpuBufferTransferManager);
+		GPUMeshSystem(IGPUBufferManager& iGPUBufferManager, GPUBufferTransferManager& gpuBufferTransferManager);
 
 		MeshInfo uploadMeshData(MeshUploadData&& meshUploadData);
 
