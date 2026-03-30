@@ -3,7 +3,7 @@
 namespace TheEngine::RenderingSystem::VulkanBackend
 {
 
-	class VulkanDescriptorSetManager : public IDescriptorSetManager
+	class VulkanDescriptorSetManager 
 	{
 
 	private:

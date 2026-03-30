@@ -27,7 +27,7 @@ namespace TheEngine::RenderingSystem
 	private:
 
 
-		std::unique_ptr<IRenderDevice> m_iRenderDevice;
+		std::unique_ptr<IRenderDevice> m_renderDevice;
 		std::unique_ptr<GPUResourceSystem>  m_gpuResourceSystem;
 
 
@@ -41,7 +41,7 @@ namespace TheEngine::RenderingSystem
 	public:
 
 
-		RenderingSystem(IRenderDevice&& iRenderDevice);
+		RenderingSystem(IRenderDevice&& renderDevice);
 		~RenderingSystem();
 
 		GPUResourceSystem& getGPUResourceSystem();

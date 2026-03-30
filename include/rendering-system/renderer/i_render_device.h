@@ -27,7 +27,7 @@ namespace TheEngine::RenderingSystem
 		std::unique_ptr<ITextureManager> m_textureManager;
 		std::unique_ptr<IShaderManager> m_shaderManager;
 		std::unique_ptr<ITransferManager> m_transferManager;
-		std::unique_ptr<IFrameBufferManager> m_framebufferManager;
+
 
 
 
@@ -52,7 +52,7 @@ namespace TheEngine::RenderingSystem
 		virtual TransferManager& getTransferManager();
 		virtual PipelineManager& getPipelineManager();
 
-		virtual FrameBufferManager& getFrameBufferManager();//do i need this method
+
 	};
 
 

@@ -7,6 +7,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
     struct OpenglSampler
     {
+        SamplerHandle samplerHandle;//only to for use by manager,not to be used by user
         GLuint openglSamplerHandle;
     };
 
@@ -37,6 +38,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
             }
         };
 		//Need to store sampler settings to sampler
+        //If we are using hash, where will we het handle from
 		std::unordered_map<SamplerSetting, OpenglSampler, SamplerHasher> m_cachedGPUSamplers;
 
 	public  :
@@ -44,10 +46,12 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
         OpenglSamplerManager();
 		~OpenglSamplerManager();
 
-		virtual GPUSampler getOrCreateGPUSampler(const SamplerSetting& samplerSetting) override;
-        virtual void destroySampler(const GPUSampler) override;
 
-        const OpenglSampler getNativeSampler(const GPUSampler);
+        virtual const SamplerHandle getOrCreateSampler(const SamplerSetting& SamplerSetting) override;
+
+        virtual void destroySampler(const SamplerHandle& samplerHandle) override;
+
+        const OpenglSampler getNativeSampler(const SamplerHandle& samplerHandle);
 	};
 
 

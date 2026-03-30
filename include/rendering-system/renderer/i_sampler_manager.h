@@ -22,7 +22,7 @@ namespace TheEngine::RenderingSystem
 		ISamplerManager();
 		virtual ~ISamplerManager() =default;
 
-		virtual const SamplerHandle getOrCreateSampler(GPUSampler SamplerSetting) = 0;
+		virtual const SamplerHandle getOrCreateSampler(const SamplerSetting& SamplerSetting) = 0;
 
 		SamplerMetadata getSamplerMetadata(const SamplerHandle& samplerHandle)
 		{

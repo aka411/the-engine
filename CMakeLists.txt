@@ -23,12 +23,20 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 
-
+file(GLOB_RECURSE ENGINE_SOURCES 
+    "src/*.cpp" 
+    "src/*.h" 
+    "src/*.hpp"
+    "include/*.h"
+)
 
 
 
 
 add_library(TheEngine STATIC
+
+${ENGINE_SOURCES}
+
 
 
 )

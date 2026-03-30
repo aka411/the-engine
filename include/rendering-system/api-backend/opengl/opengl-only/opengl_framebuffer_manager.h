@@ -7,7 +7,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 	//need to map fbo attahment requirements to GLuintFBO
 
 
-	class OpenglFrameBufferManager : public IFrameBufferManager
+	class OpenglFrameBufferManager 
 	{
 
 
@@ -18,7 +18,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 	public:
 
 		OpenglFrameBufferManager();
-		virtual ~OpenglFrameBufferManager() = default;
+		~OpenglFrameBufferManager();
 
 		//I was thinking of letting this manager set the state and fbo
 		void setState(const Framebuffer& framebuffer);//API specific method

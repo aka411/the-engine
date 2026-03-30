@@ -103,6 +103,9 @@ namespace TheEngine::RenderingSystem
 	};
 
 
+
+
+//since we are handle based now, we need to reconsiderthis
 	struct TextureInfo
 	{
 		TextureType type = TextureType::UNKNOWN;
@@ -123,7 +126,7 @@ namespace TheEngine::RenderingSystem
 
 
 
-
+	//Its need more thought if we need this or not
 	struct RenderTargetCreateInfo
 	{
 		TextureType type = TextureType::UNKNOWN;
@@ -140,7 +143,7 @@ namespace TheEngine::RenderingSystem
 
 
 
-
+	//we are more of handle based now
 	struct RenderTarget
 	{
 		TextureType type = TextureType::UNKNOWN;

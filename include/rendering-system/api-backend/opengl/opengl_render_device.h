@@ -27,7 +27,10 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 		virtual IGPUTransferManager& getTransferManager() override;
 		virtual IPipelineManager& getPipelineManager() override;
 
-		virtual IFrameBufferManager& getFrameBufferManager() override;//do i need this method
+
+
+		//OPENGL SPECIFIC METHODS
+		IFrameBufferManager& getFrameBufferManager();
 
 	}
 

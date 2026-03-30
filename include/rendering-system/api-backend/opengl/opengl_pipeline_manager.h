@@ -22,7 +22,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
 
 
-		PipelineHandle createPipeline(PipelineDescriptor& pipelineDescriptor);
+		virtual PipelineHandle createPipeline(PipelineDescriptor& pipelineDescriptor) override;
 
 		IGPUPipeline& getGPUPipelineState(const PipelineHandle pipelineHandle);
 

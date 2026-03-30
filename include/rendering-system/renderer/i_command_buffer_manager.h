@@ -9,13 +9,14 @@ namespace TheEngine::RenderingSystem
 	private:
 
 
-		VkCommandPool m_commandPool;
+	
 
 	public:
 
 		ICommandBufferManager();
 
 
+		virtual ICommandBuffer& getICommandBuffer() = 0;
 
 	};
 

@@ -16,7 +16,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
 		//we have to create the vaos, etc
 		GLuint m_vaoID;
-		GLuint m_fbo;
+		GLuint m_fbo;// yeah in old design it was in OpenglFramebuffer class but its better here
 	//A global state of RenderConfig to avoid resetting already set state
 
 	public:

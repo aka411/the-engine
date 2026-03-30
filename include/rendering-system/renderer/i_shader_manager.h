@@ -26,6 +26,7 @@ namespace TheEngine::RenderingSystem
 		virtual ~IShaderManager() = default;
 
 		//TODO : Design needs more thought
+		 // what needs to be input , mimick vulkans createinfo struct? struct of strings but 
 		virtual const ShaderHandle createShader();
 
 

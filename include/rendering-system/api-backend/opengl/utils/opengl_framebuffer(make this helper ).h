@@ -5,11 +5,11 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 {
     //In New desing we dont use this, but we need the code for what is being done here moved to somewhere else
 
-    class OpenglFramebuffer : public IFramebuffer 
+    class OpenglFramebuffer 
     {
     private:
 
-        uint32_t m_fboHandle = 0;//change to GLuint
+    
 
     public:
 

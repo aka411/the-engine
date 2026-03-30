@@ -94,7 +94,7 @@ namespace TheEngine::Platform
 			break;
 		}
 
-		case RenderingAPI::VULKAN_1_3://also update to vulkan 1.4 --> nope my card does not support so cant test it 
+		case RenderingAPI::VULKAN_1_3://why not vulkan 1.4 --> nope my card does not support so cant test it 
 		{
 			////TODO : completed this later
 
