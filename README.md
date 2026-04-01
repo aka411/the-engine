@@ -8,7 +8,16 @@ Unlike traditional **OOP** based engines, TheEngine prioritizes memory layout an
 * **Custom ECS System:** [aka411/ecs-engine](https://github.com/aka411/ecs-engine)
 * **Memory Layout:** Contiguous component arrays for minimal cache misses.
 
+## Demo
 
+Check out the latest progress in the video below:
+
+https://github.com/user-attachments/assets/4fefce97-4bf6-4443-8949-c109522d898b
+* **Asset:** ["Reap the Whirlwind"](https://sketchfab.com/3d-models/reap-the-whirlwind-297e1595d6cf4466bf5c7803db8c5bd8) by [toomanydemons](https://sketchfab.com/toomanydemons)
+* **License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+* *Note: This asset is not included in this repository. It is showcased for demonstration purposes only.*
+
+  
 ##  Current Feature Set
 
 ### Rendering & Graphics
@@ -28,18 +37,6 @@ Unlike traditional **OOP** based engines, TheEngine prioritizes memory layout an
 ### Systems
 * **Custom UI System:** A lightweight, UI framework built to integrate directly with the engine's data flow.
 * **Lighting:** Simple single-light implementation.
-
-
-
-## Demo
-
-Check out the latest progress in the video below:
-
-https://github.com/user-attachments/assets/4fefce97-4bf6-4443-8949-c109522d898b
-* **Asset:** ["Reap the Whirlwind"](https://sketchfab.com/3d-models/reap-the-whirlwind-297e1595d6cf4466bf5c7803db8c5bd8) by [toomanydemons](https://sketchfab.com/toomanydemons)
-* **License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
-* *Note: This asset is not included in this repository. It is showcased for demonstration purposes only.*
-
 
 
 ## Project Status: Active Redesign
