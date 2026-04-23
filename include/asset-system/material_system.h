@@ -1,8 +1,11 @@
 #pragma once
 #include <map>
 #include <string>
-#include "rendering-system/low-level-gpu-systems/data-structures/gpu_texture_data_structures.h"
-#include "rendering-system/gpu-resource-system/data-structures/gpu_material_system_data_structures.h"
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <rendering-system/rhi/data-structures/gpu_texture_data_structures.h>
+#include <rendering-system/engine_handles.h>
+#include <rendering-system/gpu-resource-system/data-structures/gpu_material_system_data_structures.h>
 
 
 namespace TheEngine::RenderingSystem
@@ -52,12 +55,12 @@ namespace TheEngine::AssetSystem
 
 
 
-		RenderingSystem::TextureInfo albedoTextureInfo;
-		RenderingSystem::TextureInfo metallicRoughnessTextureInfo;
+		RenderingSystem::TextureHandle albedoTextureHandle;
+		RenderingSystem::TextureHandle metallicRoughnessTextureHandle;
 
-		RenderingSystem::TextureInfo normalTextureInfo;
-		RenderingSystem::TextureInfo occlusionTextureInfo;
-		RenderingSystem::TextureInfo emissiveTextureInfo;
+		RenderingSystem::TextureHandle normalTextureHandle;
+		RenderingSystem::TextureHandle occlusionTextureHandle;
+		RenderingSystem::TextureHandle emissiveTextureHandle;
 	};
 
 

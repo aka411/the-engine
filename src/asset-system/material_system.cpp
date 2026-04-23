@@ -33,14 +33,6 @@ namespace TheEngine::AssetSystem
         TheEngine::RenderingSystem::GPUPBRMaterial gpuPBRMaterial;
 
 
-        /*
-        // Textures
-        gpuPBRMaterial.albedoTextureHandle = createInfo.albedoTextureInfo.resisdentHandle;
-        gpuPBRMaterial.emissiveTextureHandle = createInfo.emissiveTextureInfo.resisdentHandle;
-        gpuPBRMaterial.normalTextureHandle = createInfo.normalTextureInfo.resisdentHandle;
-        gpuPBRMaterial.metallicRoughnessTextureHandle = createInfo.metallicRoughnessTextureInfo.resisdentHandle;
-        gpuPBRMaterial.occlusionTextureHandle = createInfo.occlusionTextureInfo.resisdentHandle;
-        */
 
 
         const auto& it = m_nameToMaterialCreateInfoMap.find("Engine_Internal_Default_PBR_Material");
@@ -61,26 +53,25 @@ namespace TheEngine::AssetSystem
         const auto& defaultMaterial = it->second;
 
 
+        gpuPBRMaterial.albedoTextureHandle = (createInfo.albedoTextureHandle.isValid())
+            ? m_gpuMaterialManager.getBindlessTextureHandle(createInfo.albedoTextureHandle)
+            : m_gpuMaterialManager.getBindlessTextureHandle(defaultMaterial.albedoTextureHandle);
 
-        gpuPBRMaterial.albedoTextureHandle = (createInfo.albedoTextureInfo.residentHandle != 0)
-            ? createInfo.albedoTextureInfo.residentHandle
-            : defaultMaterial.albedoTextureInfo.residentHandle;
+        gpuPBRMaterial.metallicRoughnessTextureHandle = (createInfo.metallicRoughnessTextureHandle.isValid())
+            ? m_gpuMaterialManager.getBindlessTextureHandle(createInfo.metallicRoughnessTextureHandle)
+            : m_gpuMaterialManager.getBindlessTextureHandle(defaultMaterial.metallicRoughnessTextureHandle);
 
-        gpuPBRMaterial.metallicRoughnessTextureHandle = (createInfo.metallicRoughnessTextureInfo.residentHandle != 0)
-            ? createInfo.metallicRoughnessTextureInfo.residentHandle
-            : defaultMaterial.metallicRoughnessTextureInfo.residentHandle;
+        gpuPBRMaterial.normalTextureHandle = (createInfo.normalTextureHandle.isValid())
+            ? m_gpuMaterialManager.getBindlessTextureHandle(createInfo.normalTextureHandle)
+            : m_gpuMaterialManager.getBindlessTextureHandle(defaultMaterial.normalTextureHandle);
 
-        gpuPBRMaterial.normalTextureHandle = (createInfo.normalTextureInfo.residentHandle != 0)
-            ? createInfo.normalTextureInfo.residentHandle
-            : defaultMaterial.normalTextureInfo.residentHandle;
+        gpuPBRMaterial.occlusionTextureHandle = (createInfo.occlusionTextureHandle.isValid())
+            ? m_gpuMaterialManager.getBindlessTextureHandle(createInfo.occlusionTextureHandle)
+            : m_gpuMaterialManager.getBindlessTextureHandle(defaultMaterial.occlusionTextureHandle);
 
-        gpuPBRMaterial.occlusionTextureHandle = (createInfo.occlusionTextureInfo.residentHandle != 0)
-            ? createInfo.occlusionTextureInfo.residentHandle
-            : defaultMaterial.occlusionTextureInfo.residentHandle;
-
-        gpuPBRMaterial.emissiveTextureHandle = (createInfo.emissiveTextureInfo.residentHandle != 0)
-            ? createInfo.emissiveTextureInfo.residentHandle
-            : defaultMaterial.emissiveTextureInfo.residentHandle;
+        gpuPBRMaterial.emissiveTextureHandle = (createInfo.emissiveTextureHandle.isValid())
+            ? m_gpuMaterialManager.getBindlessTextureHandle(createInfo.emissiveTextureHandle)
+            : m_gpuMaterialManager.getBindlessTextureHandle(defaultMaterial.emissiveTextureHandle);
 
 
         // Factors 

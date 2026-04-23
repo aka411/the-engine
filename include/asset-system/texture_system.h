@@ -1,7 +1,6 @@
 #pragma once
-#include "rendering-system/low-level-gpu-systems/data-structures/gpu_texture_data_structures.h"
-#include <rendering-system/low-level-gpu-systems/data-structures/gpu_texture_data_structures.h>
 #include <image_loader.h>
+#include <rendering-system/engine_handles.h>
 
 
 
@@ -10,7 +9,7 @@
 
 namespace TheEngine::RenderingSystem
 {
-	class GPUTextureManager;
+	class ITextureManager;
 }
 
 namespace TheEngine::Platform
@@ -31,19 +30,19 @@ namespace TheEngine::AssetSystem
 	private :
 
 
-		RenderingSystem::GPUTextureManager& m_gpuTextureManager;
+		RenderingSystem::ITextureManager& m_textureManager;
 		ImageLoader m_imageLoader;
 
 	public :
 
-		TextureSystem(RenderingSystem::GPUTextureManager& gpuTextureManager, TheEngine::Platform::Platform& platform);
+		TextureSystem(RenderingSystem::ITextureManager&  textureManager, TheEngine::Platform::Platform& platform);
 
-		RenderingSystem::TextureInfo createNewTexture(const RenderingSystem::TextureCreateInfo& textureCreateInfo);
+		RenderingSystem::TextureHandle createNewTexture(RenderingSystem::TextureCreateInfo& textureCreateInfo);
 
 		//A helper method primarily created to help create default textures and materials
 		RenderingSystem::TextureCreateInfo createDefaultTexture(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		//Use Path
-		RenderingSystem::TextureInfo loadTexture(const TheEngine::Platform::Path& path);//allow sampler settings also?
+		RenderingSystem::TextureHandle loadTexture(const TheEngine::Platform::Path& path);//allow sampler settings also?
 
 	};
 

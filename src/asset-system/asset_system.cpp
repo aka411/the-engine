@@ -10,10 +10,11 @@ namespace TheEngine::AssetSystem
 	AssetSystem::AssetSystem(TheEngine::Platform::Platform& platform, RenderingSystem::GPUResourceSystem& gpuResourceSystem) :
 
 		m_animationResourceSystem(gpuResourceSystem.getGPUAnimationManager()),
-		m_lightSystem(gpuResourceSystem.getGPULightManager()),
+		//m_lightSystem(gpuResourceSystem.getGPULightManager()),
 		m_materialSystem(gpuResourceSystem.getGPUMaterialManager()),
 		m_meshSystem(gpuResourceSystem.getGPUMeshSystem()),
-		m_textureSystem(gpuResourceSystem.getGPUTextureManager(), platform)
+
+		m_textureSystem(gpuResourceSystem.getTextureManager(), platform)
 
 	{
 
@@ -33,12 +34,12 @@ namespace TheEngine::AssetSystem
 		return m_materialSystem;
 	}
 
-
+	/*
 	LightSystem& AssetSystem::getLightSystem()
 	{
 
 		return m_lightSystem;
-	}
+	}*/
 
 
 

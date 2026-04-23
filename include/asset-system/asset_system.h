@@ -29,7 +29,7 @@ namespace TheEngine::AssetSystem
 
 		//Owner of all
 		AnimationResourceSystem m_animationResourceSystem;
-		LightSystem m_lightSystem;
+		//LightSystem m_lightSystem;
 		MaterialSystem m_materialSystem;
 		MeshSystem m_meshSystem;
 		TextureSystem m_textureSystem; 
@@ -48,7 +48,7 @@ namespace TheEngine::AssetSystem
 		MaterialSystem& getMaterialSystem();
 		TextureSystem& getTextureSystem();
 
-		LightSystem& getLightSystem();
+		//LightSystem& getLightSystem();
 		AnimationResourceSystem& getAnimationResourceSystem();
 
 	};
