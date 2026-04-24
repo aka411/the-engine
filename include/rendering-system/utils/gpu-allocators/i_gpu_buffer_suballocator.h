@@ -1,11 +1,18 @@
 #pragma once
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
+
+#include <rendering-system/engine_handles.h>
 
 
 namespace TheEngine::RenderingSystem
 {
 
 
+	struct GPUSubAllocationInfo
+	{
+		size_t offset;
+		size_t size;
+		bool isAllocationSuccessful = false;
+	};
 
 
 	//more like abstract class
@@ -13,19 +20,19 @@ namespace TheEngine::RenderingSystem
 	{
 	protected:
 
-		const GPUBufferHandle m_gpuBufferHandle;
-
+		const BufferHandle m_bufferHandle;
+		const size_t m_bufferSize;
 	public:
 
-		IGPUBufferSubAllocator(GPUBufferHandle gpuBufferHandle);
+		IGPUBufferSubAllocator(const BufferHandle& bufferHandle, const size_t& bufferSize);
 
 		//add message to warn gpu memory leak, cause we still have not added methods to clean up buffers
 		virtual ~IGPUBufferSubAllocator() = default;
 
-		GPUBufferHandle getGPUBufferHandle();
+		BufferHandle getBufferHandle();
 
 		virtual GPUSubAllocationInfo allocate(const size_t size) = 0;
-		virtual void deallocate(GPUSubAllocationInfo gpuSubAllocationInfo) = 0;
+		virtual void deallocate(GPUSubAllocationInfo& gpuSubAllocationInfo) = 0;
 
 	};
 

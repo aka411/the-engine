@@ -1,5 +1,5 @@
 #pragma once
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/i_gpu_buffer_suballocator.h>
+#include <rendering-system/utils/gpu-allocators/i_gpu_buffer_suballocator.h>
 #include <cstdint>
 
 
@@ -16,11 +16,11 @@ namespace TheEngine::RenderingSystem
 
 	public:
 
-		GPUBufferCircularSubAllocator(GPUBufferInfo gpuBufferInfo);
+		GPUBufferCircularSubAllocator( const BufferHandle& bufferHandle, const size_t& bufferSize);
 
 
 		virtual GPUSubAllocationInfo allocate(const size_t size) override;
-		virtual void deallocate(GPUSubAllocationInfo gpuSubAllocationInfo) override;
+		virtual void deallocate(GPUSubAllocationInfo& gpuSubAllocationInfo) override;
 
 
 	};

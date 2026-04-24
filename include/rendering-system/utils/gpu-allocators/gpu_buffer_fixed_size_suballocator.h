@@ -1,7 +1,8 @@
 #pragma once 
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/i_gpu_buffer_suballocator.h>
-#include <map>
+#include <rendering-system/utils/gpu-allocators/i_gpu_buffer_suballocator.h>
 #include <vector>
+#include <map>
+
 
 
 namespace TheEngine::RenderingSystem
@@ -33,11 +34,11 @@ namespace TheEngine::RenderingSystem
 		GPUSubAllocationInfo getFreeBlockFromFreeList();
 	public:
 
-		GPUBufferFixedSizeSubAllocator(const size_t size, GPUBufferInfo gpuBufferInfo);
+		GPUBufferFixedSizeSubAllocator(const size_t fixedSize, const BufferHandle& bufferHandle, const size_t& bufferSize);
 
 
 		virtual GPUSubAllocationInfo allocate(const size_t size) override;
-		virtual void deallocate(GPUSubAllocationInfo gpuSubAllocationInfo) override;
+		virtual void deallocate(GPUSubAllocationInfo& gpuSubAllocationInfo) override;
 
 
 	};

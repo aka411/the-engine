@@ -1,11 +1,11 @@
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_circular_suballocator.h>
+#include <rendering-system/utils/gpu-allocators/gpu_buffer_circular_suballocator.h>
 #include <assert.h>
 
 namespace TheEngine::RenderingSystem
 {
 
-	GPUBufferCircularSubAllocator::GPUBufferCircularSubAllocator(GPUBufferInfo gpuBufferInfo):
-		IGPUBufferSubAllocator(gpuBufferInfo)
+	GPUBufferCircularSubAllocator::GPUBufferCircularSubAllocator(const BufferHandle& bufferHandle, const size_t& bufferSize) :
+		IGPUBufferSubAllocator(bufferHandle, bufferSize)
 	{
 
 
@@ -16,9 +16,9 @@ namespace TheEngine::RenderingSystem
 	GPUSubAllocationInfo GPUBufferCircularSubAllocator::allocate(const size_t size)
 	{
 
-		if (m_currentOffset + size > m_gpuBufferInfo.size)
+		if (m_currentOffset + size > m_bufferSize)
 		{
-			assert(size < m_gpuBufferInfo.size && "Tried to allocate memory block larger than availabe pool in GPUBufferCircularSubAllocator");
+			assert(size < m_bufferSize && "Tried to allocate memory block larger than availabe pool in GPUBufferCircularSubAllocator");
 			m_currentOffset = 0;
 		}
 
@@ -33,7 +33,7 @@ namespace TheEngine::RenderingSystem
 	}
 
 
-	void GPUBufferCircularSubAllocator::deallocate(GPUSubAllocationInfo gpuSubAllocationInfo)
+	void GPUBufferCircularSubAllocator::deallocate(GPUSubAllocationInfo& gpuSubAllocationInfo)
 	{
 		//do nothing
 	}

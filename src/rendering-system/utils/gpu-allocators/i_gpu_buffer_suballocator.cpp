@@ -1,11 +1,12 @@
-
+#include <rendering-system/utils/gpu-allocators/i_gpu_buffer_suballocator.h>
 
 
 namespace TheEngine::RenderingSystem
 {
 
-	IGPUBufferSubAllocator::IGPUBufferSubAllocator(GPUBufferHandle gpuBufferHandle) :
-		m_gpuBufferHandle(gpuBufferHandle)
+	IGPUBufferSubAllocator::IGPUBufferSubAllocator(const BufferHandle& bufferHandle, const size_t& bufferSize) :
+		m_bufferHandle(bufferHandle),
+		m_bufferSize(bufferSize)
 
 	{
 
@@ -13,9 +14,9 @@ namespace TheEngine::RenderingSystem
 
 
 
-	GPUBufferHandle IGPUBufferSubAllocator::getGPUBufferHandle();
+	BufferHandle IGPUBufferSubAllocator::getBufferHandle()
 	{
-		return m_gpuBufferHandle;
+		return m_bufferHandle;
 	}
 
 

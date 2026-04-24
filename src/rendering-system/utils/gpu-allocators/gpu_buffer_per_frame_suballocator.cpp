@@ -1,11 +1,11 @@
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_per_frame_suballocator.h>
+#include <rendering-system/utils/gpu-allocators/gpu_buffer_per_frame_suballocator.h>
 #include <assert.h>
 
 namespace TheEngine::RenderingSystem
 {
 
-	GPUBufferPerFrameSubAllocator::GPUBufferPerFrameSubAllocator(GPUBufferInfo gpuBufferInfo) :
-		IGPUBufferSubAllocator(gpuBufferInfo)
+	GPUBufferPerFrameSubAllocator::GPUBufferPerFrameSubAllocator(const BufferHandle& bufferHandle, const size_t& bufferSize) :
+		IGPUBufferSubAllocator(bufferHandle, bufferSize)
 	{
 
 
@@ -18,10 +18,10 @@ namespace TheEngine::RenderingSystem
 	GPUSubAllocationInfo GPUBufferPerFrameSubAllocator::allocate(const size_t size)
 	{
 
-		if (size + m_currentOffset > m_gpuBufferInfo.size)
+		if (size + m_currentOffset > m_bufferSize)
 		{
 
-			assert(size < m_gpuBufferInfo.size && "Buffer size than requested Allocation size");
+			assert(size < m_bufferSize && "Buffer size smaller than requested Allocation size");
 			m_currentOffset = 0;
 
 		}
@@ -30,13 +30,14 @@ namespace TheEngine::RenderingSystem
 		GPUSubAllocationInfo allocationInfo;
 
 		allocationInfo.offset = m_currentOffset;
+		allocationInfo.isAllocationSuccessful = true;
 		m_currentOffset += size;
 
 		return allocationInfo;
 
 	}
 
-	void GPUBufferPerFrameSubAllocator::deallocate(GPUSubAllocationInfo gpuSubAllocationInfo)
+	void GPUBufferPerFrameSubAllocator::deallocate(GPUSubAllocationInfo& gpuSubAllocationInfo)
 	{
 
 		//do nothing

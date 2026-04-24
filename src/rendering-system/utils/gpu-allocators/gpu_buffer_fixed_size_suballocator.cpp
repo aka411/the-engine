@@ -1,4 +1,4 @@
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_fixed_size_suballocator.h>
+#include <rendering-system/utils/gpu-allocators/gpu_buffer_fixed_size_suballocator.h>
 #include <assert.h>
 
 
@@ -15,13 +15,18 @@ namespace TheEngine::RenderingSystem
 			m_allocatedList[gpuSubAllocationInfo.offset] = gpuSubAllocationInfo;
 			return gpuSubAllocationInfo;
 		}
-		assert(m_currentOffset < m_gpuBufferInfo.size && "GPUBufferFixedSizeSubAllocator : Ran out of memory");
+		assert(m_currentOffset < m_bufferSize && "GPUBufferFixedSizeSubAllocator : Ran out of memory");
+
+
+
+		return GPUSubAllocationInfo{ .isAllocationSuccessful = false };
+
 	}
 
 
-	GPUBufferFixedSizeSubAllocator::GPUBufferFixedSizeSubAllocator(const size_t size, GPUBufferInfo gpuBufferInfo):
-		IGPUBufferSubAllocator(gpuBufferInfo),
-		FIXED_SIZE(size)
+	GPUBufferFixedSizeSubAllocator::GPUBufferFixedSizeSubAllocator(const size_t fixedSize, const BufferHandle& bufferHandle, const size_t& bufferSize) :
+		IGPUBufferSubAllocator(bufferHandle, bufferSize),
+		FIXED_SIZE(fixedSize)
 	{
 
 
@@ -42,7 +47,7 @@ namespace TheEngine::RenderingSystem
 			//Not yet fully curved up
 			
 			//check if we have space for more carving
-			if (m_currentOffset + FIXED_SIZE > m_gpuBufferInfo.size)
+			if (m_currentOffset + FIXED_SIZE > m_bufferSize)
 			{
 				//Nope
 	
@@ -80,7 +85,7 @@ namespace TheEngine::RenderingSystem
 	}
 
 
-	void GPUBufferFixedSizeSubAllocator::deallocate(GPUSubAllocationInfo gpuSubAllocationInfo)
+	void GPUBufferFixedSizeSubAllocator::deallocate(GPUSubAllocationInfo& gpuSubAllocationInfo)
 	{
 
 		//validate 

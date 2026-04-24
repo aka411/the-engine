@@ -1,6 +1,5 @@
 #pragma once 
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/i_gpu_buffer_suballocator.h>
-
+#include <rendering-system/utils/gpu-allocators/i_gpu_buffer_suballocator.h>
 
 
 namespace TheEngine::RenderingSystem
@@ -16,11 +15,11 @@ namespace TheEngine::RenderingSystem
 
 	public:
 
-		GPUBufferPerFrameSubAllocator(GPUBufferInfo gpuBufferInfo);
+		GPUBufferPerFrameSubAllocator(const BufferHandle& bufferHandle, const size_t& bufferSize);
 
 
 		virtual GPUSubAllocationInfo allocate(const size_t size) override;
-		virtual void deallocate(GPUSubAllocationInfo gpuSubAllocationInfo) override;
+		virtual void deallocate(GPUSubAllocationInfo& gpuSubAllocationInfo) override;
 
 		//do i need this
 		void reset();

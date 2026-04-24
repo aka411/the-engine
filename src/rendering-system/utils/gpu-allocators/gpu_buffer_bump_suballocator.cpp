@@ -1,13 +1,19 @@
 
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_bump_suballocator.h>
+#include <rendering-system/utils/gpu-allocators/gpu_buffer_bump_suballocator.h>
 #include <cassert>
 
 
 namespace TheEngine::RenderingSystem
 {
+	void GPUBufferBumpSubAllocator::reset()
+	{
+		m_currentOffset = 0;
+	}
 
-	GPUBufferBumpSubAllocator::GPUBufferBumpSubAllocator(GPUBufferInfo gpuBufferInfo) :
-		IGPUBufferSubAllocator(gpuBufferInfo)
+
+
+	GPUBufferBumpSubAllocator::GPUBufferBumpSubAllocator(const BufferHandle& bufferHandle, const size_t& bufferSize) :
+		IGPUBufferSubAllocator(bufferHandle, bufferSize)
 	{
 
 
@@ -22,7 +28,7 @@ namespace TheEngine::RenderingSystem
 	{
 
 
-		if (size + m_currentOffset > m_gpuBufferInfo.size)
+		if (size + m_currentOffset > m_bufferSize)
 		{
 
 			assert(0 && " RUN OUT OF MEMORY IN GPU BUFFER SUB BUMP ALLOCATOR ");
@@ -32,6 +38,7 @@ namespace TheEngine::RenderingSystem
 		GPUSubAllocationInfo gpuSubAllocationInfo;
 
 		gpuSubAllocationInfo.offset = m_currentOffset;
+		gpuSubAllocationInfo.size = size;
 		m_currentOffset += size;
 
 		gpuSubAllocationInfo.isAllocationSuccessful = true;
@@ -40,12 +47,48 @@ namespace TheEngine::RenderingSystem
 
 	}
 
-	void GPUBufferBumpSubAllocator::deallocate(GPUSubAllocationInfo gpuSubAllocationInfo)
+
+
+	GPUSubAllocationInfo GPUBufferBumpSubAllocator::allocateAligned(const size_t size, const size_t alignment)
+	{
+		//assert alignement not zero
+		const size_t remainder = m_currentOffset % alignment;
+		const size_t padding = (remainder == 0) ? 0 : (alignment - remainder);
+
+
+		if (size + m_currentOffset + padding > m_bufferSize)
+		{
+
+			//assert(0 && " RUN OUT OF MEMORY IN GPU BUFFER SUB BUMP ALLOCATOR ");
+			return GPUSubAllocationInfo{ .isAllocationSuccessful = false };
+		}
+
+
+
+		GPUSubAllocationInfo gpuSubAllocationInfo;
+
+		gpuSubAllocationInfo.offset = m_currentOffset + padding;
+
+		m_currentOffset += size + padding;
+
+		gpuSubAllocationInfo.isAllocationSuccessful = true;
+
+		return gpuSubAllocationInfo;
+
+
+
+	}
+
+
+
+	void GPUBufferBumpSubAllocator::deallocate(GPUSubAllocationInfo& gpuSubAllocationInfo)
 	{
 
 		//do nothing
 
 	}
+
+
 
 
 

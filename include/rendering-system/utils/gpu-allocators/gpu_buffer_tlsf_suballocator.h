@@ -1,5 +1,5 @@
 #pragma once
-#include "rendering-system/low-level-gpu-systems/memory-management/gpu-allocators/i_gpu_buffer_suballocator.h"
+#include <rendering-system/utils/gpu-allocators/i_gpu_buffer_suballocator.h>
 
 namespace TheEngine::RenderingSystem
 {
@@ -33,7 +33,7 @@ namespace TheEngine::RenderingSystem
 	{
 
 	private:
-
+		class TlsfBlockHeader;
 
 		uint32_t m_firstLevelBitmap = 0; // Bitmap for the first level of free blocks
 		uint8_t m_secondLevelBitmap[32] = { 0 }; // Bitmap for the second level of free blocks,
@@ -45,12 +45,13 @@ namespace TheEngine::RenderingSystem
 
 	public:
 
+		GPUBufferTLSFSubAllocator(const BufferHandle& bufferHandle, const size_t& bufferSize);
 
-		GPUBufferInfo getGPUBufferInfo() override;
+		virtual ~GPUBufferTLSFSubAllocator() override;
 
-		GPUSubAllocationInfo allocate(const size_t size) override;
-		GPUSubAllocationInfo deallocate(GPUSubAllocationInfo& gpuSubAllocationInfo);
-
+		virtual GPUSubAllocationInfo allocate(const size_t size) override;
+		virtual void deallocate(GPUSubAllocationInfo& gpuSubAllocationInfo) override;
+		
 
 	};
 
