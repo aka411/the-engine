@@ -10,12 +10,14 @@ namespace TheEngine::RenderingSystem
 
 	using MeshOffset = size_t;
 
-	enum class BufferUsage
+
+	enum class BufferResourceUsageHint
 	{
-		STATIC,
-		DYNAMIC,
-		STREAM
+		STATIC,  // Upload once, use many times
+		DYNAMIC, // Upload often (once per frame/few frames)
+		STREAM   // Upload once, use once
 	};
+
 
 	//  Vertex Formats //
 
@@ -37,8 +39,8 @@ namespace TheEngine::RenderingSystem
 
 	struct MeshUploadData
 	{
-		VertexFormat vertexFormat;
-		BufferUsage bufferUsage;
+		VertexFormat vertexFormat = VertexFormat::STANDARD;
+		BufferResourceUsageHint bufferResourceUsageHint = BufferResourceUsageHint::STATIC;
 
 		TheEngine::Memory::MemoryBlock meshData;
 		//size_t meshDataSizeInBytes = 0;
@@ -65,7 +67,7 @@ namespace TheEngine::RenderingSystem
 	{
 		MeshId meshId;
 		VertexFormat vertexFormat;
-		BufferUsage bufferUsage;
+		BufferResourceUsageHint bufferResourceUsageHint;
 
 		bool hasIndex;
 		IndexFormat indexFormat;
