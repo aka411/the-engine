@@ -1,13 +1,26 @@
 #pragma once
 
 #include <cstdint>
-#include "SDL3/SDL_video.h"
 #include <memory>
-#include <engine/engine_core_data_types.h>
+#include <string>
+
+
+
+namespace TheEngine::RenderingSystem
+{
+	class IRenderDevice;
+}
+
+namespace TheEngine
+{
+	struct EngineConfiguration;
+}
+
+class SDL_Window;
+
 
 namespace TheEngine::Platform
 {
-
 
 
 
@@ -21,8 +34,11 @@ namespace TheEngine::Platform
 
 		//use a smart pointer
         SDL_Window* m_window = nullptr;
+	   
+		//NOT OWNER
+		std::unique_ptr<TheEngine::RenderingSystem::IRenderDevice> m_renderDevice;
 
-        void enableOpenGLDebugging();
+   
 
 
 	public:
@@ -30,13 +46,15 @@ namespace TheEngine::Platform
 
         //creates window and GPU API context
 		WindowSystem(const EngineConfiguration& engineConfiguration);
+		~WindowSystem();
+
+	
 
 
-		std::string getGPUVendor() const { return m_gpuVendor; };
+		std::unique_ptr<TheEngine::RenderingSystem::IRenderDevice> getRenderDevice();
 
 
-		//swaps the front and back buffers, in opengl SDL does it for us , in vulkan its our job to do it
-		void swapBuffers();
+
 
 
 
