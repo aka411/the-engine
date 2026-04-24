@@ -11,13 +11,14 @@ namespace TheEngine::AnimationSystem
 	*/
 
 
+	class AnimationResourceSystem;
 
 	class AniamtionSystem
 	{
 
 	private:
 
-		class AnimationResourceSystem;
+
 
 		AnimationResourceSystem& m_animationResoruceSystem;
 
@@ -31,7 +32,7 @@ namespace TheEngine::AnimationSystem
 
 		//sample methods so as to just remember an idea of what to do, not the best methods
 		//use std::span??
-		void animateKeyframeAnimation(TransfomationComponent* transformationComponent,const int transfomationComponentCount,  AnimationState& animationState, float deltaTime);
+		//void animateKeyframeAnimation(TransfomationComponent* transformationComponent,const int transfomationComponentCount,  AnimationState& animationState, float deltaTime);
 		void animateSkeletalAnimation();
 
 

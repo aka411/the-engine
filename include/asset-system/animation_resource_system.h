@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
 #include <rendering-system/gpu-resource-system/gpu_animation_manager.h>
-
+#include <unordered_map>
+#include <string>
 
 
 namespace ThEngine::RenderingSystem
@@ -51,11 +52,15 @@ namespace TheEngine::AssetSystem
 		SCALE
 	};
 
+
+	using TargetNode = uint64_t;
+	using SamplerIndex = uint64_t;
+
 	struct Channel
 	{ 
 		Path path;
-		//TargetNode targetNode;// point of pain, this is link to external data
-		//SamplerIndex samplerIndex;// Maybe not needed? 
+		TargetNode targetNodeIndex;// point of pain, this is link to external data
+		SamplerIndex samplerIndex;// Maybe not needed? 
 	
 	};
 
@@ -64,15 +69,15 @@ namespace TheEngine::AssetSystem
 		InterpolationMethod interpolationMethod;
 		
 		//Might need to use Index into another vector of keyframe times and values to avoid duplication
-		std::vector<float> keyframeTimes;
-		std::vector<float> keyframeValues;
+		//std::vector<float> keyframeTimes;
+		//std::vector<float> keyframeValues;
 
-		//size_t keyframeTimesIndex;
-		//size_t keyframeValuesIndex;
+		size_t keyframeTimesIndex;
+		size_t keyframeValuesIndex;
 
 	};
 
-	/*
+	
 	
 	struct KeyframeTimes
 	{
@@ -84,7 +89,7 @@ namespace TheEngine::AssetSystem
 		std::vector<float> keyframeValues;
 	};
 	
-	*/
+	
 
 
 
@@ -102,6 +107,11 @@ namespace TheEngine::AssetSystem
 	struct KeyframeAnimationSet
 	{
 		//string name to KeyframeAnimation
+		std::unordered_map<std::string, KeyframeAnimation> stringNameToKeyframeAnimation;
+
+		//Global
+		std::vector<KeyframeTimes> keyframeTimes;
+		std::vector<KeyframeValues> keyframeValues;
 	};
 
 
