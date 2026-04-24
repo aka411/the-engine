@@ -1,14 +1,18 @@
 #pragma once
+#include <cstdint>
+#include <assert.h>
 
 namespace TheEngine::RenderingSystem
 {
 
     //might consider CRTP to impose strict type
+    constexpr uint64_t INVALID_RESOURCE_ID = UINT64_MAX;
 
-    struct ResourceHandle {
-        uint32_t id;
+    struct ResourceHandle 
+    {
+        uint64_t id = INVALID_RESOURCE_ID;
 
-        bool is_valid() const { return id != 0; }
+        bool isValid() const { return id != INVALID_RESOURCE_ID; }
         bool operator==(const ResourceHandle& other) const { return id == other.id; }
     };
 
@@ -22,7 +26,10 @@ namespace TheEngine::RenderingSystem
     struct SamplerHandle : public ResourceHandle {};
     struct PipelineHandle : public ResourceHandle {};
 
+
+
+
     struct DescriptorSetLayoutHandle : public ResourceHandle {};//need more thought here
-    //FBO handle??
+
 
 }
