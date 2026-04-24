@@ -50,42 +50,32 @@ target_include_directories(TheEngine PUBLIC
 
 ${CMAKE_CURRENT_SOURCE_DIR}/include
 
-${CMAKE_CURRENT_SOURCE_DIR}/external/
-
-
 )
 
 
 
-# SDL is used for input handling and window management, in vulkan we also use it for surface creation
-# I can switch to glfw also if i want cause the way the engine is designed is very modular 
-FetchContent_Declare(
-  SDL3
-  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-  GIT_TAG        release-3.2.20
-)
-
-set(SDL_STATIC ON CACHE BOOL "" FORCE)
-set(SDL_SHARED OFF CACHE BOOL "" FORCE)
-set(SDL_LIBC ON CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(SDL3)
-
-
-FetchContent_Declare(
-	glm
-	GIT_REPOSITORY	https://github.com/g-truc/glm.git
-	GIT_TAG 	1.0.1 
-)
-
-FetchContent_MakeAvailable(glm)
-
+add_subdirectory(external)
 
 target_link_libraries(TheEngine PUBLIC
+
   SDL3::SDL3-static
   #SDL3::SDL3
   glm::glm
+
+  common-lib
+
+
 )
+
+
+
+enable_testing()
+
+
+
+# This subdirectory will handle fetching Google Test and defining test executables.
+add_subdirectory(tests) #IMPORTANT UNCOMMENT TO INCLUDE TEST FOLDER FOR TESTING
+
 
 
 
