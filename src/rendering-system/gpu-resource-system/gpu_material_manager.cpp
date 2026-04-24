@@ -1,10 +1,13 @@
 #pragma once
 #include <assert.h>
-
 #include "rendering-system/gpu-resource-system/gpu_material_manager.h"
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_buffer_transfer_manager.h>
-#include <rendering-system/low-level-gpu-systems/gpu_buffer_manager.h>
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_fixed_size_suballocator.h>
+#include <rendering-system/utils/gpu-allocators/i_gpu_buffer_suballocator.h>
+#include <rendering-system/utils/gpu-allocators/gpu_buffer_fixed_size_suballocator.h>
+#include <rendering-system/rhi/i_buffer_manager.h>
+#include <rendering-system/rhi/i_transfer_manager.h>
+#include <rendering-system/rhi/data-structures/gpu_buffer_data_types.h>
+#include <rendering-system/rhi/data-structures/gpu_texture_data_structures.h>
+#include <rendering-system/rhi/i_texture_manager.h>
 
 
 namespace TheEngine::RenderingSystem
@@ -12,11 +15,11 @@ namespace TheEngine::RenderingSystem
 	using namespace TheEngine::Memory;
 
 
-	GPUMaterialManager::GPUMaterialManager(GPUBufferManager& gpuBufferManager, GPUBufferTransferManager& gpuBufferTransferManager) :
+	GPUMaterialManager::GPUMaterialManager(IBufferManager& bufferManager, ITransferManager& transferManager, ITextureManager& textureManager) :
 
-		m_gpuBufferManager(gpuBufferManager),
-		m_gpuBufferTransferManager(gpuBufferTransferManager)
-
+		m_bufferManager(bufferManager),
+		m_transferManager(transferManager),
+		m_textureManager(textureManager)
 	{
 
 
@@ -33,26 +36,20 @@ namespace TheEngine::RenderingSystem
 
 		if (it == m_shadingTypeToAllocators.end())
 		{
-			//not found
-			//need to create a allocator for it
-			//assert(false && "ShadingModel's allocator not found");
-
-			//create allocator
-			//and continue
 
 			const size_t SIZE_OF_ONE_MATERIAL_IN_BYTES = memoryBlock.getSize();
 			const size_t totalBufferSizeNeeded = SIZE_OF_ONE_MATERIAL_IN_BYTES * 200; //200 number of materials
 
 
-			GPUBufferCreateInfo gpuBufferCreateInfo;
-			gpuBufferCreateInfo.gpuBufferType = GPUBufferType::STORAGE;//SSBO
-			gpuBufferCreateInfo.size = totalBufferSizeNeeded;
-			gpuBufferCreateInfo.memoryFlags = MemoryFlags::COHERENT | MemoryFlags::CPU_VISIBLE | MemoryFlags::PERSISTENT_MAPPED;
+			BufferCreateInfo bufferCreateInfo;
+			bufferCreateInfo.bufferUsage = BufferUsage::STORAGE_BUFFER_BIT | BufferUsage::TRANSFER_DST_BIT;
+			bufferCreateInfo.size = totalBufferSizeNeeded;
+			bufferCreateInfo.memoryPropertyFlags = MemoryPropertyFlags::HOST_VISIBLE_BIT | MemoryPropertyFlags::HOST_COHERENT_BIT;
 
-			GPUBufferInfo allocatedGPUBufferInfo = m_gpuBufferManager.createBuffer(gpuBufferCreateInfo);
+			BufferHandle allocatedBufferHandle = m_bufferManager.createBuffer(bufferCreateInfo);
 
 			//Allocator needed is fixed size
-			std::unique_ptr<IGPUBufferSubAllocator>  gpuBufferFixedSizeSubAllocator = std::make_unique<GPUBufferFixedSizeSubAllocator>(SIZE_OF_ONE_MATERIAL_IN_BYTES,allocatedGPUBufferInfo);
+			std::unique_ptr<IGPUBufferSubAllocator>  gpuBufferFixedSizeSubAllocator = std::make_unique<GPUBufferFixedSizeSubAllocator>(SIZE_OF_ONE_MATERIAL_IN_BYTES, allocatedBufferHandle, totalBufferSizeNeeded);
 			m_shadingTypeToAllocators[shadingModel] = std::move(gpuBufferFixedSizeSubAllocator);
 
 			it = m_shadingTypeToAllocators.find(shadingModel);
@@ -70,18 +67,18 @@ namespace TheEngine::RenderingSystem
 		//Material Id mapping is pain 
 		MaterialId materialId = static_cast<MaterialId>(gpuSubAllocationInfo .offset/ memoryBlock.getSize());
 
-		GPUBufferTransferRequest uploadRequest
+		BufferTransferRequest uploadRequest
 		{
 			std::move(memoryBlock),
 
-			it->second.get()->getGPUBufferInfo(),
+			it->second->getBufferHandle(),
 			gpuSubAllocationInfo.offset,
 			TransferPriority::HIGH
 
 		};
 
 
-		m_gpuBufferTransferManager.transferDataToGPUBuffer(std::move(uploadRequest));
+		m_transferManager.transferToBuffer(std::move(uploadRequest));
 
 
 
@@ -90,9 +87,14 @@ namespace TheEngine::RenderingSystem
 
 	}
 
+	uint64_t GPUMaterialManager::getBindlessTextureHandle(const TextureHandle& textureHandle) const
+	{
+		TextureMetadata textureMetadata = m_textureManager.getTextureMetadata(textureHandle);
+		assert(textureMetadata.isBindless && "Texture is not bindless, cannot get bindless handle");
+		return textureMetadata.bindlessHandle;
+	}
 
-
-	GPUBufferInfo GPUMaterialManager::getGPUBufferInfoForMaterial(const ShadingModel& shadingModel)
+	BufferHandle GPUMaterialManager::getBufferHandleForMaterial(const ShadingModel& shadingModel) const
 	{
 
 
@@ -103,7 +105,7 @@ namespace TheEngine::RenderingSystem
 			assert(false && "NO Buffer for Shading Model");
 		}
 
-		return it->second->getGPUBufferInfo();
+		return it->second->getBufferHandle();
 
 	}
 
@@ -111,11 +113,7 @@ namespace TheEngine::RenderingSystem
 
 
 
-	bool GPUMaterialManager::isAllUploadComplete() const
-	{
-		return m_gpuUploadComplete;
 
-	}
 
 
 

@@ -1,69 +1,48 @@
-
-#include <rendering-system/gpu-resource-system/gpu_mesh_system.h>
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_buffer_transfer_manager.h>
-#include <rendering-system/low-level-gpu-systems/gpu_buffer_manager.h>
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
-
-
 #include <assert.h>
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_bump_suballocator.h>
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/gpu_buffer_circular_suballocator.h>
+#include <rendering-system/gpu-resource-system/gpu_mesh_system.h>
 
+#include <rendering-system/utils/gpu-allocators/gpu_buffer_circular_suballocator.h>
+#include <rendering-system/utils/gpu-allocators/gpu_buffer_bump_suballocator.h>
+#include <rendering-system/rhi/i_buffer_manager.h>
+#include <rendering-system/rhi/i_transfer_manager.h>
+#include <rendering-system/rhi/data-structures/gpu_buffer_data_types.h>
 
 namespace TheEngine::RenderingSystem
 {
 
-	/*
-	void GPUMeshSystem::upload(GPUSubAllocationInfo& gpuSubAllocationInfo, GPUBufferInfo& targetBuffer, MeshUploadData&& meshUploadData, const TransferPriority& transferPriority)
-	{
 
 
-		m_gpuBufferTransferManager.transferDataToGPUBuffer(
-
-			GPUBufferTransferRequest
-			(
-			std::move(meshUploadData.meshData),
-			meshUploadData.meshDataSizeInBytes,
-			targetBuffer,
-			gpuSubAllocationInfo.offset,
-			transferPriority
-			)
-
-		);
-	}
-	*/
-
-	GPUMeshSystem::GPUMeshSystem(GPUBufferManager& gpuBufferManager, GPUBufferTransferManager& gpuBufferTransferManager) :
-		m_gpuBufferManager(gpuBufferManager),
-		m_gpuBufferTransferManager(gpuBufferTransferManager)
+	GPUMeshSystem::GPUMeshSystem(IBufferManager& bufferManager, ITransferManager& transferManager) :
+		m_bufferManager(bufferManager),
+		m_transferManager(transferManager)
 	{
 
 
 	}
 
-	std::unique_ptr<IGPUBufferSubAllocator> GPUMeshSystem::createAllocator(const GPUBufferInfo& GPUBufferInfo, const BufferUsage& bufferUsage)
+	std::unique_ptr<IGPUBufferSubAllocator> GPUMeshSystem::createAllocator(const BufferHandle& bufferHandle, const size_t bufferSize, const BufferResourceUsageHint& bufferResourceUsageHint)
 	{
 
 
-		switch (bufferUsage)
+		switch (bufferResourceUsageHint)
 		{
-		case BufferUsage::DYNAMIC:
+		case BufferResourceUsageHint::DYNAMIC:
 		{
 			//Circular , Linear, ...
-			return std::make_unique<GPUBufferCircularSubAllocator>(GPUBufferInfo);
+			return std::make_unique<GPUBufferCircularSubAllocator>(bufferHandle, bufferSize);
 			break;
 		}
 
-		case BufferUsage::STREAM:
+		case BufferResourceUsageHint::STREAM:
 		{
 			//circular, linear...
-			return std::make_unique <GPUBufferCircularSubAllocator>(GPUBufferInfo);
+			return std::make_unique <GPUBufferCircularSubAllocator>(bufferHandle, bufferSize);
 			break;
 		}
 
-		case BufferUsage::STATIC:
+		case BufferResourceUsageHint::STATIC:
 		{
-			return std::make_unique <GPUBufferBumpSubAllocator>(GPUBufferInfo);
+			return std::make_unique <GPUBufferBumpSubAllocator>(bufferHandle, bufferSize);
 			//tlsf , or general purpose allocator
 			break;
 		}
@@ -79,23 +58,23 @@ namespace TheEngine::RenderingSystem
 	}
 
 
-	std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& GPUMeshSystem::getVertexMap(const BufferUsage bufferUsage)
+	 std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& GPUMeshSystem::getVertexMap(const BufferResourceUsageHint& bufferResourceUsageHint)
 	{
-		switch (bufferUsage)
+		switch (bufferResourceUsageHint)
 		{
-		case BufferUsage::DYNAMIC:
+		case BufferResourceUsageHint::DYNAMIC:
 		{
 			return m_dynamicMeshMap;
 			break;
 		}
 
-		case BufferUsage::STREAM:
+		case BufferResourceUsageHint::STREAM:
 		{
 			return m_streamMeshMap;
 			break;
 		}
 
-		case BufferUsage::STATIC:
+		case BufferResourceUsageHint::STATIC:
 		{
 			return m_staticMeshMap;
 			break;
@@ -110,7 +89,7 @@ namespace TheEngine::RenderingSystem
 	}
 
 
-	IGPUBufferSubAllocator& GPUMeshSystem::getAllocatorForVertexFormat(std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& vertexMap, const VertexFormat vertexFormat, const BufferUsage bufferUsage)
+	IGPUBufferSubAllocator& GPUMeshSystem::getAllocatorForVertexFormat(std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& vertexMap, const VertexFormat& vertexFormat, const BufferResourceUsageHint& bufferResourceUsageHint)
 	{
 		auto it = vertexMap.find(vertexFormat);
 
@@ -126,14 +105,14 @@ namespace TheEngine::RenderingSystem
 
 			const size_t totalBufferSizeNeeded = 1024 * 1024 * 200;//200 MB out to do it
 
-			GPUBufferCreateInfo gpuBufferCreateInfo;
-			gpuBufferCreateInfo.gpuBufferType = GPUBufferType::STORAGE;//SSBO
-			gpuBufferCreateInfo.size = totalBufferSizeNeeded;
-			gpuBufferCreateInfo.memoryFlags = MemoryFlags::COHERENT | MemoryFlags::CPU_VISIBLE | MemoryFlags::PERSISTENT_MAPPED;
+			BufferCreateInfo bufferCreateInfo;
+			bufferCreateInfo.bufferUsage = BufferUsage::TRANSFER_DST_BIT | BufferUsage::VERTEX_BUFFER_BIT;
+			bufferCreateInfo.size = totalBufferSizeNeeded;
+			bufferCreateInfo.memoryPropertyFlags = MemoryPropertyFlags::DEVICE_LOCAL_BIT;
 
-			GPUBufferInfo allocatedGPUBufferInfo = m_gpuBufferManager.createBuffer(gpuBufferCreateInfo);
+			BufferHandle allocatedBufferHandle= m_bufferManager.createBuffer(bufferCreateInfo);
 
-			vertexMap.emplace(vertexFormat, std::move(createAllocator(allocatedGPUBufferInfo, bufferUsage)));
+			vertexMap.emplace(vertexFormat, std::move(createAllocator(allocatedBufferHandle, totalBufferSizeNeeded, bufferResourceUsageHint)));
 
 
 			it = vertexMap.find(vertexFormat);
@@ -155,8 +134,8 @@ namespace TheEngine::RenderingSystem
 		//ToDo : Need to return MeshInfo not offset
 		//TODO : How about we just use swtich statement here to get the maps and use that to use a acommon method to handle allocation etc and common logic
 		//MeshInfo uploadMesh(std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& meshMap,std::map<IndexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& indexMap, MeshUploadData&& meshUploadData)
-		std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& vertexMap = getVertexMap(meshUploadData.bufferUsage);
-		IGPUBufferSubAllocator& gpuAllocator = getAllocatorForVertexFormat(vertexMap, meshUploadData.vertexFormat, meshUploadData.bufferUsage);
+		 std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& vertexMap = getVertexMap(meshUploadData.bufferResourceUsageHint);
+		 IGPUBufferSubAllocator& gpuAllocator = getAllocatorForVertexFormat(vertexMap, meshUploadData.vertexFormat, meshUploadData.bufferResourceUsageHint);
 
 
 		//TODO : check size matches expected vertex format count 
@@ -177,20 +156,20 @@ namespace TheEngine::RenderingSystem
 
 		MeshInfo meshInfo;
 
-		GPUBufferTransferRequest request{
+		BufferTransferRequest request{
 			std::move(meshUploadData.meshData),
 
-			gpuAllocator.getGPUBufferInfo(),
+			gpuAllocator.getBufferHandle(),
 			gpuSubAllocationInfo.offset,
 			TransferPriority::HIGH
 		};
 
 
 
-		m_gpuBufferTransferManager.transferDataToGPUBuffer(std::move(request));
+		m_transferManager.transferToBuffer(std::move(request));
 
 
-		meshInfo.bufferUsage = meshUploadData.bufferUsage;
+		meshInfo.bufferResourceUsageHint = meshUploadData.bufferResourceUsageHint;
 		meshInfo.vertexDataSizeInBytes = gpuSubAllocationInfo.size;
 		meshInfo.vertexFormat = meshUploadData.vertexFormat;
 		meshInfo.vertexOffsetInBuffer = gpuSubAllocationInfo.offset;
@@ -235,15 +214,15 @@ namespace TheEngine::RenderingSystem
 	}
 
 
-	GPUBufferInfo GPUMeshSystem::getGPUBufferInfoForVetexFormat(const VertexFormat& vertexFormat, const BufferUsage& bufferUsage)
+	const BufferHandle GPUMeshSystem::getBufferHandleForVertexFormat(const VertexFormat& vertexFormat, const BufferResourceUsageHint& bufferResourceUsageHint)
 	{
 
-		std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& vertexMap = getVertexMap(bufferUsage);
-		IGPUBufferSubAllocator& gpuAllocator = getAllocatorForVertexFormat(vertexMap, vertexFormat, bufferUsage);//yeah this method also creates new buffer if not there
+		std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& vertexMap = getVertexMap(bufferResourceUsageHint);
+	    IGPUBufferSubAllocator& gpuAllocator = getAllocatorForVertexFormat(vertexMap, vertexFormat, bufferResourceUsageHint);//yeah this method also creates new buffer if not there
 
 
 
-		return gpuAllocator.getGPUBufferInfo();
+		return gpuAllocator.getBufferHandle();
 
 	}
 

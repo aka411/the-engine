@@ -2,11 +2,10 @@
 #include <map>
 #include <memory>
 #include <cstddef>
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
 #include <rendering-system/gpu-resource-system/data-structures/gpu_material_system_data_structures.h>
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/i_gpu_buffer_suballocator.h>
 
 #include <memory-management/memory_block.h>
+#include <rendering-system/engine_handles.h>
 
 
 
@@ -14,8 +13,11 @@ namespace TheEngine::RenderingSystem
 {
 
 
-	class GPUBufferManager;
-	class GPUBufferTransferManager;
+	class IBufferManager;
+	class ITransferManager;
+	class ITextureManager;
+
+	class IGPUBufferSubAllocator;
 
 	class GPUMaterialManager
 	{
@@ -23,12 +25,13 @@ namespace TheEngine::RenderingSystem
 
 
 
-		GPUBufferManager& m_gpuBufferManager;
+		IBufferManager& m_bufferManager;
 
-		GPUBufferTransferManager& m_gpuBufferTransferManager;
+		ITransferManager& m_transferManager;
+
+		ITextureManager& m_textureManager;
 
 
-		//TODO : use fixed size allocators 
 
 		std::map<ShadingModel, std::unique_ptr<IGPUBufferSubAllocator>> m_shadingTypeToAllocators;
 
@@ -41,7 +44,7 @@ namespace TheEngine::RenderingSystem
 
 	public:
 
-		GPUMaterialManager(GPUBufferManager& gpuBufferManager, GPUBufferTransferManager& gpuBufferTransferManager);
+		GPUMaterialManager(IBufferManager& bufferManager, ITransferManager& transferManager, ITextureManager& textureManager);
 
 
 		//One method to handle all material types or multiple methods for different materials
@@ -59,13 +62,14 @@ namespace TheEngine::RenderingSystem
 
 
 
-
+		uint64_t getBindlessTextureHandle(const TextureHandle& textureHandle) const;
+	
 
 		/*-----For Rendering System-------*/
 
 		//TODO : we also need to express no buffer also?
-		GPUBufferInfo getGPUBufferInfoForMaterial(const ShadingModel& shadingModel);
-		bool isAllUploadComplete() const;//maybe not needed??
+		BufferHandle getBufferHandleForMaterial(const ShadingModel& shadingModel) const;
+		//bool isAllUploadComplete() const;//maybe not needed??
 
 	};
 

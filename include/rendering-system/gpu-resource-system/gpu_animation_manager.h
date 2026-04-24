@@ -1,13 +1,15 @@
 #pragma once
 #include <vector>
 #include <glm/ext/matrix_float4x4.hpp>
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/i_gpu_buffer_suballocator.h>
 #include <memory>
+
 
 namespace TheEngine::RenderingSystem
 {
-	class GPUBufferManager;
-	class GPUBufferTransferManager;
+	class IBufferManager;
+	class ITransferManager;
+
+	class IGPUBufferSubAllocator;
 
 	using BoneJointMatrixSetId = uint32_t;
 
@@ -21,15 +23,16 @@ namespace TheEngine::RenderingSystem
 
 
 
-		GPUBufferManager& m_gpuBufferManager;
-		GPUBufferTransferManager& m_gpuBufferTransferManager;
+		IBufferManager& m_bufferManager;
+		ITransferManager& m_transferManager;
 
-		std::unique_ptr<IGPUBufferSubAllocator> m_boneMatricesAllocator;
+		std::unique_ptr<IGPUBufferSubAllocator> m_JointMatrixSetAllocator;
 
 	public:
 
-		GPUAnimationManager(GPUBufferManager& gpuBufferManager, GPUBufferTransferManager& gpuBufferTransferManager);
+		GPUAnimationManager(IBufferManager& bufferManager, ITransferManager& transferManager);
 
+		~GPUAnimationManager();
 
 		BoneJointMatrixSetId uploadNewJointMatrixSetToGPUBuffer(std::vector<glm::mat4>&& jointMatrixSet);//One time registration method
 		void updateJointMatrixSetInGPUBuffer(const BoneJointMatrixSetId& boneJointMatrixSetId, std::vector<glm::mat4>&& jointMatrixSet);

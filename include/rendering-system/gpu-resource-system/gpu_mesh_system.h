@@ -1,11 +1,13 @@
 #pragma once
 #include <map>
 #include <vector>
-#include <memory.h>
+#include <memory>
+
 #include <rendering-system/gpu-resource-system/data-structures/gpu_mesh_system_data_structures.h>
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu-allocators/i_gpu_buffer_suballocator.h>
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_buffer_transfer_manager.h> // only for Transfer Priority enum
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
+#include <rendering-system/engine_handles.h>
+#include <rendering-system/utils/gpu-allocators/i_gpu_buffer_suballocator.h>
+#include <rendering-system/rhi/i_transfer_manager.h>
+
 
 
 
@@ -16,8 +18,10 @@ namespace TheEngine::RenderingSystem
 
 
 
-	class IGPUBufferManager;
-	class IGPUBufferTransferManager;
+	class IBufferManager;
+	class ITransferManager;
+
+	class IGPUBufferSubAllocator;
 
 	class GPUMeshSystem
 	{
@@ -26,12 +30,12 @@ namespace TheEngine::RenderingSystem
 
 		
 
-		//lass IGPUBufferSubAllocator;
+	
 
 
 
-		IGPUBufferManager& m_iGPUBufferManager;
-		IGPUBufferTransferManager& m_iGPUBufferTransferManager;
+		IBufferManager& m_bufferManager;
+		ITransferManager& m_transferManager;
 
 
 		//Vertex Format to Buffer
@@ -56,16 +60,18 @@ namespace TheEngine::RenderingSystem
 		bool m_gpuUploadComplete = true;
 
 		//helper to upload
-		void upload(GPUSubAllocationInfo& gpuSubAllocationInfo, GPUBufferInfo& targetBuffer, MeshUploadData&& meshUploadData, const TransferPriority& transferPriority);
+
+		void upload(GPUSubAllocationInfo& gpuSubAllocationInfo, BufferHandle& targetBufferHandle, MeshUploadData&& meshUploadData, const TransferPriority& transferPriority);
 		
-		std::unique_ptr<IGPUBufferSubAllocator> createAllocator(const GPUBufferInfo& GPUBufferInfo, const BufferUsage& bufferUsage);
-		std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& getVertexMap(const BufferUsage bufferUsage);
-		IGPUBufferSubAllocator& getAllocatorForVertexFormat(std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& vertexMap, const VertexFormat vertexFormat, const BufferUsage bufferUsage);
+		std::unique_ptr<IGPUBufferSubAllocator> createAllocator(const BufferHandle& bufferHandle, const size_t bufferSize, const BufferResourceUsageHint& bufferResourceUsageHint);
+
+		std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& getVertexMap(const BufferResourceUsageHint& bufferResourceUsageHint);
+		IGPUBufferSubAllocator& getAllocatorForVertexFormat(std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& vertexMap, const VertexFormat& vertexFormat, const BufferResourceUsageHint& bufferResourceUsageHint);
 
 
 	public:
 
-		GPUMeshSystem(IGPUBufferManager& iGPUBufferManager, GPUBufferTransferManager& gpuBufferTransferManager);
+		GPUMeshSystem(IBufferManager& bufferManager, ITransferManager& transferManager);
 
 		MeshInfo uploadMeshData(MeshUploadData&& meshUploadData);
 
@@ -76,7 +82,7 @@ namespace TheEngine::RenderingSystem
 
 
 		//For giving out the buffers
-		GPUBufferInfo getGPUBufferInfoForVetexFormat(const VertexFormat& vertexFormat, const BufferUsage& bufferUsage);
+		const BufferHandle getBufferHandleForVertexFormat(const VertexFormat& vertexFormat, const BufferResourceUsageHint& bufferResourceUsageHint);
 
 
 

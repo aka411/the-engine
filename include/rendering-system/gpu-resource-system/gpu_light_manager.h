@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
-#include <rendering-system/low-level-gpu-systems/gpu-memory-management/gpu_memory_system_data_types.h>
-
+#include <rendering-system/utils/gpu-allocators/i_gpu_buffer_suballocator.h>
 
 
 namespace TheEngine::RenderingSystem
@@ -12,10 +11,9 @@ namespace TheEngine::RenderingSystem
 	using GPULightIndex = size_t;// not stable ID, changes, also conside using something that can have invalid also
 	using LightId = size_t;//Stable ID ,also use generation
 	
-	class LowLevelGPUSystem;
+	class IRenderDevice;
 
-	class GPUBufferManager;
-	class GPUBufferTransferManager;
+
 
 	struct GPUBufferInfo;
 	struct LightData;
@@ -28,9 +26,6 @@ namespace TheEngine::RenderingSystem
 
 
 
-		GPUBufferManager& m_gpuBufferManager;
-		GPUBufferTransferManager& m_gpuBufferTransferManager;
-
 		//GPU index , do i need this ?
 		//Or use step allocator with step size
 		std::vector<GPUSubAllocationInfo> m_lightIdToGPUAllocationInfo;//Light id to allocation info
@@ -42,11 +37,11 @@ namespace TheEngine::RenderingSystem
 
 
 		size_t m_totalLightCount = 0;
-
+		IRenderDevice& m_renderDevice;
 
 	public:
 
-		GPULightManager(LowLevelGPUSystem& lowLevelGPUSystem);
+		GPULightManager(IRenderDevice& renderDevice);
 
 	
 

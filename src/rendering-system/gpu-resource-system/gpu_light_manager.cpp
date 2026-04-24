@@ -1,7 +1,7 @@
-#include "rendering-system/gpu-resource-system/gpu_light_manager.h"
-#include "rendering-system/low-level-gpu-systems/low_level_gpu_system.h"
+#include <rendering-system/gpu-resource-system/gpu_resource_system.h>
+#include <rendering-system/rhi/i_render_device.h>
 #include <glm/ext/vector_float4.hpp>
-
+#include <rendering-system/gpu-resource-system/gpu_light_manager.h>
 
 namespace TheEngine::RenderingSystem
 {
@@ -19,9 +19,9 @@ namespace TheEngine::RenderingSystem
 
 
 
-	GPULightManager::GPULightManager(LowLevelGPUSystem& lowLevelGPUSystem):
-		m_gpuBufferManager(lowLevelGPUSystem.getGPUBufferManager()),
-		m_gpuBufferTransferManager(lowLevelGPUSystem.getGPUBufferTransferManager())
+	GPULightManager::GPULightManager(IRenderDevice& renderDevice) :
+
+		m_renderDevice(renderDevice)
 
 	{
 

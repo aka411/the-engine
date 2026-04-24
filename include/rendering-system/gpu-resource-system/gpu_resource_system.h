@@ -3,8 +3,8 @@
 
 namespace TheEngine::RenderingSystem
 {
-	class GPUBufferManager;
-	class GPUBufferTransferManager;
+	class IBufferManager;
+	class ITransferManager;
 
 	class GPUMeshSystem;
 	class GPUMaterialManager;
@@ -12,9 +12,9 @@ namespace TheEngine::RenderingSystem
 	class GPUAnimationManager;
 
 	class GPUTextureManager;
+	class ITextureManager;
 
-	class LowLevelGPUSystem;
-
+	class IRenderDevice;
 
 
 	class GPUResourceSystem
@@ -23,32 +23,36 @@ namespace TheEngine::RenderingSystem
 	private:
 
 
-		LowLevelGPUSystem& m_lowLevelGPUSystem;
+		
+		IRenderDevice& m_renderDevice;
 
-		GPUBufferManager& m_gpuBufferManager;
-		GPUBufferTransferManager& m_gpuBufferTransferManager;
+		IBufferManager& m_bufferManager;
+		ITransferManager& m_transferManager;
 
 		//OWNER 
 		std::unique_ptr<GPUMeshSystem> m_gpuMeshSystem;
 		std::unique_ptr<GPUMaterialManager> m_gpuMaterialManager;
-		std::unique_ptr<GPULightManager> m_gpuLightManager;
+		//std::unique_ptr<GPULightManager> m_gpuLightManager;
 		std::unique_ptr<GPUAnimationManager> m_gpuAnimationManager;
+
+		
 
 	
 
 	public:
 
-		GPUResourceSystem(LowLevelGPUSystem& lowLevelGPUSystem);
+		GPUResourceSystem(IRenderDevice& renderDevice);
 		~GPUResourceSystem();
+
 
 		GPUMeshSystem& getGPUMeshSystem();
 		GPUMaterialManager& getGPUMaterialManager();
 
-		GPULightManager& getGPULightManager();
+		//GPULightManager& getGPULightManager();
 
 		GPUAnimationManager& getGPUAnimationManager();
 
-		GPUTextureManager& getGPUTextureManager();
+		ITextureManager& getTextureManager();
 
 
 	};
