@@ -20,7 +20,7 @@ namespace TheEngine::RenderingSystem
 	struct DrawCall
 	{
 
-		MaterialId materialId;//technically offset but other systems decide its meaning,cause i can make it so that its just messenger
+		MaterialId materialId;//technically offset 
 
 		size_t vertexCount;
 		size_t indexCount;
@@ -44,7 +44,7 @@ namespace TheEngine::RenderingSystem
 
 		VertexFormat vertexFormat;
 		IndexFormat indexFormat;
-		BufferUsage bufferUsage;
+		BufferResourceUsageHint bufferResourceUsageHint;
 
 
 		bool isIndexed;
