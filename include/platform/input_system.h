@@ -74,7 +74,7 @@ namespace TheEngine::Platform
 
 	private:
 
-        bool m_keyStates[512];
+        bool m_keyStates[512];//512 bytes on stack, 0.0005 % of stack limit, assuming 1 MiB stack
         std::vector<EngineEvent> m_inputQueue;
 
 	public:
