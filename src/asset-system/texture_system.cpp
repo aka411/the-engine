@@ -29,6 +29,7 @@ namespace TheEngine::AssetSystem
     RenderingSystem::TextureCreateInfo TextureSystem::createDefaultTexture(uint8_t r, uint8_t g, uint8_t b, uint8_t a) 
     {
       
+        //TODO : replace with builder pattern
         using namespace RenderingSystem;
 
         RenderingSystem::TextureCreateInfo textureCreateInfo;
@@ -38,7 +39,7 @@ namespace TheEngine::AssetSystem
         textureCreateInfo.desc.type = TextureType::TEXTURE_2D;
         textureCreateInfo.desc.format = ResourceFormat::RGBA8_UNORM;
     
-
+     
 
         /*
         info.samplerSetting.minFilter = TextureFilter::NEAREST;
