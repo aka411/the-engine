@@ -1,8 +1,11 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include  <rendering-system/renderer/rendering_context.h>
-#include <rendering-system/renderer/rendering_system_data_types.h>
+#include <rendering-system/rendering_system_data_types.h>
+#include <rendering-system/shader_system.h>
+#include <rendering-system/pipeline_system.h>
+#include <rendering-system/render-graph/render_graph.h>
+
 
 
 namespace TheEngine::Platform
@@ -12,10 +15,11 @@ namespace TheEngine::Platform
 
 
 
+
 namespace TheEngine::RenderingSystem
 {
 
-
+	class IPresentationSystem;
 
 
 	class GPUResourceSystem;
@@ -28,27 +32,39 @@ namespace TheEngine::RenderingSystem
 
 
 		std::unique_ptr<IRenderDevice> m_renderDevice;
+
 		std::unique_ptr<GPUResourceSystem>  m_gpuResourceSystem;
 
+		IPresentationSystem& m_presentationSystem;
 
+
+		ShaderSystem m_shaderSystem;
 	
-
-
-	
+		PipelineSystem m_pipelineSystem;
 
 		std::unique_ptr <DrawCallBucket> m_drawCallBucket;
+
+		RenderGraph m_renderGraph;
+
 
 	public:
 
 
-		RenderingSystem(IRenderDevice&& renderDevice);
+		RenderingSystem(std::unique_ptr<IRenderDevice>&& renderDevice, TheEngine::Platform::FileSystem& filesystem);
 		~RenderingSystem();
 
 		GPUResourceSystem& getGPUResourceSystem();
 
+
 		//TODO : might need vector of buckets
 		void submitDrawCallBucket(DrawCallBucket&& drawCallbucket);
-		void startRender(Camera& camera);
+		void startRender(const Camera& camera);
+
+
+
+		RenderGraph& getRenderGraph();
+
+
 
 	};
 
