@@ -27,6 +27,7 @@ namespace TheEngine::RenderingSystem
 		gpuSubAllocationInfo.offset = m_currentOffset;
 		m_currentOffset += size;
 		gpuSubAllocationInfo.isAllocationSuccessful = true;
+		gpuSubAllocationInfo.size = size;
 		return gpuSubAllocationInfo;
 
 
