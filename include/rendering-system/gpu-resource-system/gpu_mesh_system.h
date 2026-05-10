@@ -68,12 +68,14 @@ namespace TheEngine::RenderingSystem
 		std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& getVertexMap(const BufferResourceUsageHint& bufferResourceUsageHint);
 		IGPUBufferSubAllocator& getAllocatorForVertexFormat(std::map<VertexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& vertexMap, const VertexFormat& vertexFormat, const BufferResourceUsageHint& bufferResourceUsageHint);
 
+		IGPUBufferSubAllocator& getAllocatorForIndexFormat(std::map<IndexFormat, std::unique_ptr<IGPUBufferSubAllocator>>& indexMap, const IndexFormat& indexFormat, const BufferResourceUsageHint& bufferResourceUsageHint);
 
 	public:
 
 		GPUMeshSystem(IBufferManager& bufferManager, ITransferManager& transferManager);
 
 		MeshInfo uploadMeshData(MeshUploadData&& meshUploadData);
+		MeshInfo uploadDynamicMeshData(const DynamicMeshUploadInfo& dynamicMeshUploadInfo);
 
 		void deleteMeshDataFromGPU(const MeshId& meshId);
 
@@ -84,7 +86,7 @@ namespace TheEngine::RenderingSystem
 		//For giving out the buffers
 		const BufferHandle getBufferHandleForVertexFormat(const VertexFormat& vertexFormat, const BufferResourceUsageHint& bufferResourceUsageHint);
 
-
+		const BufferHandle getBufferHandleForIndexFormat(const IndexFormat& indexFormat, const BufferResourceUsageHint& bufferResourceUsageHint);
 
 
 
