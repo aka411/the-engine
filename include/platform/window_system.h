@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <engine/engine_core_data_types.h>
 
 
 
@@ -35,7 +36,7 @@ namespace TheEngine::Platform
 		//use a smart pointer
         SDL_Window* m_window = nullptr;
 	   
-		//NOT OWNER
+		//NOT OWNER (may need design change)
 		std::unique_ptr<TheEngine::RenderingSystem::IRenderDevice> m_renderDevice;
 
    
@@ -44,12 +45,12 @@ namespace TheEngine::Platform
 	public:
 
 
-        //creates window and GPU API context
+
 		WindowSystem(const EngineConfiguration& engineConfiguration);
 		~WindowSystem();
 
 	
-
+		WindowExtent getWindowExtent() const;
 
 		std::unique_ptr<TheEngine::RenderingSystem::IRenderDevice> getRenderDevice();
 
