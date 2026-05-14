@@ -8,14 +8,14 @@ namespace TheEngine::Platform
 
 	enum class FileAccessStrategy 
 	{
-		AUTO,       // Let the engine decide based on size
-		//STREAM,  // yeah i dont see any use with this,  MEMORY_MAP is way better
-		MEMORY_MAP,  // Force mmap (good for large assets/random access)
+		AUTO,       
+		//STREAM,  
+		MEMORY_MAP,  // Force mmap 
 		BUFFERED    // Read entire file into RAM at once
 	};
 
 
-	//only example , the flags need to be more detailed like 
+	//This is currently not used 
 	enum class FileAccessPattern
 	{
 		READ_ONLY,
@@ -35,10 +35,11 @@ namespace TheEngine::Platform
 		bool m_useMmap = false;
 		std::byte* m_mmapPtr = nullptr;     
 
-		std::vector<std::byte> m_buffer;    
-
-
+		std::vector<std::byte> m_buffer;//Alignment?    
+		//MemoryBlock memoryBlock;
+		
 		size_t m_fileSize = 0;
+
 
 	public:
 
