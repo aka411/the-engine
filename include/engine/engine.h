@@ -27,11 +27,13 @@ namespace TheEngine
 
 		Engine(const EngineConfiguration& engineConfiguration);
 		~Engine();
+
+
 		TheEngine::Platform::Platform& getPlatform();
 
 		TheEngine::RenderingSystem::RenderingSystem& getRenderingSystem();
 		TheEngine::AssetSystem::AssetSystem& getAssetSystem();
-
+		TheEngine::AudioSystem::AudioSystem& getAudioSystem();
 
 
 
