@@ -1,6 +1,6 @@
 #root/CMakeLists.txt
 
-cmake_minimum_required(VERSION 3.17) # FetchContent_MakeAvailable requires 3.14+
+cmake_minimum_required(VERSION 3.17)
 project(TheEngine CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -10,12 +10,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(FetchContent)
 
 
-#enable_testing()
 
-
-# Add the tests directory.
-# This subdirectory will handle fetching Google Test and defining test executables.
-#add_subdirectory(tests) #IMPORTANT UNCOMMENT TO INCLUDE TEST FOLDER FOR TESTING
 
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -23,7 +18,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 
-file(GLOB_RECURSE ENGINE_SOURCES 
+file(GLOB_RECURSE ENGINE_SOURCES
     "src/*.cpp" 
     "src/*.h" 
     "src/*.hpp"
@@ -31,12 +26,18 @@ file(GLOB_RECURSE ENGINE_SOURCES
 )
 
 
+file(GLOB_RECURSE EXCLUDE_SOURCES 
+"src/rendering-system/api-backend/opengl/*"
+"include/rendering-system/api-backend/opengl/*"
+)
+
+list(REMOVE_ITEM ENGINE_SOURCES ${EXCLUDE_SOURCES})
+
 
 
 add_library(TheEngine STATIC
 
 ${ENGINE_SOURCES}
-
 
 
 )
@@ -64,6 +65,8 @@ target_link_libraries(TheEngine PUBLIC
 
   common-lib
 
+  VulkanDeps
+  #OpenGLDeps
 
 )
 
@@ -73,17 +76,11 @@ enable_testing()
 
 
 
-# This subdirectory will handle fetching Google Test and defining test executables.
-add_subdirectory(tests) #IMPORTANT UNCOMMENT TO INCLUDE TEST FOLDER FOR TESTING
+
+add_subdirectory(tests)
 
 
 
 
 
 
-  #add_custom_command(TARGET TheEngine POST_BUILD
-  #  COMMAND ${CMAKE_COMMAND} -E copy_directory
-  #  $<TARGET_FILE_DIR:SDL3::SDL3>
-  # $<TARGET_FILE_DIR:TheEngine>
-  #  COMMENT "Copying SDL3 DLL to the executable directory"
-  #)
