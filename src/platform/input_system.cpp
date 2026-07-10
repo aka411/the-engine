@@ -35,17 +35,18 @@ namespace TheEngine::Platform
 			{
 			case SDL_EVENT_WINDOW_RESIZED:
 			{
+				//Yeah this is mixed up , 
 				outEvent.engineEventType = EngineEventType::WINDOW_RESIZE;
 
 				// Physical Pixels, not logical pixels, it has DPI scaling applied
-				outEvent.windowResizeEvent.physicalPixelWidth = sdlEvent.window.data1;
+				outEvent.windowResizeEvent.physicalPixelWidth = sdlEvent.window.data1;//This is logical
 				outEvent.windowResizeEvent.physicalPixelHeight = sdlEvent.window.data2;
 
 				/// Logical pixels, 
 				int logicalW, logicalH;
-				//SDL_GetWindowSize(m_window, &logicalW, &logicalH);
-				outEvent.windowResizeEvent.logicalPixelWidth = logicalW;
-				outEvent.windowResizeEvent.logicalPixelHeight = logicalH;
+				//SDL_GetWindowSize(m_window, &logicalW, &logicalH);//THIS IS PHYSICAL
+				//outEvent.windowResizeEvent.logicalPixelWidth = logicalW;
+				//outEvent.windowResizeEvent.logicalPixelHeight = logicalH;
 				return true;
 			}
 			break;
@@ -75,6 +76,7 @@ namespace TheEngine::Platform
 
 			case SDL_EVENT_KEY_UP:
 			{
+				
 				if (sdlEvent.key.scancode < 512 && sdlEvent.key.scancode >= 0)
 				{
 					outEvent.engineEventType = EngineEventType::KEY_RELEASED;
@@ -110,5 +112,11 @@ namespace TheEngine::Platform
 	}
 
 
+	void InputSystem::resetKeyState()
+	{
 
+		memset(&m_keyStates[0], false, 512);
+
+
+	}
 }
