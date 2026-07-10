@@ -36,6 +36,7 @@ namespace TheEngine::Memory
 
 	MemoryBlock::MemoryBlock(MemoryBlock&& memoryBlock) noexcept
 	{
+
 		this->m_data = memoryBlock.m_data;
 		this->m_sizeInBytes = memoryBlock.m_sizeInBytes;
 
@@ -60,7 +61,7 @@ namespace TheEngine::Memory
 
 	MemoryBlock::~MemoryBlock()
 	{
-		//yeah when we use custom allocators need to change this
+
 		delete[] m_data;
 		m_sizeInBytes = 0;
 	};

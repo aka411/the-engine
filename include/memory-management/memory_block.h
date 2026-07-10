@@ -3,18 +3,19 @@
 
 namespace TheEngine::Memory
 {
-	//yeah need care full review here
+
 
 	class MemoryBlock
 	{
 	private:
 		std::byte* m_data = nullptr;
 		size_t m_sizeInBytes = 0;
-		//A custom allocator maybe
 
-		//delete copy constructors 
+
+
 		MemoryBlock(const MemoryBlock&) = delete;
 		MemoryBlock& operator=(const MemoryBlock&) = delete;
+
 	public:
 
 
