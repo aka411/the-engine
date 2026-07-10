@@ -62,7 +62,7 @@ namespace TheEngine::Platform
 
 			
 
-			//yeah whos gonna delete this? whats its lifetime
+	
 			const GLubyte* rawString = glGetString(GL_RENDERER);
 
 			if (rawString != nullptr)
@@ -77,7 +77,7 @@ namespace TheEngine::Platform
 			break;
 		}
 
-		case RenderingAPI::VULKAN_1_3://why not vulkan 1.4 --> I need to later downlaod latest drivers to support vulkan 1.4
+		case RenderingAPI::VULKAN_1_3:
 		{
 		
 
@@ -92,7 +92,7 @@ namespace TheEngine::Platform
 
 			//volkInitializeCustom((PFN_vkGetInstanceProcAddr)SDL_Vulkan_GetVkGetInstanceProcAddr);
 
-			volkInitialize();//from sdk
+			volkInitialize();
 
 
 
@@ -158,6 +158,24 @@ namespace TheEngine::Platform
 		//SDL_GL_DeleteContext(m_iRenderingAPIContext.get()-;
 		SDL_DestroyWindow(m_window);
 		SDL_Quit();
+	}
+
+	WindowExtent WindowSystem::getWindowExtent() const
+	{
+		WindowExtent extent;
+
+
+		int physicalWidth, physicalHeight;
+		SDL_GetWindowSizeInPixels(m_window, &physicalWidth, &physicalHeight);
+		extent.physicalWidth = static_cast<uint32_t>(physicalWidth);
+		extent.physicalHeight = static_cast<uint32_t>(physicalHeight);
+
+		int logicalWidth, logicalHeight;
+		SDL_GetWindowSize(m_window, &logicalWidth, &logicalHeight);
+		extent.width = static_cast<uint32_t>(logicalWidth);
+		extent.height = static_cast<uint32_t>(logicalHeight);
+
+		return extent;
 	}
 
 	std::unique_ptr<TheEngine::RenderingSystem::IRenderDevice> WindowSystem::getRenderDevice()
