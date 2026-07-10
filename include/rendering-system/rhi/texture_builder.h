@@ -35,7 +35,7 @@ namespace TheEngine::RenderingSystem
         //Logical OR - ing
         TextureBuilder& addUsage(TextureUsageFlags flag);
 
-        TextureBuilder& setSamples(uint32_t count);
+        TextureBuilder& setSamples(SampleCountBit sampleCountBit);
 
         // Sinks data in
         TextureBuilder& setMemoryBlock(Memory::MemoryBlock&& block);
