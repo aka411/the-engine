@@ -1,8 +1,7 @@
 #pragma once
 #include <rendering-system/engine_handles.h>
 #include <memory-management/memory_block.h>
-#include <type_traits>
-#include "data-structures/gpu_texture_data_structures.h"
+#include <rendering-system/rhi/data-structures/gpu_texture_data_structures.h>
 
 
 namespace TheEngine::RenderingSystem
@@ -47,7 +46,7 @@ namespace TheEngine::RenderingSystem
 		}
 	};
 
-	//Make it only vulkan concept
+
 	struct ImageTransferRequest
 	{
 		Memory::MemoryBlock memoryBlock;
@@ -93,14 +92,12 @@ namespace TheEngine::RenderingSystem
 		
 		virtual void transferToBuffer(BufferTransferRequest&& request) = 0;
 
-		virtual void quickTransfer(std::byte* srcDataPtr, const size_t bytesToCopy, BufferHandle bufferHandle, const size_t targetOffset) = 0;
+		virtual void quickTransfer(const std::byte* srcDataPtr, const size_t bytesToCopy, const BufferHandle targetBufferHandle, const size_t targetOffset) = 0;
 		
-		
-		//OR make it vulkan only medthod
-		// Path B: The Tiled/Formatted copy (Images/Textures)
-		//virtual void transferToImage(ImageTransferRequest&& request) = 0;
 
+		//virtual void transferToImage(ImageTransferRequest&& request) = 0;
 		virtual void flush() = 0;
+
 	};
 
 
