@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
 #include <string>
-
+#include <memory>
 
 
 
 #include <rendering-system/render-graph/render_graph_types.h>
 #include <rendering-system/render-graph/render_graph_builder.h>
+#include  <rendering-system/render-graph/i_render_graph_node.h>
 
 
 
@@ -27,13 +28,13 @@ namespace TheEngine::RenderingSystem
 	private:
 
     
-		std::vector<RenderGraphNode> m_renderGraphNodes;
+		std::vector<std::unique_ptr<IRenderGraphNode>> m_renderGraphNodes;
 
         RenderGraphBuilder m_renderGraphBuilder;
 
-
         RenderPassSetupContext m_renderPassSetupContext;
       
+        WindowExtent m_currenWindowExtend;
 
 
 	public:
@@ -41,13 +42,17 @@ namespace TheEngine::RenderingSystem
 		RenderGraph(IRenderDevice& renderDevice, const RenderPassSetupContext& renderPassSetupContext);
 
 
-        void addPass(const std::string& name, SetupFunc setupFunc);
 
+        void addPass(std::unique_ptr<IRenderGraphNode>&& renderGraphNode);
+
+
+
+        //These methods below should be hidden
         void compile();
 
         void execute(RenderPassExecuteContext& renderPassExecuteContext);
 
-
+        void onWindowResize(const WindowExtent& windowExtend);
 
 
 

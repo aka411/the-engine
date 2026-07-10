@@ -25,7 +25,7 @@ namespace TheEngine::RenderingSystem
    
         PipelineSystem& pipelineSystem;
         ShaderSystem& shaderSystem;
-      
+        WindowExtent windowExtent;
     };
 
 
@@ -35,6 +35,7 @@ namespace TheEngine::RenderingSystem
         GPUResourceSystem& gpuResourceSystem;
         const DrawCallBucket& drawCallBucket; // The data to actually render
         Camera camera;
+        WindowExtent windowExtend;
     };
 
 
@@ -48,7 +49,7 @@ namespace TheEngine::RenderingSystem
 
 
 
-
+    /*
     struct RenderGraphNode
     {
         std::string m_name;
@@ -66,13 +67,13 @@ namespace TheEngine::RenderingSystem
 
 
     };
-
+    */
 
 
     struct RenderReadWriteTargets
     {
-        RenderTargetFormat renderTargetFormat;
-        TextureHandle textureHandle;
+        RenderTargetFormat renderTargetFormat{};
+        TextureHandle textureHandle{};
     };
 
 
@@ -118,6 +119,27 @@ namespace TheEngine::RenderingSystem
         virtual std::string GetName() const = 0;
     };
 }
+
+
+
+class IRenderNode
+{
+private:
+
+
+public:
+
+virtual void setUp(RenderPassSetupContext& ctx, RenderGraphBuilder& builder) = 0;
+virtual void execute(RenderPassExecuteContext& ctx) = 0;
+
+virtual void onResize(const WindowExtent& extent) = 0;
+       
+virtual std::string GetName() const = 0;
+
+}
+
+
+
 
 */
 

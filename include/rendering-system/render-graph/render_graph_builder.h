@@ -36,7 +36,7 @@ namespace TheEngine::RenderingSystem
         TextureHandle writeTexture(const std::string& name);
 
 
-
+        void deleteTexture(const TextureHandle textureHandle);
 
     };
 
