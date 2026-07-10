@@ -1,5 +1,5 @@
 #pragma once
-#include <rendering-system/low-level-gpu-systems/data-structures/gpu_texture_data_structures.h>
+#include <rendering-system/rhi/data-structures/gpu_texture_data_structures.h>
 
 
 
@@ -24,7 +24,7 @@ namespace TheEngine
 
 		ImageLoader(TheEngine::Platform::FileSystem& fileSystem);//file system
 
-		RenderingSystem::TextureCreateInfo loadTextureFile(const TheEngine::Platform::Path& path);
+		TheEngine::RenderingSystem::TextureCreateInfo loadTextureFile(const TheEngine::Platform::Path& path);
 	};
 
 }

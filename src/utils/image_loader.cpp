@@ -1,10 +1,11 @@
-#include <image_loader.h>
+#include <utils/image_loader.h>
 #include <platform/platform.h>
 #include <cassert>
 
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
+#include <stb/stb_image.h>
+
 
 
 namespace TheEngine
@@ -17,9 +18,10 @@ namespace TheEngine
 		stbi_set_flip_vertically_on_load(true);
 	}
 
-	RenderingSystem::TextureCreateInfo ImageLoader::loadTextureFile(const TheEngine::Platform::Path& path)
+
+	TheEngine::RenderingSystem::TextureCreateInfo ImageLoader::loadTextureFile(const TheEngine::Platform::Path& path)
 	{
-		//use stb to load file and create memory block
+		
 	
 		using namespace TheEngine::RenderingSystem;
 
@@ -46,22 +48,20 @@ namespace TheEngine
 
 
 		TheEngine::RenderingSystem::TextureCreateInfo textureCreateInfo;
-		// --- Dimensions ---
-		textureCreateInfo.width = width;
-		textureCreateInfo.height = height;
-		textureCreateInfo.depth = 1; // Always 1 for 2D static images
-		textureCreateInfo.type = TextureType::TEXTURE_2D;
+	
+		textureCreateInfo.desc.width = width;
+		textureCreateInfo.desc.height = height;
+		textureCreateInfo.desc.depth = 1; // Need more thought here
+		textureCreateInfo.desc.type = TextureType::TEXTURE_2D;
+
 
 		textureCreateInfo.memoryBlock = TheEngine::Memory::MemoryBlock(
 			reinterpret_cast<std::byte*>(stbiRawPixels),
 			width * height * channels
 		);
 
-		// --- Format ---
-		//Yeah need way to handle alphaless also?
-		textureCreateInfo.textureSourcePixelFormat = TextureSourcePixelFormat::RGBA;
-		textureCreateInfo.textureSourceComponentType = TextureSourceComponentType::UNSIGNED_BYTE;
-		textureCreateInfo.internalFormat = TextureInternalFormat::RGBA8; 
+		textureCreateInfo.desc.format = ResourceFormat::RGBA8_UNORM;//TODO : Don't hardcode
+		textureCreateInfo.desc.usageFlags = TextureUsageFlags::IMAGE_USAGE_SAMPLED_BIT | TextureUsageFlags::IMAGE_USAGE_TRANSFER_DST_BIT;
 
 
 
