@@ -59,7 +59,7 @@ namespace TheEngine::RenderingSystem
 
 		virtual void beginFrame(const uint32_t frameIndex) = 0;
 
-		virtual std::unique_ptr<IPipelineBuilder> getPipelineBuilder() = 0;
+
 	};
 
 
