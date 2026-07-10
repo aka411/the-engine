@@ -1,5 +1,5 @@
 #pragma once
-#include <image_loader.h>
+#include <utils/image_loader.h>
 #include <rendering-system/engine_handles.h>
 
 
