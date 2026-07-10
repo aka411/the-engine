@@ -1,0 +1,104 @@
+#include <rendering-system/pipeline_system.h>
+#include <platform/file_system.h>
+#include <nlohmann/json.hpp>
+#include <rendering-system/pipeline_json_loader.h>
+#include <rendering-system/rhi/i_render_device.h>
+#include <rendering-system/rhi/i_pipeline_manager.h>
+namespace TheEngine::RenderingSystem
+{
+
+
+
+	PipelineStateConfig PipelineSystem::getPipelineStateConfigFromJson(std::byte* byteData, const size_t size)
+	{
+
+
+		auto json = nlohmann::json::parse(
+			reinterpret_cast<const uint8_t*>(byteData),
+			reinterpret_cast<const uint8_t*>(byteData + size));
+
+
+
+		PipelineStateConfig pipelineStateConfig;
+
+		from_json(json, pipelineStateConfig);
+	
+	
+
+
+		return pipelineStateConfig;
+	}
+
+
+
+
+
+
+
+
+	PipelineSystem::PipelineSystem(IRenderDevice& renderDevice, TheEngine::Platform::FileSystem& fileSystem, ShaderSystem& shaderSystem):
+	    m_renderDevice(renderDevice),
+	    m_fileSystem(fileSystem),
+		m_shaderSystem(shaderSystem)
+	{
+
+	}
+
+	PipelineStateConfig PipelineSystem::loadPipelineConfigFromFile(const TheEngine::Platform::Path& configPath)
+	{
+		auto file = m_fileSystem.open(configPath);
+
+
+		return getPipelineStateConfigFromJson(file.data(), file.size());
+	}
+
+
+	VertexLayout PipelineSystem::loadVertexLayoutFromFile(const TheEngine::Platform::Path& vertexLayoutPath)
+	{
+
+		auto file = m_fileSystem.open(vertexLayoutPath);
+
+		auto json = nlohmann::json::parse(
+			reinterpret_cast<const uint8_t*>(file.data()),
+			reinterpret_cast<const uint8_t*>(file.data() + file.size()));
+
+
+		VertexLayout vertexLayout;
+
+		from_json(json, vertexLayout);
+
+
+		return vertexLayout;
+	}
+
+
+
+
+
+	RenderOutputConfiguration PipelineSystem::loadRenderOutputConfigurationFromFile(const TheEngine::Platform::Path& renderOutputConfigurationPath)
+	{
+
+
+		auto file = m_fileSystem.open(renderOutputConfigurationPath);
+
+		auto json = nlohmann::json::parse(
+			reinterpret_cast<const uint8_t*>(file.data()),
+			reinterpret_cast<const uint8_t*>(file.data() + file.size()));
+
+
+		RenderOutputConfiguration renderOutputConfiguration;
+
+		from_json(json, renderOutputConfiguration);
+
+
+		return renderOutputConfiguration;
+
+
+	}
+
+	PipelineHandle PipelineSystem::buildPipeline(const PipelineBuilder& pipelineBuilder)
+	{
+		return m_renderDevice.getPipelineManager().createPipeline(pipelineBuilder.getPipelineName(), pipelineBuilder.getPipelineStateCreateInfo());
+	}
+
+}
