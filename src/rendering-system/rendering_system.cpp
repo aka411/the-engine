@@ -4,10 +4,8 @@
 #include <rendering-system/gpu-resource-system/gpu_resource_system.h>
 
 
-#include <rendering-system/rhi/i_pipeline_builder.h>
-#include <rendering-system/rhi/i_transfer_manager.h>
 #include <rendering-system/rhi/i_presentation_system.h>
-
+#include <rendering-system/rhi/i_transfer_manager.h>
 #include <rendering-system/rhi/i_command_buffer.h>
 #include <rendering-system/rhi/i_pipeline_manager.h>
 #include <rendering-system/rhi/framebuffer.h>
@@ -16,58 +14,36 @@ namespace TheEngine::RenderingSystem
 {
 
 
-	RenderingSystem::RenderingSystem(std::unique_ptr<IRenderDevice>&& renderDevice, TheEngine::Platform::FileSystem& filesystem) :
+
+
+	bool RenderingSystem::hasResized() const 
+	{ 
+		return m_resizePending; 
+	}
+
+	WindowExtent RenderingSystem::getExtent() const
+	{ 
+		return m_windowExtent; 
+	}
+
+
+	void RenderingSystem::acknowledgeResize() 
+	{ 
+		m_resizePending = false;
+	}
+
+
+	RenderingSystem::RenderingSystem(std::unique_ptr<IRenderDevice>&& renderDevice, TheEngine::Platform::FileSystem& filesystem,const WindowExtent& windowExtent) :
 
 		m_renderDevice(std::move(renderDevice)),
 		m_shaderSystem(filesystem, m_renderDevice->getShaderManager()),
 		m_pipelineSystem(*m_renderDevice,filesystem, m_shaderSystem),
 	    m_presentationSystem(m_renderDevice->getPresentationSystem()),
-		m_renderGraph(*m_renderDevice, RenderPassSetupContext{ .pipelineSystem = m_pipelineSystem ,.shaderSystem = m_shaderSystem })
+		m_renderGraph(*m_renderDevice, RenderPassSetupContext{ .pipelineSystem = m_pipelineSystem ,.shaderSystem = m_shaderSystem,.windowExtent = windowExtent })
 	{
 
 		m_gpuResourceSystem = std::make_unique<GPUResourceSystem>(*m_renderDevice);
 		
-
-
-/*
-		ShaderCreateInfoFromFile shaderCreateInfoFromFile;
-
-		shaderCreateInfoFromFile.shaderSourceFilePaths.insert({ ShaderType::VERTEX, TheEngine::Platform::Path(TheEngine::Platform::MountPoint::ENGINE,"shaders/vulkan/forward_vert.glsl") });
-		shaderCreateInfoFromFile.shaderSourceFilePaths.insert({ ShaderType::FRAGMENT, TheEngine::Platform::Path(TheEngine::Platform::MountPoint::ENGINE, "shaders/vulkan/forward_frag.glsl") });
-
-		ShaderHandle shaderHandle = m_shaderSystem.createShaderFromFile(shaderCreateInfoFromFile);
-
-
-		PipelineStateConfig pipelineStateConfig = m_pipelineSystem
-			.loadPipelineConfigFromFile(
-				TheEngine::Platform::Path(TheEngine::Platform::MountPoint::ENGINE,
-					"pipeline-state-config/pipeline_config.json"));
-
-		RenderOutputConfiguration renderOutputConfiguration = m_pipelineSystem
-			.loadRenderOutputConfigurationFromFile(
-				TheEngine::Platform::Path(TheEngine::Platform::MountPoint::ENGINE,
-					"render-output-config/render_config.json"));
-		
-
-
-		std::unique_ptr<IPipelineBuilder> pipelineBuilder =  m_renderDevice->getPipelineBuilder();
-		pipelineBuilder->setName("Default")
-			.setShader(shaderHandle)
-			.setPipelineConfig(pipelineStateConfig)
-			//.setPipelineLayout() // Use reflection for now, this is a headache casue 
-			.setRenderOutputConfiguration(renderOutputConfiguration);
-			
-
-
-			// 
-		//Build fails
-		 PipelineHandle pipelineHandle = pipelineBuilder->build();
-		 
-
-
-
-		 */
-
 
 
 
@@ -105,9 +81,19 @@ namespace TheEngine::RenderingSystem
 	void RenderingSystem::startRender(const Camera& camera)
 	{
 
-	
+
 		
 		m_renderDevice->getTransferManager().flush();
+
+		if (m_resizePending)
+		{
+			m_presentationSystem.setWindowSize(m_windowExtent);
+			m_renderGraph.onWindowResize(m_windowExtent);
+
+			acknowledgeResize();
+		}
+
+		m_presentationSystem.startFrame();
 
 		uint32_t frameIndex = m_presentationSystem.getCurrentFrameIndex();
 
@@ -124,7 +110,8 @@ namespace TheEngine::RenderingSystem
 			.cmd = commandBuffer,
 			.gpuResourceSystem = *m_gpuResourceSystem,
 			.drawCallBucket = *m_drawCallBucket,
-			.camera = camera
+			.camera = camera,
+			.windowExtend = m_windowExtent
 		};
 
 
@@ -137,13 +124,22 @@ namespace TheEngine::RenderingSystem
 
 
 
+
 		//Final step
 		m_presentationSystem.submitRenderCommandBuffer(commandBuffer);
 
 
-
+		m_presentationSystem.endFrame();
 
 	}
+
+	void RenderingSystem::setWindowExtend(const WindowExtent& windowExtend)
+	{
+		
+		m_resizePending = true;
+		m_windowExtent = windowExtend;
+	}
+
 
 
 	RenderGraph& RenderingSystem::getRenderGraph()

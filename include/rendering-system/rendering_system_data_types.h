@@ -25,8 +25,8 @@ namespace TheEngine::RenderingSystem
 		size_t vertexCount;
 		size_t indexCount;
 
-		size_t vertexDataSizeInBytes;
-		size_t indexDataSizeInBytes;
+		//size_t vertexDataSizeInBytes;
+		//size_t indexDataSizeInBytes;
 
 		size_t vertexOffsetInBuffer;
 		size_t indexOffsetInBuffer;
@@ -50,7 +50,7 @@ namespace TheEngine::RenderingSystem
 		bool isIndexed;
 
 
-		std::vector<DrawCall> drawCalls;//heap allocated bad , use custom alloctor and maintain pools of memory block for use
+		std::vector<DrawCall> drawCalls;
 
 	};
 

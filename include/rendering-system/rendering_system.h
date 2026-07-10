@@ -47,10 +47,17 @@ namespace TheEngine::RenderingSystem
 		RenderGraph m_renderGraph;
 
 
+
+		WindowExtent m_windowExtent;
+		bool m_resizePending = false;
+
+		bool hasResized() const;
+		void acknowledgeResize();
+
 	public:
 
 
-		RenderingSystem(std::unique_ptr<IRenderDevice>&& renderDevice, TheEngine::Platform::FileSystem& filesystem);
+		RenderingSystem(std::unique_ptr<IRenderDevice>&& renderDevice, TheEngine::Platform::FileSystem& filesystem, const WindowExtent& windowExtent);
 		~RenderingSystem();
 
 		GPUResourceSystem& getGPUResourceSystem();
@@ -60,10 +67,13 @@ namespace TheEngine::RenderingSystem
 		void submitDrawCallBucket(DrawCallBucket&& drawCallbucket);
 		void startRender(const Camera& camera);
 
+		
+		void setWindowExtend(const WindowExtent& windowExtend);
+		WindowExtent getExtent() const;
 
 
 		RenderGraph& getRenderGraph();
-
+		//void addPass(const std::string& name, SetupFunc setupFunc);
 
 
 	};
