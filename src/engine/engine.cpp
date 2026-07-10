@@ -1,4 +1,5 @@
-#include "engine\engine.h"
+#include <engine\engine.h>
+#include <rendering-system/rhi/i_render_device.h>
 
 namespace TheEngine
 {
@@ -15,36 +16,38 @@ namespace TheEngine
 		auto flatNormInfo = textureSystem.createDefaultTexture(128, 128, 255, 255); // Normal Map (0.5, 0.5, 1.0)
 
 
-		TheEngine::RenderingSystem::TextureInfo defaultWhite = textureSystem.createNewTexture(whiteTexInfo);
-		TheEngine::RenderingSystem::TextureInfo defaultBlack = textureSystem.createNewTexture(blackTexInfo);
-		TheEngine::RenderingSystem::TextureInfo defaultNormal = textureSystem.createNewTexture(flatNormInfo);
+		TheEngine::RenderingSystem::TextureHandle defaultWhite = textureSystem.createNewTexture(whiteTexInfo);
+		TheEngine::RenderingSystem::TextureHandle defaultBlack = textureSystem.createNewTexture(blackTexInfo);
+		TheEngine::RenderingSystem::TextureHandle defaultNormal = textureSystem.createNewTexture(flatNormInfo);
 
 
 		TheEngine::AssetSystem::PBRMRCreateInfo defaultMaterialCreateInfo;
 
-		// --- Factors ---
+		
 		// Pure white base, no emissive
 		defaultMaterialCreateInfo.baseColorFactor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		defaultMaterialCreateInfo.emissiveFactor = glm::vec3(0.0f, 0.0f, 0.0f);
 
-		// 0.0 metallic (dielectric) and 0.5 roughness (balanced) is a safe default
+	
 		defaultMaterialCreateInfo.metallicFactor = 0.0f;
 		defaultMaterialCreateInfo.roughnessFactor = 0.5f;
 
 
-		// --- Texture Assignments ---
+
+
 		// Albedo, Occlusion, and Metal-Rough all use the White 1x1 texture
-		defaultMaterialCreateInfo.albedoTextureInfo = defaultWhite;
-		defaultMaterialCreateInfo.occlusionTextureInfo = defaultWhite;
-		defaultMaterialCreateInfo.metallicRoughnessTextureInfo = defaultWhite;
+		defaultMaterialCreateInfo.albedoTextureHandle = defaultWhite;
+		defaultMaterialCreateInfo.occlusionTextureHandle = defaultWhite;
+		defaultMaterialCreateInfo.metallicRoughnessTextureHandle = defaultWhite;
 
 		// Normal uses the Flat (0.5, 0.5, 1.0) texture
-		defaultMaterialCreateInfo.normalTextureInfo = defaultNormal;
+		defaultMaterialCreateInfo.normalTextureHandle = defaultNormal;
 
-		// Emissive uses the Black texture
-		defaultMaterialCreateInfo.emissiveTextureInfo = defaultBlack;
+	
+		defaultMaterialCreateInfo.emissiveTextureHandle = defaultBlack;
 
-		// --- Finalize ---
+	
+
 		 m_assetSystem.
 			 getMaterialSystem().createDefaultInternalPBRMaterial(defaultMaterialCreateInfo);
 
@@ -53,16 +56,23 @@ namespace TheEngine
 
 	Engine::Engine(const EngineConfiguration& engineConfiguration) :
 		m_platform(engineConfiguration),
-		//TODO : NEED MORE THOUGHT HERE
-		m_renderingSystem(),//
-		m_assetSystem(m_platform, m_renderingSystem.getGPUResourceSystem())// currently uses fileSystem
+		
+		m_renderingSystem(std::move(m_platform.getWindowSystem().getRenderDevice()), m_platform.getFileSystem(),m_platform.getWindowSystem().getWindowExtent()),//
+		m_assetSystem(m_platform, m_renderingSystem.getGPUResourceSystem()),// currently uses fileSystem
+		m_audioSystem(m_platform.getFileSystem())
 	{
 
 		initializeMaterials();
+	
+		WindowExtent windowExtent = m_platform.getWindowSystem().getWindowExtent();
+		m_renderingSystem.setWindowExtend(windowExtent);
 
 	}
 
+	Engine::~Engine()
+	{
 
+	}
 
 
 
@@ -89,5 +99,12 @@ namespace TheEngine
 		return m_assetSystem;
 
 	}
+
+	TheEngine::AudioSystem::AudioSystem& Engine::getAudioSystem()
+	{
+		return m_audioSystem;
+	}
+
+
 
 }
