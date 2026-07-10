@@ -6,13 +6,14 @@ include(FetchContent)
 
 
 
-
 FetchContent_Declare(
   volk
   GIT_REPOSITORY https://github.com/zeux/volk.git
   GIT_TAG        vulkan-sdk-1.4.321.0
 )
 
+#guide volk to where vulkan headers are
+set(VULKAN_HEADERS_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vulkan-headers" CACHE PATH "" FORCE)
 FetchContent_MakeAvailable(volk)
 
 
@@ -87,6 +88,13 @@ set_target_properties(shaderc_shared PROPERTIES
     IMPORTED_IMPLIB "${SHADERC_LIB_ROOT_PATH}/${SHADERC_PLATFORM}/shaderc_shared.lib"
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libshaderc/include"
 )
+
+
+
+
+
+
+
 
 
 
