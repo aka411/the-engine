@@ -75,4 +75,11 @@
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
 
-demo/asset/font/**/*.json binary
+
+
+
+
+# Libs
+*.lib binary
+*.a   binary
+*.dll binary
