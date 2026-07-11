@@ -43,7 +43,10 @@ ${ENGINE_SOURCES}
 )
 
 
-set_target_properties(TheEngine PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+
+
+
 
 
 
@@ -71,11 +74,20 @@ target_link_libraries(TheEngine PUBLIC
 )
 
 
+function(copy_runtime_deps target)
+    if(WIN32)
+        add_custom_command(
+            TARGET ${target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "$<TARGET_RUNTIME_DLLS:${target}>"
+            "$<TARGET_FILE_DIR:${target}>"
+            COMMAND_EXPAND_LISTS
+        )
+    endif()
+endfunction()
+
 
 enable_testing()
-
-
-
 
 add_subdirectory(tests)
 
