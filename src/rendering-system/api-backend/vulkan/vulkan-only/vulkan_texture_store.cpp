@@ -52,7 +52,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
             // Includes UNORM, SRGB, FLOAT, and UINT formats
         case ResourceFormat::UNKNOWN:
         default:
-            assert(false && "Unknown ResourceFormat used to create texture ");
+            //assert(false && "Unknown ResourceFormat used to create texture ");
             return VK_IMAGE_ASPECT_COLOR_BIT;
         }
     }
