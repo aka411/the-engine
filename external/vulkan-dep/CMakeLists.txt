@@ -27,7 +27,7 @@ FetchContent_Declare(
 
 
 )
-
+set(VK_BOOTSTRAP_VULKAN_HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vulkan-headers/include" CACHE PATH "" FORCE)
 FetchContent_MakeAvailable(VulkanBootstrap)
 
 
@@ -88,12 +88,6 @@ set_target_properties(shaderc_shared PROPERTIES
     IMPORTED_IMPLIB "${SHADERC_LIB_ROOT_PATH}/${SHADERC_PLATFORM}/shaderc_shared.lib"
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libshaderc/include"
 )
-
-
-
-
-
-
 
 
 
