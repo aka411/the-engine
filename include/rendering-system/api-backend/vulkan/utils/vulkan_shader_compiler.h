@@ -15,7 +15,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 	{
 	private:
 
-		shaderc::Compiler m_SprivCompiler;
+		shaderc::Compiler m_SpirvCompiler;
 		shaderc::CompileOptions m_compileOptions;
 
 

@@ -47,7 +47,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 		const shaderc_shader_kind shaderKind = getShadercKind(shadertype);
 
-		const shaderc::SpvCompilationResult module = m_SprivCompiler.CompileGlslToSpv(codeString, shaderKind, "shader", m_compileOptions);
+		const shaderc::SpvCompilationResult module = m_SpirvCompiler.CompileGlslToSpv(codeString, shaderKind, "shader", m_compileOptions);
 
 		if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 		{
