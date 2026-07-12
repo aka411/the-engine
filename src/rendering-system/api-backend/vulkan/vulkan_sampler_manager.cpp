@@ -34,7 +34,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 	VkSampler VulkanSamplerManager::getOrCreateVkSampler(const TheEngine::RenderingSystem::SamplerCreateInfo& samplerCreateInfo)
 	{
 
-		assert(false && "Vulkan Sampler Manager Not yet complete");
+		//assert(false && "Vulkan Sampler Manager Not yet complete");
 
 		//This class is hardcoded for MVP
 
