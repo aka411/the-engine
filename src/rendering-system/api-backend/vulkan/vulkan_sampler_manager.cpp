@@ -54,9 +54,10 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 			samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 			samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 
-			// Anisotropic Filtering (Optional)
-			samplerInfo.anisotropyEnable = VK_TRUE;
-			samplerInfo.maxAnisotropy = 16.0f; // Check limits via VkPhysicalDeviceProperties
+			// Anisotropic Filtering
+			// This needs more work 
+			//samplerInfo.anisotropyEnable = VK_TRUE;
+			//samplerInfo.maxAnisotropy = 16.0f; // NOTE : Need to check limits via VkPhysicalDeviceProperties
 
 			// Border and LOD
 			samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
