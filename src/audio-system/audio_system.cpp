@@ -1,5 +1,6 @@
-
+#include <cstring>
 #include <math.h>
+
 #include <audio-system/audio_system.h>
 #include <platform/file_system.h>
 #include <platform/path.h>
