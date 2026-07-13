@@ -1,30 +1,31 @@
 #pragma once
-#include <rendering-system/low-level-gpu-systems/data-structures/gpu_pipeline_state_data_types.h>
-#include <glad/glad.h>
+
+#include <glad.h>
+#include <rendering-system/rhi/gpu_pipeline_data_structures.h>
 
 namespace TheEngine::RenderingSystem::OpenGLBackend
 {
 
-	//currently under rework
 
-	class OpenglPipelineStateObject : public IPipelineStateObject
+
+	class OpenglPipelineStateObject 
 	{
 
 
 
 	private:
 
-		//we have to create the vaos, etc
+
 		GLuint m_vaoID;
-		GLuint m_fbo;// yeah in old design it was in OpenglFramebuffer class but its better here
-	//A global state of RenderConfig to avoid resetting already set state
+		GLuint m_fbo;
+
 
 	public:
 
 
-		OpenglPipelineStateObject(const RenderStateConfiguration& renderStateConfiguration);
+		OpenglPipelineStateObject(const PipelineStateConfiguration& pipelineStateConfiguration);
 
-		virtual void bind() override;
+		
 
 	};
 

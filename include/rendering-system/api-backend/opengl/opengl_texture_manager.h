@@ -1,37 +1,36 @@
 #pragma once
+#include <unordered_map>
+#include <glad/glad.h>
 
+#include <rendering-system/rhi/i_texture_manager.h>
 
 
 namespace TheEngine::RenderingSystem::OpenGLBackend
 {
 
-	class GPUSamplerManager;
-		
 
-	class GPUTextureManager
+	struct OpenglTextureHandle
+	{
+		GLuint glTextureId = 0;
+		uint64_t residentHandle = 0; // For bindless textures
+
+	};
+
+	class OpenglTextureManager : public ITextureManager
 	{
 
 	private:
 
-		std::unordered_map<uint64_t, GLuint> m_residentHandleToTextureApiHandle;
 
-		size_t m_totalAllocatedTextureMemory = 0;
+		std::vector<OpenglTextureHandle> m_allotedGLTextures; 
 
-		GPUSamplerManager& m_gpuSamplerManager;
+
 
 	public:
 
-		GPUTextureManager(GPUSamplerManager& gpuSamplerManager);
-		~GPUTextureManager();
+		OpenglTextureManager();
 
-		TextureInfo createNewTexture(const TextureCreateInfo& textureCreateInfo);
-		RenderTarget createRenderTarget(const RenderTargetCreateInfo& bufferTextureCreateInfo);
-
-
-
-		void destroyTexture(TextureInfo& textureInfo);
-
-		size_t getTotalAllocatedTextureMemory() const;
+		virtual TextureHandle createNewTexture(const TextureCreateInfo& textureCreateInfo) override;
 
 	};
 

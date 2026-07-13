@@ -1,5 +1,5 @@
 #pragma once
-
+#include <rendering-system/rhi/i_sampler_manager.h>
 
 
 namespace TheEngine::RenderingSystem::OpenGLBackend
@@ -7,12 +7,12 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
     struct OpenglSampler
     {
-        SamplerHandle samplerHandle;//only to for use by manager,not to be used by user
+        SamplerHandle samplerHandle;
         GLuint openglSamplerHandle;
     };
 
 
-	class OpenglSamplerManager : IGPUSamplerManager
+	class OpenglSamplerManager : ISamplerManager
 	{
 
 	private :
@@ -37,14 +37,13 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
                 return seed;
             }
         };
-		//Need to store sampler settings to sampler
-        //If we are using hash, where will we het handle from
+
 		std::unordered_map<SamplerSetting, OpenglSampler, SamplerHasher> m_cachedGPUSamplers;
 
 	public  :
 
         OpenglSamplerManager();
-		~OpenglSamplerManager();
+		 ~OpenglSamplerManager() override;
 
 
         virtual const SamplerHandle getOrCreateSampler(const SamplerSetting& SamplerSetting) override;

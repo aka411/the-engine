@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include <rendering-system/low-level-gpu-systems/data-structures/gpu_pipeline_state_data_types.h>
+
+#include <rendering-system/rhi/i_pipeline_manager.h>
+#include <rendering-system/engine_handles.h>
 
 
 namespace TheEngine::RenderingSystem::OpenGLBackend
@@ -13,18 +15,19 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
 	private:
 
-		std::vector<std::unique_ptr<IGPUPipeline>> m_gpuPipelines;
+		std::vector<PipelineStateConfiguration> m_openglPipelineCache;
 
 	public:
 
 		OpenglPipelineManager();
-		~OpenglPipelineManager();
+		virtual ~OpenglPipelineManager() override;
+
+
+		virtual const PipelineHandle createPipelineStateObject(const PipelineStateConfiguration& pipelineStateConfiguration) override;
 
 
 
-		virtual PipelineHandle createPipeline(PipelineDescriptor& pipelineDescriptor) override;
 
-		IGPUPipeline& getGPUPipelineState(const PipelineHandle pipelineHandle);
 
 	};
 

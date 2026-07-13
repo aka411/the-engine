@@ -1,28 +1,32 @@
 #pragma once
 #include <map>
 
+#include <glad/glad.h>
+
+#include <rendering-system/rhi/gpu_pipeline_data_structures.h>
+#include <rendering-system/rhi/framebuffer.h>
+
 namespace TheEngine::RenderingSystem::OpenGLBackend
 {
 
 	//need to map fbo attahment requirements to GLuintFBO
 
 
-	class OpenglFrameBufferManager 
+	class OpenglFramebufferManager 
 	{
 
 
 	private:
 
-		std::map<RenderOutputConfigurationHash, GLuint> m_frabuffers;
+		std::map<RenderOutputConfigurationHash, GLuint> m_framebuffers;
 
 	public:
 
-		OpenglFrameBufferManager();
-		~OpenglFrameBufferManager();
+		OpenglFramebufferManager();
+		~OpenglFramebufferManager();
 
-		//I was thinking of letting this manager set the state and fbo
-		void setState(const Framebuffer& framebuffer);//API specific method
 
+		GLuint getOrCreateFramebuffer(const RenderOutputConfiguration& renderOutputConfiguration);
 
 	
 		GLuint getNativeHandle(const RenderOutputConfiguration& renderOutputConfiguration);

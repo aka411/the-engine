@@ -1,5 +1,10 @@
 #pragma once
+#include <vector>
 
+#include <glad.h>
+
+#include <rendering-system/rhi/i_buffer_manager.h>
+#include <rendering-system/rhi/gpu_buffer_data_types.h>
 
 
 namespace TheEngine::RenderingSystem::OpenGLBackend
@@ -11,13 +16,13 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 	{
 		GLuint openglAPIBufferHandle;
 
-		MemoryFlags memoryFlags;
+		//MemoryFlags memoryFlags;
 		void* mappedPtr = nullptr;
 		bool isMapped = false;
 	};
 
 
-	class OpenglBufferManager : public IGPUBufferManager
+	class OpenglBufferManager : public IBufferManager
 	{
 
 	private:
@@ -34,11 +39,11 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 		virtual ~OpenglBufferManager() override;
 
 
-		//instead of above methods a single method 
-		virtual const GPUBufferHandle createBuffer(const GPUBufferCreateInfo& gpuBufferCreateInfo) override;
-		virtual void destroyBuffer(const GPUBufferHandle& gpuBufferHandle) override;
+		
+		virtual const BufferHandle createBuffer(const BufferCreateInfo& bufferCreateInfo) override;
+		virtual void destroyBuffer(const BufferHandle& bufferHandle) override;
 
-		const OpenglBuffer getNativeBuffer(const GPUBufferHandle& gpuBufferHandle);
+		const OpenglBuffer getNativeBuffer(const BufferHandle& bufferHandle);
 
 	
 
