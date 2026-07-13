@@ -1,4 +1,7 @@
+#include <rendering-system/api-backend/opengl/opengl_shader_manager.h>
 
+#include <assert.h>
+#include <iostream>
 
 
 namespace TheEngine::RenderingSystem::OpenGLBackend
@@ -6,70 +9,96 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
 
 
-	GPUShaderManager::GPUShaderManager(TheEngine::Platform::Platform& platform):
-		m_platform(platform)
+
+	OpenglShaderManager::OpenglShaderManager(TheEngine::Platform::FileSystem& fileSystem) :
+		IShaderManager(fileSystem)
 	{
 
 
 	}
 
 
-	GPUShaderManager::~GPUShaderManager()
-	{
 
+	OpenglShaderManager::~OpenglShaderManager()
+	{
 
 	}
 
-	ShaderProgram GPUShaderManager::getShader(const std::string& shaderName)
-	{
 
-		auto it = m_shaderPrograms.find(shaderName);
-		if (it != m_shaderPrograms.end()) {
-			return  it->second;
+
+	const ShaderHandle OpenglShaderManager::createShader(ShaderCreateInfo shaderCreateInfo)
+	{
+		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+		const char* vertShaderSource = shaderCreateInfo.shaderSourceCodes[ShaderType::VERTEX].c_str();
+		const char* fragShaderSource = shaderCreateInfo.shaderSourceCodes[ShaderType::FRAGMENT].c_str();
+
+		glShaderSource(vertexShader, 1, &vertShaderSource, NULL);
+		glShaderSource(fragmentShader, 1, &fragShaderSource, NULL);
+
+
+
+		glCompileShader(vertexShader);
+		glCompileShader(fragmentShader);
+
+		GLint success;
+		GLchar infoLog[512];
+		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+		if (!success)
+		{
+			glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+			std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+			assert(false && "Vertex Shader Compilation Failed");
 		}
 
-		assert(false && ("Failed To Get ShaderProgram : " + shaderName).c_str());
+
+		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+		if (!success)
+		{
+			glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+			std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+			assert(false && "Fragment Shader Compilation Failed");
+		}
 
 
-		return ShaderProgram{};
+
+		GLuint shaderProgram;
+
+		shaderProgram = glCreateProgram();
+
+		glAttachShader(shaderProgram, vertexShader);
+		glAttachShader(shaderProgram, fragmentShader);
+
+		glLinkProgram(shaderProgram);
+
+		glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+		if (!success)
+		{
+			glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+			std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+			assert(false && "Shader Program Linking Failed");
+		}
+
+
+		//cleanup
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragmentShader);
+
+		ShaderHandle shaderHandle;
+		shaderHandle.id = m_shaderPrograms.size() + 1; //Handles are 1-based indexed, 0 is invalid
+		m_shaderPrograms.push_back(shaderProgram);
+
+		return shaderHandle;
 	}
 
-
-
-	ShaderProgram GPUShaderManager::createAndStoreShader(const std::string& shaderName, ShaderCreateInfo shaderCreateInfo)
+	GLuint OpenglShaderManager::getNavtiveShaderHandle(const ShaderHandle& shaderHandle) const
 	{
-		
+		assert(shaderHandle.id > 0 && "OpenglShaderManager : Invalid ShaderHandle");
+		assert(shaderHandle.id <= m_shaderPrograms.size() && "OpenglShaderManager : Tried to access invalid shader");
 
-
-		GLuint shaderProgramOpenglHandle = TheEngine::RenderingSystem::OpenGLBackend::compileShader(shaderCreateInfo.vertexShaderString, shaderCreateInfo.fragmentShaderString);
-
-		m_shaderPrograms[shaderName] = ShaderProgram{ shaderProgramOpenglHandle };
-		//casting
-		return ShaderProgram{ shaderProgramOpenglHandle };
-	}
-
-
-
-
-
-
-
-	ShaderProgram GPUShaderManager::loadCreateAndStoreShader(const std::string& shaderName, const TheEngine::Platform::Path& vertexShaderPath, const TheEngine::Platform::Path& fragmentShaderPath)
-	{
-
-		TheEngine::Platform::File vertexShaderfile =m_platform.getFileSystem().open(vertexShaderPath);
-		TheEngine::Platform::File fragmentShaderfile = m_platform.getFileSystem().open(fragmentShaderPath);
-
-		ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderString = std::string(reinterpret_cast<char*>(vertexShaderfile.data()), vertexShaderfile.size()) ;
-		shaderCreateInfo.fragmentShaderString = std::string(reinterpret_cast<char*>(fragmentShaderfile.data()), fragmentShaderfile.size());
-
-
-
-		return createAndStoreShader(shaderName,shaderCreateInfo);
-
+		return m_shaderPrograms[shaderHandle.id - 1];
 
 	}
-
 
 }

@@ -1,10 +1,10 @@
-
+#include <rendering-system/api-backend/opengl/opengl_pipeline_manager.h>
 
 namespace TheEngine::RenderingSystem::OpenGLBackend
 {
 
 
-	GPUPipelineManager::GPUPipelineManager()
+    OpenglPipelineManager::OpenglPipelineManager()
 
 	{
 
@@ -15,7 +15,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
 
 
-    GPUPipelineManager::~GPUPipelineManager()
+    OpenglPipelineManager::~OpenglPipelineManager()
     {
 
 
@@ -23,23 +23,21 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
 
 
-    PipelineHandle GPUPipelineManager::createPipeline(PipelineDescriptor& pipelineDescriptor)
+
+    const PipelineHandle OpenglPipelineManager::createPipelineStateObject(const PipelineStateConfiguration& pipelineStateConfiguration)
     {
 
-        PipelineHandle handle = m_gpuPipelines.size();
+        PipelineHandle handle;
+        handle.id = m_openglPipelineCache.size();
 
-        m_gpuPipelines.emplace_back(std::make_unique<TheEngine::RenderingSystem::OpenGLBackend::OpenglPipelineStateObject>(pipelineDescriptor));
+        m_openglPipelineCache.push_back(pipelineStateConfiguration);
 
         return handle;
 
     }
 
 
-    IGPUPipeline& GPUPipelineManager::getGPUPipelineState(const PipelineHandle pipelineHandle)
-    {
-        assert(m_gpuPipelines.size() > pipelineHandle);
 
-        return *m_gpuPipelines[pipelineHandle];
-    }
+
 
 }

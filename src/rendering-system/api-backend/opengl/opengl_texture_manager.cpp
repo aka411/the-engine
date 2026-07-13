@@ -1,3 +1,4 @@
+#include <rendering-system/api-backend/opengl/opengl_texture_manager.h>
 
 
 
@@ -9,12 +10,6 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
 
 
-	GPUTextureManager::GPUTextureManager(GPUSamplerManager& gpuSamplerManager):
-		m_gpuSamplerManager(gpuSamplerManager)
-	{
-
-
-	}
 
 	GPUTextureManager::~GPUTextureManager()
 	{
@@ -206,13 +201,13 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
 		if (it == m_residentHandleToTextureApiHandle.end())
 		{
-			// Handle error: texture not found
+			
 			return;
 		}
 
 		GLuint glTextureId = it->second;
 
-		// 2. Make the 64-bit handle non-resident
+		
 		glMakeTextureHandleNonResidentARB(residentHandle);
 
 
@@ -225,10 +220,18 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 	}
 
 
-	size_t GPUTextureManager::getTotalAllocatedTextureMemory() const
+
+
+	TextureHandle TheEngine::RenderingSystem::OpenGLBackend::OpenglTextureManager::createNewTexture(const TextureCreateInfo& textureCreateInfo)
 	{
-		return m_totalAllocatedTextureMemory;
+
+
+
+
+		return TextureHandle();
 	}
+
+
 
 
 }

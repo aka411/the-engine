@@ -1,4 +1,4 @@
-
+#include <rendering-system/api-backend/opengl/opengl_buffer_manager.h>
 
 
 namespace TheEngine::RenderingSystem::OpenGLBackend
@@ -13,7 +13,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 	}
 
 
-	virtual OpenglBufferManager::~OpenglBufferManager() override
+	OpenglBufferManager::~OpenglBufferManager()
 	{
 		if (m_allocatedBuffers.size() > 0)
 		{
@@ -22,12 +22,9 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 	}
 
 
-	virtual const GPUBufferHandle OpenglBufferManager::createBuffer(const GPUBufferCreateInfo& gpuBufferCreateInfo) override
+	const BufferHandle OpenglBufferManager::createBuffer(const GPUBufferCreateInfo& gpuBufferCreateInfo)
 	{
 
-
-		//API specific code goes here
-		//TODO : Implement this
 
 		GLuint gpuBuffer;
 
@@ -71,7 +68,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 
 	}
 
-	virtual void OpenglBufferManager::destroyBuffer(const GPUBufferHandle& gpuBufferHandle) override
+	void OpenglBufferManager::destroyBuffer(const BufferHandle& bufferHandle)
 	{
 
 

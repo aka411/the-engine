@@ -1,80 +1,64 @@
-
+#include <rendering-system/api-backend/opengl/opengl-only/opengl_framebuffer_manager.h>
 
 namespace TheEngine::RenderingSystem::OpenGLBackend
 {
 
+	static uint64_t RenderOutputConfigurationHash(const RenderOutputConfiguration& renderOutputConfiguration)
+	{
 
-	class OpenglFramebufferManager : public IFramebufferManager
+	
 
-		OpenglFramebufferManager::OpenglFramebufferManager()
+	}
+	
+
+	OpenglFramebufferManager::OpenglFramebufferManager()
 	{
 
 	}
 
-	virtual OpenglFramebufferManager::~OpenglFramebufferManager() override
+
+	OpenglFramebufferManager::~OpenglFramebufferManager()
 	{
 
 	}
 
 
-	void OpenglFramebufferManager::setState(const Framebuffer& framebuffer)
+	GLuint OpenglFramebufferManager::getOrCreateFramebuffer(const RenderOutputConfiguration& renderOutputConfiguration)
 	{
 
+		//check if we alread have
+
+		if (m_framebuffers.find(RenderOutputConfigurationHash(renderOutputConfiguration)) != m_framebuffers.end())
+		{
+			return m_framebuffers.at(RenderOutputConfigurationHash(renderOutputConfiguration));
+		}
 
 
 
+		GLuint fbo;
+		glCreateFramebuffers(1, &fbo);
 
-        // 1. Update internal tracking
-        if (index >= m_colorAttachments.size()) m_colorAttachments.resize(index + 1);
-        m_colorAttachments[index] = attachment;
+		glNamedFramebufferTexture(fbo, GL_COLOR_ATTACHMENT0, tex, 0);
+		glNamedFramebufferTexture(fbo, GL_DEPTH_ATTACHMENT, depthTex, 0);
 
-        // 2. Modern OpenGL Swap (DSA)
-        glNamedFramebufferTexture(m_fboHandle, GL_COLOR_ATTACHMENT0 + index,
-            (GLuint)attachment.texture.apiHandle, attachment.mipLevel);
+		if (glCheckNamedFramebufferStatus(fbo, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		{
+			//failed
+		}
 
-        // 3. Update Draw Buffers routing (The "Pipes")
-        std::vector<GLenum> drawBuffers;
-        for (int i = 0; i < m_colorAttachments.size(); ++i) {
-            drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i);
-        }
-        glNamedFramebufferDrawBuffers(m_fboHandle, (GLsizei)drawBuffers.size(), drawBuffers.data());
-    }
+		m_framebuffers[RenderOutputConfigurationHash(renderOutputConfiguration)] = fbo;
 
-    virtual void OpenglFramebuffer::setDepthStencilAttachment(const FramebufferAttachment& attachment) override
+		return fbo;
+	}
+
+
+
+    GLuint OpenglFramebufferManager::getNativeHandle(const RenderOutputConfiguration& renderOutputConfiguration)
     {
-        m_depthStencilAttachment = attachment;
-        m_hasDepthStencil = true;
-        glNamedFramebufferTexture(m_fboHandle, GL_DEPTH_STENCIL_ATTACHMENT,
-            (GLuint)attachment.texture.apiHandle, attachment.mipLevel);
+
+		return m_framebuffers.at(RenderOutputConfigurationHash(renderOutputConfiguration));
+
     }
-
-
-
-
-    virtual uint32_t OpenglFramebuffer::getNativeHandle() const override
-    {
-        return m_fboHandle;
-    }
-
-
-
-
-
-
-
-
-
-
-	}
-
-
-
-	GLuint OpenglFrameBufferManager::getNativeHandle(const RenderOutputConfiguration& renderOutputConfiguration)
-	{
-
-	}
-
-
 
 
 

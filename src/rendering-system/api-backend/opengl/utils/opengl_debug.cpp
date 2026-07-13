@@ -1,4 +1,4 @@
-#include "rendering-system/api-backend/opengl/opengl_utils.h"
+#include <rendering-system/api-backend/opengl/utils/opengl_debug.h>
 #include <stdio.h>
 #include <iostream>
 
@@ -25,11 +25,10 @@ void GLAPIENTRY DebugMessageCallback(
 	fprintf(stderr, "  Message: %s\n", message);
 	fprintf(stderr, "------------------------------------------------\n");
 
-	// Crash the program if it's a high-severity error
 	if (severity == GL_DEBUG_SEVERITY_HIGH)
 	{
 
-		// __debugbreak(); // Windows-specific
+		
 	}
 }
 
@@ -37,7 +36,7 @@ void GLAPIENTRY DebugMessageCallback(
 
 
 
-//another one
+
 void message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
 {
 	auto const src_str = [source]() {
