@@ -135,7 +135,7 @@ namespace TheEngine::RenderingSystem::OpenGLBackend
 		case TextureWrap::CLAMP_TO_EDGE: 	return GL_CLAMP_TO_EDGE;
 		case TextureWrap::MIRRORED_REPEAT: 	return GL_MIRRORED_REPEAT;
 
-		default: return GL_REPEAT; 
+		default: return GL_REPEAT; // Default safe value
 		}
 	}
 
