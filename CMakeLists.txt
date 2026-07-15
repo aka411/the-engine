@@ -87,11 +87,15 @@ function(copy_runtime_deps target)
 endfunction()
 
 
-enable_testing()
-
-add_subdirectory(tests)
 
 
+
+option(BUILD_TESTS "Enable Tests" OFF)
+
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 
 
 
