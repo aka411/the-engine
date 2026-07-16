@@ -59,10 +59,12 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          libx11-dev \
-          libxkbcommon-dev \
-          libwayland-dev \
-          libdecor-0-dev
+          build-essential cmake pkg-config \
+          libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
+          libxfixes-dev libxi-dev libxss-dev libxkbcommon-dev \
+          libwayland-dev libdecor-0-dev libdrm-dev libgbm-dev \
+          libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev \
+          libpulse-dev libasound2-dev
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
