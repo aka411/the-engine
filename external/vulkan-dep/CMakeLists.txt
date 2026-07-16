@@ -68,18 +68,20 @@ if(WIN32)
     set(SHADERC_PLATFORM "win64")
 	set(SHADERC_SHARED_FILE_NAME "shaderc_shared.dll")
     if(MSVC)
-	    set(SHADERC_SHARED_IMPORT_FILE "msvc/shaderc_shared.lib")
+	    set(SHADERC_SHARED_IMPORT_FILE "import-library/msvc/shaderc_shared.lib")
     elseif(MINGW)
-	    set(SHADERC_SHARED_IMPORT_FILE "mingw/shaderc_shared.a")
+	    set(SHADERC_SHARED_IMPORT_FILE "import-library/mingw/shaderc_shared.a")
     else()
 
         message(FATAL_ERROR "Unsupported compiler for prebuilt shaderc")
 
     endif()
 
-elseif(UNIX)
+elseif(LINUX)
 
- message(FATAL_ERROR "Unix not yet supported.")
+    set(SHADERC_PLATFORM "linux64")
+    set(SHADERC_SHARED_FILE_NAME "libshaderc_shared.so.1")
+    set(SHADERC_IMPLIB_PATH "")
 
 else()
 
@@ -92,7 +94,7 @@ add_library(shaderc_shared SHARED IMPORTED)
 
 set_target_properties(shaderc_shared PROPERTIES
     IMPORTED_LOCATION "${SHADERC_LIB_ROOT_PATH}/${SHADERC_PLATFORM}/${SHADERC_SHARED_FILE_NAME}"
-    IMPORTED_IMPLIB "${SHADERC_LIB_ROOT_PATH}/${SHADERC_PLATFORM}/import-library/${SHADERC_SHARED_IMPORT_FILE}"
+    IMPORTED_IMPLIB "${SHADERC_LIB_ROOT_PATH}/${SHADERC_PLATFORM}/${SHADERC_SHARED_IMPORT_FILE}"
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libshaderc/include"
 )
 
