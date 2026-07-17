@@ -34,8 +34,8 @@ namespace TheEngine::RenderingSystem
 			for (const auto& [shaderType, filePath] : createInfoFromFile.shaderSourceFilePaths)
 			{
 				auto file = m_fileSystem.open(filePath);
-
-				std::string shaderCode(reinterpret_cast<char*>(file.data()), file.size());
+				assert(file.isValid() && "Shader file is not valid");
+				std::string shaderCode(reinterpret_cast<const char*>(file.begin()), file.size());
 
 				createInfo.shaderSourceCodes[shaderType] = shaderCode;
 			}
