@@ -30,7 +30,7 @@ namespace TheEngine::RenderingSystem
 
 		ShaderSystem& m_shaderSystem;
 
-		PipelineStateConfig getPipelineStateConfigFromJson(std::byte* byteData, const size_t size);
+		PipelineStateConfig getPipelineStateConfigFromJson(const std::byte* byteData, const size_t size);
 
 	public:
 
