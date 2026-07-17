@@ -31,14 +31,16 @@ namespace TheEngine
 
 		int width, height, channels;
 
+		assert(file.isValid() && "Image File not valid");
 
 		unsigned char* stbiRawPixels = stbi_load_from_memory(
-			reinterpret_cast<const stbi_uc*>(file.data()),
+			reinterpret_cast<const stbi_uc*>(file.begin()),
 			static_cast<int>(file.size()),
 			&width, &height, &channels, STBI_rgb_alpha
 		);
 
-		if (!stbiRawPixels) {
+		if (!stbiRawPixels) 
+		{
 
 			assert(false && stbi_failure_reason());
 
