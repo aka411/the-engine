@@ -86,12 +86,12 @@ namespace TheEngine::AudioSystem
 		static ma_result vfsTellStatic(ma_vfs* pVFS, ma_vfs_file file, ma_int64* pCursor);
 		static ma_result vfsInfoStatic(ma_vfs* pVFS, ma_vfs_file file, ma_file_info* pInfo);
 
-		ma_engine m_engine;
-		ma_resource_manager m_resourceManager;
+		ma_engine m_engine{};
+		ma_resource_manager m_resourceManager{};
 
 	
 
-		
+	private:
 
 		struct AudioFileAsset
 		{
@@ -132,6 +132,8 @@ namespace TheEngine::AudioSystem
 
 
 		TheEngine::Platform::FileSystem&  m_fileSystem;
+
+	private:
 
 		AudioSystem(const AudioSystem&) = delete;
 		AudioSystem& operator=(const AudioSystem&) = delete;

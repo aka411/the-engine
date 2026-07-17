@@ -9,7 +9,7 @@ namespace TheEngine::RenderingSystem
 
 
 
-	PipelineStateConfig PipelineSystem::getPipelineStateConfigFromJson(std::byte* byteData, const size_t size)
+	PipelineStateConfig PipelineSystem::getPipelineStateConfigFromJson(const std::byte* byteData, const size_t size)
 	{
 
 
@@ -48,8 +48,9 @@ namespace TheEngine::RenderingSystem
 	{
 		auto file = m_fileSystem.open(configPath);
 
+		assert(file.isValid() && "PipelineConfig file is not valid");
 
-		return getPipelineStateConfigFromJson(file.data(), file.size());
+		return getPipelineStateConfigFromJson(file.begin(), file.size());
 	}
 
 
@@ -58,9 +59,11 @@ namespace TheEngine::RenderingSystem
 
 		auto file = m_fileSystem.open(vertexLayoutPath);
 
+		assert(file.isValid() && "VertexLayout file not valid");
+
 		auto json = nlohmann::json::parse(
-			reinterpret_cast<const uint8_t*>(file.data()),
-			reinterpret_cast<const uint8_t*>(file.data() + file.size()));
+			reinterpret_cast<const uint8_t*>(file.begin()),
+			reinterpret_cast<const uint8_t*>(file.end()));
 
 
 		VertexLayout vertexLayout;
@@ -81,9 +84,11 @@ namespace TheEngine::RenderingSystem
 
 		auto file = m_fileSystem.open(renderOutputConfigurationPath);
 
+		assert(file.isValid() && "RenderOutputConfiguration file is not valid");
+
 		auto json = nlohmann::json::parse(
-			reinterpret_cast<const uint8_t*>(file.data()),
-			reinterpret_cast<const uint8_t*>(file.data() + file.size()));
+			reinterpret_cast<const uint8_t*>(file.begin()),
+			reinterpret_cast<const uint8_t*>(file.end()));
 
 
 		RenderOutputConfiguration renderOutputConfiguration;
