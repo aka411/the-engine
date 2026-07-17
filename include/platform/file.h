@@ -32,14 +32,21 @@ namespace TheEngine::Platform
 
 	protected:
 
-		bool m_useMmap = false;
-		std::byte* m_mmapPtr = nullptr;     
+		bool m_isMemoryMapped = false;
 
-		std::vector<std::byte> m_buffer;//Alignment?    
-		//MemoryBlock memoryBlock;
-		
+		std::byte* m_memoryMappedPtr = nullptr;     
+		std::vector<std::byte> m_buffer;   
+
 		size_t m_fileSize = 0;
 
+#if defined(__linux__)
+		int   m_fd = -1;
+#endif
+	
+	private:
+
+		void releaseResources() noexcept;
+		void move(File&& other) noexcept;
 
 	public:
 
@@ -47,9 +54,18 @@ namespace TheEngine::Platform
 		~File();
 
 		File(File&& other) noexcept;
+		File& operator=(File&& other) noexcept;
 
-	    std::byte* data();
-		size_t size() const;
+
+		const std::byte& operator[](const size_t index) const;
+		const size_t size() const;
+
+		const std::byte* data() const;
+
+		const std::byte* begin() const;
+		const std::byte* end() const;
+
+		const bool isValid() const;
 	};
 
 
