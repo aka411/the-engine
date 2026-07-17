@@ -6,7 +6,6 @@
 #define WIN32_LEAN_AND_MEAN 
 #include <Windows.h>
 #elif defined(__linux__)
-#include <unistd.h>
 #include <sys/mman.h>
 #else
 static_assert(false && "Unsupported Platform");
@@ -28,15 +27,8 @@ namespace TheEngine::Platform
 			UnmapViewOfFile(m_memoryMappedPtr);
 			m_memoryMappedPtr = nullptr;
 #elif defined(__linux__)
-			assert(m_fd != -1 && "File descriptor missing");
-			if (m_fd != -1)
-			{
 				::munmap(m_memoryMappedPtr, m_fileSize);
-				::close(m_fd);
-				m_fd = -1;
 				m_memoryMappedPtr = nullptr;
-			}
-
 #else
 			static_assert(false && "Unsupported Platform, Corrupted File destructor");
 #endif
@@ -51,12 +43,6 @@ namespace TheEngine::Platform
 		m_memoryMappedPtr = other.m_memoryMappedPtr;
 		m_fileSize = other.m_fileSize;
 		m_buffer = std::move(other.m_buffer);
-
-#if defined(__linux__)
-		m_fd = other.m_fd;
-
-		other.m_fd = -1;
-#endif
 
 		other.m_memoryMappedPtr = nullptr;
 		other.m_isMemoryMapped = false;
@@ -149,12 +135,6 @@ namespace TheEngine::Platform
 		{
 			return false;
 		}
-#if defined(__linux__)
-		if (m_isMemoryMapped && m_fd == -1)
-		{
-			return false;
-		}
-#endif
 
 		return true;
 	}

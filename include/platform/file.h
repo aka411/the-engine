@@ -38,10 +38,6 @@ namespace TheEngine::Platform
 		std::vector<std::byte> m_buffer;   
 
 		size_t m_fileSize = 0;
-
-#if defined(__linux__)
-		int   m_fd = -1;
-#endif
 	
 	private:
 
