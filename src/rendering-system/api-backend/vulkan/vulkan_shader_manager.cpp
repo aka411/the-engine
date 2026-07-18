@@ -130,6 +130,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 		assert(false && "Invalid ShaderHandle");
 
+		return VulkanShader{};
 	}
 
 

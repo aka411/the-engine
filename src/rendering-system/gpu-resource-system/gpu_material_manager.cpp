@@ -1,6 +1,6 @@
-#pragma once
+
 #include <assert.h>
-#include "rendering-system/gpu-resource-system/gpu_material_manager.h"
+#include <rendering-system/gpu-resource-system/gpu_material_manager.h>
 #include <rendering-system/utils/gpu-allocators/i_gpu_buffer_suballocator.h>
 #include <rendering-system/utils/gpu-allocators/gpu_buffer_fixed_size_suballocator.h>
 #include <rendering-system/rhi/i_buffer_manager.h>

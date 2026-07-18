@@ -7,15 +7,15 @@
 #include <filesystem>
 
 #ifdef WIN32
-	#define WIN32_LEAN_AND_MEAN 
-	#include <Windows.h>
+#define WIN32_LEAN_AND_MEAN 
+#include <Windows.h>
 #elif defined(__linux__)
-	#include <fcntl.h>    
-	#include <sys/stat.h> 
-	#include <unistd.h>   
-	#include <sys/mman.h> 
+#include <fcntl.h>    
+#include <sys/stat.h> 
+#include <unistd.h>   
+#include <sys/mman.h> 
 #else
-	static_assert(false && "Unsupported Platform");
+static_assert(false && "Unsupported Platform");
 #endif
 
 
@@ -167,7 +167,7 @@ namespace TheEngine::Platform
 			, handle.fileDescriptor
 			, 0x00
 		);
-	
+
 
 
 		if (mappedPtrLinux == MAP_FAILED)
@@ -220,16 +220,16 @@ namespace TheEngine::Platform
 		switch (strategy)
 		{
 
-		case FileAccessStrategy::AUTO :
+		case FileAccessStrategy::AUTO:
 		{
-			if (size < 64 * 1024) 
+			if (size < 64 * 1024)
 			{ // 64KB Threshold
-				
+
 				//Implement later
 				//return loadToBuffer(path); // Uses fstream/fread, whole file copied to RAM
 				return mapToMemory(path);
 			}
-			else 
+			else
 			{
 				return mapToMemory(path);  // Uses mmap/MapViewOfFile, disk mapped to virtual address page
 			}
@@ -246,7 +246,7 @@ namespace TheEngine::Platform
 			assert(false && " FileAccessStrategy::BUFFERED not implemented yet");
 			//loadToBuffer(path);
 		}
-		default :
+		default:
 		{
 			assert(false && "FileAccessStrategy : UNKNOW FileAccessStrategy used");
 
@@ -254,7 +254,7 @@ namespace TheEngine::Platform
 
 		}
 
-		
+
 
 
 
