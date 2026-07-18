@@ -1,6 +1,10 @@
 name: Windows Build
-on: [push, pull_request, workflow_dispatch]
-
+on:
+  push:
+    branches: [ "main", "master" ]
+    
+  workflow_dispatch:
+  
 jobs:
   build:
     runs-on: windows-latest
@@ -11,7 +15,7 @@ jobs:
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        run: cmake --build build --config Release
+        run: cmake --build build --config Release --parallel
 
       - name: Test
         working-directory: build
