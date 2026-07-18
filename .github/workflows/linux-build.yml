@@ -1,5 +1,9 @@
 name: Linux Build
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    branches: [ "main", "master" ]
+
+  workflow_dispatch:
 
 jobs:
   build:
@@ -22,7 +26,7 @@ jobs:
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        run: cmake --build build --config Release
+        run: cmake --build build --config Release  --parallel
 
       - name: Test
         working-directory: build
