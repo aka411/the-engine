@@ -1,4 +1,7 @@
 #pragma once
+#include <cstddef>
+#include <cstdint>
+
 #include <rendering-system/utils/gpu-allocators/i_gpu_buffer_suballocator.h>
 
 namespace TheEngine::RenderingSystem

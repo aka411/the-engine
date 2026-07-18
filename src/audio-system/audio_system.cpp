@@ -29,7 +29,7 @@ namespace TheEngine::AudioSystem
 
 			auto file =TheEngine::Platform::File(audioSystem->m_fileSystem.open(path));
 
-			if (file.data() == nullptr)
+			if (!file.isValid())
 			{
 				return MA_NO_DATA_AVAILABLE;
 			}
@@ -114,7 +114,7 @@ namespace TheEngine::AudioSystem
 
 		size_t fileSize = asset->file.size();
 		size_t remaining = (state->currentReadIndex < fileSize) ? (fileSize - state->currentReadIndex) : 0;
-		size_t actualRead = std::min(bytesToRead, remaining);
+		size_t actualRead = (std::min)(bytesToRead, remaining);
 
 		if (actualRead > 0)
 		{
@@ -152,6 +152,9 @@ namespace TheEngine::AudioSystem
 
 		case ma_seek_origin_end:
 			newPos = static_cast<ma_int64>(fileSize) + offset;
+			break;
+		defualt:
+			assert(false && "Unknown ma_seek_origin enum");
 			break;
 		}
 

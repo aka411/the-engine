@@ -6,9 +6,17 @@
 #include <platform/path.h>
 #include <filesystem>
 
-#define WIN32_LEAN_AND_MEAN 
-#include <Windows.h>
-
+#ifdef WIN32
+	#define WIN32_LEAN_AND_MEAN 
+	#include <Windows.h>
+#elif defined(__linux__)
+	#include <fcntl.h>    
+	#include <sys/stat.h> 
+	#include <unistd.h>   
+	#include <sys/mman.h> 
+#else
+	static_assert(false && "Unsupported Platform");
+#endif
 
 
 namespace TheEngine::Platform
@@ -19,9 +27,37 @@ namespace TheEngine::Platform
 	{
 		File file;
 
-		//windows specific code
+#ifdef WIN32
+		//Windows specific code
 
-		HANDLE file_handle = CreateFile(
+		struct AutoHandleWin
+		{
+			HANDLE fileHandle = INVALID_HANDLE_VALUE;
+			HANDLE fileMappingHandle = NULL;
+
+
+			AutoHandleWin(const AutoHandleWin&) = delete;
+			AutoHandleWin& operator=(const AutoHandleWin&) = delete;
+
+			AutoHandleWin() = default;
+
+
+			~AutoHandleWin()
+			{
+				if (fileHandle != INVALID_HANDLE_VALUE)
+				{
+					CloseHandle(fileHandle);
+				}
+				if (fileMappingHandle != NULL)
+				{
+					CloseHandle(fileMappingHandle);
+				}
+			}
+		};
+
+		AutoHandleWin handles{};
+
+		handles.fileHandle = CreateFile(
 			path.getPhysicalPath().c_str(),
 			GENERIC_READ,
 			FILE_SHARE_READ,
@@ -31,13 +67,20 @@ namespace TheEngine::Platform
 			nullptr);
 
 
-		LARGE_INTEGER size;
-		if (GetFileSizeEx(file_handle, &size)) {
-			file.m_fileSize = static_cast<size_t>(size.QuadPart);
+		if (handles.fileHandle == INVALID_HANDLE_VALUE)
+		{
+			throw std::runtime_error("Unable to open file");
 		}
 
-		HANDLE file_mapping_handle = CreateFileMapping(
-			file_handle,
+
+		LARGE_INTEGER fileSizeWindows;
+		if (!GetFileSizeEx(handles.fileHandle, &fileSizeWindows))
+		{
+			throw std::runtime_error("Unable to get file size");
+		}
+
+		handles.fileMappingHandle = CreateFileMapping(
+			handles.fileHandle,
 			nullptr,
 			PAGE_READONLY,
 			// Passing zeroes for the high and low max-size params here will allow the
@@ -46,12 +89,15 @@ namespace TheEngine::Platform
 			0,
 			nullptr);
 
-		// We can close this now because the file mapping retains an open handle to
-		// the underlying file.
-		CloseHandle(file_handle);
 
-		char * data = (char *)MapViewOfFile(
-			file_mapping_handle,
+
+		if (handles.fileMappingHandle == NULL)
+		{
+			throw std::runtime_error("Unable to map file");
+		}
+
+		void* mappedPtrWindows = MapViewOfFile(
+			handles.fileMappingHandle,
 			FILE_MAP_READ,
 			0, // Offset high
 			0, // Offset low
@@ -60,16 +106,89 @@ namespace TheEngine::Platform
 
 
 
-		// Close the mapping handle
-		CloseHandle(file_mapping_handle);
+		assert(mappedPtrWindows != nullptr);
+
+		file.m_memoryMappedPtr = static_cast<std::byte*>(mappedPtrWindows);
+		file.m_fileSize = static_cast<size_t>(fileSizeWindows.QuadPart);
 
 
-		file.m_useMmap = true;
-		file.m_mmapPtr = reinterpret_cast<std::byte*>(data);
+#elif defined(__linux__)
+
+		constexpr int INVALID_LINUX_FILE_DESCRIPTOR = -1;
+		struct AutoHandleLinux
+		{
+			int fileDescriptor = INVALID_LINUX_FILE_DESCRIPTOR;
+
+			AutoHandleLinux(const AutoHandleLinux&) = delete;
+			AutoHandleLinux& operator=(const AutoHandleLinux&) = delete;
+
+			AutoHandleLinux() = default;
+
+			~AutoHandleLinux()
+			{
+				if (fileDescriptor != INVALID_LINUX_FILE_DESCRIPTOR)
+				{
+					::close(fileDescriptor);
+				}
+			}
+		};
+
+
+		AutoHandleLinux handle{};
+		void* mappedPtrLinux = nullptr;
+		ssize_t fileSizeLinux = -1;
+
+
+		// Get read-only file descriptor of file 
+		handle.fileDescriptor = ::open(path.getPhysicalPath().c_str(), O_RDONLY);
+		if (handle.fileDescriptor == INVALID_LINUX_FILE_DESCRIPTOR)
+		{
+			throw std::runtime_error("Unable to open file");
+		}
+
+
+		struct stat file_stat;
+		if (::fstat(handle.fileDescriptor, &file_stat) == -1)
+		{
+			throw std::runtime_error("Error: unable to get file size");
+		}
+		fileSizeLinux = file_stat.st_size;
+
+
+		if (fileSizeLinux == -1)
+		{
+			throw std::runtime_error("Unable to get file size");
+		}
+
+		mappedPtrLinux = ::mmap(nullptr
+			, fileSizeLinux
+			, PROT_READ
+			, MAP_PRIVATE
+			, handle.fileDescriptor
+			, 0x00
+		);
+	
+
+
+		if (mappedPtrLinux == MAP_FAILED)
+		{
+			throw std::runtime_error("Error: failed to map file to memory");
+		}
+
+
+
+
+		file.m_fileSize = fileSizeLinux;
+		file.m_memoryMappedPtr = reinterpret_cast<std::byte*>(mappedPtrLinux);
+
+#else
+		static_assert(false && "Unsupported Platform");
+
+#endif
+
+
+		file.m_isMemoryMapped = true;
 		return file;
-
-
-
 
 	}
 

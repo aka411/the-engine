@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 
 #include <rendering-system/engine_handles.h>
 
