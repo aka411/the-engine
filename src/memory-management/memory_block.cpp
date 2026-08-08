@@ -16,7 +16,7 @@ namespace TheEngine::Memory
 	{
 		assert(src != nullptr);
 		m_data = new std::byte[size];
-		m_sizeInBytes = size;
+		m_size = size;
 
 		memcpy(m_data, src, size);
 	};
@@ -24,7 +24,7 @@ namespace TheEngine::Memory
 
 	const size_t MemoryBlock::getSize() const
 	{
-		return m_sizeInBytes;
+		return m_size;
 	}
 
 	const std::byte* MemoryBlock::getData() const
@@ -38,10 +38,10 @@ namespace TheEngine::Memory
 	{
 
 		this->m_data = memoryBlock.m_data;
-		this->m_sizeInBytes = memoryBlock.m_sizeInBytes;
+		this->m_size = memoryBlock.m_size;
 
 		memoryBlock.m_data = nullptr;
-		memoryBlock.m_sizeInBytes = 0;
+		memoryBlock.m_size = 0;
 	};
 
 	MemoryBlock& MemoryBlock::operator=(MemoryBlock&& memoryBlock) noexcept
@@ -49,10 +49,10 @@ namespace TheEngine::Memory
 		if (this != &memoryBlock)
 		{
 			this->m_data = memoryBlock.m_data;
-			this->m_sizeInBytes = memoryBlock.m_sizeInBytes;
+			this->m_size = memoryBlock.m_size;
 
 			memoryBlock.m_data = nullptr;
-			memoryBlock.m_sizeInBytes = 0;
+			memoryBlock.m_size = 0;
 		}
 
 		return *this;
@@ -63,7 +63,7 @@ namespace TheEngine::Memory
 	{
 
 		delete[] m_data;
-		m_sizeInBytes = 0;
+		m_size = 0;
 	};
 
 
