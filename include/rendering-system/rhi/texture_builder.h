@@ -37,9 +37,6 @@ namespace TheEngine::RenderingSystem
 
         TextureBuilder& setSamples(SampleCountBit sampleCountBit);
 
-        // Sinks data in
-        TextureBuilder& setMemoryBlock(Memory::MemoryBlock&& block);
-
         TextureBuilder& setInitialLayout(TextureLayout layout);
 
     

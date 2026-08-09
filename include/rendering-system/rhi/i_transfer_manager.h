@@ -58,7 +58,7 @@ namespace TheEngine::RenderingSystem
 
 		ImageTransferRequest(
 			Memory::MemoryBlock&& memoryBlock,
-			TextureDescription& textureDescription
+			const TextureDescription& textureDescription
 		) :
 			memoryBlock(std::move(memoryBlock)),
 			textureDescription(textureDescription)

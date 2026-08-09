@@ -27,13 +27,14 @@ namespace TheEngine::RenderingSystem
 		{
 			m_textureRegistry.push_back(TextureMetadata{});//To reserve swap chain index
 		}
+
 		virtual ~ITextureManager() = default;
 
 
+		virtual TextureHandle createTexture(const TextureCreateInfo& info) = 0;
+		virtual TextureHandle createTexture(const TextureCreateInfo& info, TheEngine::Memory::MemoryBlock&& initialData) = 0;
 
-		//Use one method for both
-		virtual TextureHandle createNewTexture(TextureCreateInfo& textureCreateInfo) = 0;
-		//virtual TextureHandle createRenderTarget(const RenderTargetCreateInfo& renderTargetCreateInfo) = 0;
+		
 		TextureMetadata getTextureMetadata(const TextureHandle& textureHandle)
 		{
 			assert(m_textureRegistry.size() > textureHandle.id && "ITextureManager : Invalid handle");
@@ -41,10 +42,7 @@ namespace TheEngine::RenderingSystem
 			return m_textureRegistry[textureHandle.id];
 
 		}
-
-		//Mostly exist only for RenderGraph to work on, yeah this is wrong design
-		//virtual TextureHandle createNewViewFromTexture(ImageViewCreateInfo imageViewCreateInfo, const TextureHandle textureHandle) = 0;
-
+		
 
 		virtual void destroyTexture(const TextureHandle& textureHandle) = 0;
 

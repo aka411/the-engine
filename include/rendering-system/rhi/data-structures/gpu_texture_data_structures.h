@@ -93,7 +93,7 @@ namespace TheEngine::RenderingSystem
 
 
 
-	// Shared by both CreateInfo and Metadata to ensure zero duplication.
+
 	struct TextureDescription 
 	{
 		uint32_t width = 1;
@@ -113,10 +113,7 @@ namespace TheEngine::RenderingSystem
 
 	struct TextureCreateInfo 
 	{
-		TextureDescription desc{}; // Reusing the same core definition
-
-		// Data Source
-		Memory::MemoryBlock memoryBlock;
+		TextureDescription desc{};
 
 		// Creation-only settings
 		TextureLayout initialLayout = TextureLayout::UNDEFINED;
