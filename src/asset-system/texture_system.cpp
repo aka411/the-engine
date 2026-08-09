@@ -17,16 +17,16 @@ namespace TheEngine::AssetSystem
 	}
 
 
-    RenderingSystem::TextureHandle TextureSystem::createNewTexture(TheEngine::RenderingSystem::TextureCreateInfo& textureCreateInfo)
+    RenderingSystem::TextureHandle TextureSystem::createNewTexture(const TheEngine::RenderingSystem::TextureCreateInfo& textureCreateInfo)
 	{
 
-		return m_textureManager.createNewTexture(textureCreateInfo);
+		return m_textureManager.createTexture(textureCreateInfo);
 	}
 
 
 
     //Helper function
-    RenderingSystem::TextureCreateInfo TextureSystem::createDefaultTexture(uint8_t r, uint8_t g, uint8_t b, uint8_t a) 
+    RenderingSystem::TextureHandle TextureSystem::createDefaultTexture(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
       
         //TODO : replace with builder pattern
@@ -50,12 +50,11 @@ namespace TheEngine::AssetSystem
 
          uint8_t pixels[4] =  { r, g, b, a };
 
-         textureCreateInfo.memoryBlock = TheEngine::Memory::MemoryBlock(
+         Memory::MemoryBlock memoryBlock = TheEngine::Memory::MemoryBlock(
             reinterpret_cast<std::byte*>(pixels),
             4
         );
-
-        return textureCreateInfo;
+         return m_textureManager.createTexture(textureCreateInfo, std::move(memoryBlock));
     }
 
 
@@ -63,8 +62,9 @@ namespace TheEngine::AssetSystem
 
     RenderingSystem::TextureHandle TextureSystem::loadTexture(const TheEngine::Platform::Path& path)
 	{
-        TheEngine::RenderingSystem::TextureCreateInfo textureCreateInfo = m_imageLoader.loadTextureFile(path);
-		return m_textureManager.createNewTexture(textureCreateInfo);
+        Memory::MemoryBlock memoryBlock;
+        const TheEngine::RenderingSystem::TextureCreateInfo textureCreateInfo = m_imageLoader.loadTextureFile(path, memoryBlock);
+		return m_textureManager.createTexture(textureCreateInfo, std::move(memoryBlock));
 	}
 
 

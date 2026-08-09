@@ -26,7 +26,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 
 
-		m_vulkanSwapchainManager.recreateSwapchain(m_windowExtent.physicalWidth, m_windowExtent.physicalHeight);
+		m_vulkanSwapchainManager.recreateSwapchain(m_windowExtent.framebuffer.width, m_windowExtent.framebuffer.height);
 		m_isWindowResized = false;
 
 		//The calling order of other methods will take care of synchronisations

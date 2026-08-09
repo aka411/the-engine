@@ -39,10 +39,10 @@ namespace TheEngine::RenderingSystem
 		m_shaderSystem(filesystem, m_renderDevice->getShaderManager()),
 		m_pipelineSystem(*m_renderDevice,filesystem, m_shaderSystem),
 	    m_presentationSystem(m_renderDevice->getPresentationSystem()),
-		m_renderGraph(*m_renderDevice, RenderPassSetupContext{ .pipelineSystem = m_pipelineSystem ,.shaderSystem = m_shaderSystem,.windowExtent = windowExtent })
+		m_gpuResourceSystem( std::make_unique<GPUResourceSystem>(*m_renderDevice)),
+		m_renderGraph(*m_renderDevice, RenderPassSetupContext{ .pipelineSystem = m_pipelineSystem ,.shaderSystem = m_shaderSystem,.windowExtent = windowExtent },*m_gpuResourceSystem)
 	{
 
-		m_gpuResourceSystem = std::make_unique<GPUResourceSystem>(*m_renderDevice);
 		
 
 
@@ -67,18 +67,7 @@ namespace TheEngine::RenderingSystem
 	}
 
 
-
-	void RenderingSystem::submitDrawCallBucket(DrawCallBucket&& drawCallbucket)
-	{
-
-		m_drawCallBucket = std::make_unique<DrawCallBucket>(std::move(drawCallbucket));
-
-	}
-
-
-
-
-	void RenderingSystem::startRender(const Camera& camera)
+	void RenderingSystem::startRender(const UserPassData userPassData)
 	{
 
 
@@ -108,9 +97,7 @@ namespace TheEngine::RenderingSystem
 		RenderPassExecuteContext renderPassExecuteContext
 		{
 			.cmd = commandBuffer,
-			.gpuResourceSystem = *m_gpuResourceSystem,
-			.drawCallBucket = *m_drawCallBucket,
-			.camera = camera,
+			.userPassData = userPassData,
 			.windowExtend = m_windowExtent
 		};
 

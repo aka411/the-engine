@@ -24,7 +24,7 @@ namespace TheEngine
 
 		ImageLoader(TheEngine::Platform::FileSystem& fileSystem);//file system
 
-		TheEngine::RenderingSystem::TextureCreateInfo loadTextureFile(const TheEngine::Platform::Path& path);
+		TheEngine::RenderingSystem::TextureCreateInfo loadTextureFile(const TheEngine::Platform::Path& path,Memory::MemoryBlock& memoryBlock);
 	};
 
 }

@@ -46,7 +46,7 @@ namespace TheEngine::Platform
 
 			m_window = SDL_CreateWindow(
 				"TheEngine(openGL 4.6)",
-				engineConfiguration.windowWidth, engineConfiguration.windowHeight,
+				engineConfiguration.logicalWindowExtend.width, engineConfiguration.logicalWindowExtend.height,
 				SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL
 			);
 
@@ -83,7 +83,7 @@ namespace TheEngine::Platform
 
 			m_window = SDL_CreateWindow(
 				"TheEngine(Vulkan 1.3)",
-				engineConfiguration.windowWidth, engineConfiguration.windowHeight,
+				engineConfiguration.logicalWindowExtend.width, engineConfiguration.logicalWindowExtend.height,
 				SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN
 			);
 
@@ -167,13 +167,13 @@ namespace TheEngine::Platform
 
 		int physicalWidth, physicalHeight;
 		SDL_GetWindowSizeInPixels(m_window, &physicalWidth, &physicalHeight);
-		extent.physicalWidth = static_cast<uint32_t>(physicalWidth);
-		extent.physicalHeight = static_cast<uint32_t>(physicalHeight);
+		extent.framebuffer.width = static_cast<uint32_t>(physicalWidth);
+		extent.framebuffer.height = static_cast<uint32_t>(physicalHeight);
 
 		int logicalWidth, logicalHeight;
 		SDL_GetWindowSize(m_window, &logicalWidth, &logicalHeight);
-		extent.width = static_cast<uint32_t>(logicalWidth);
-		extent.height = static_cast<uint32_t>(logicalHeight);
+		extent.logical.width = static_cast<uint32_t>(logicalWidth);
+		extent.logical.height = static_cast<uint32_t>(logicalHeight);
 
 		return extent;
 	}
