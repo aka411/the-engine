@@ -13,26 +13,28 @@ namespace TheEngine
 	};
 
 
+
+	struct Extend2D
+	{
+		uint32_t width{ 0 };
+		uint32_t height{ 0 };
+	};
+
 	struct WindowExtent
 	{
-		// The size in screen coordinates (logical), similar to css pixels
-		uint32_t width = 0;
-		uint32_t height = 0;
-
-		// The size in actual pixels (physical) , the framebuffer size, the size considering Device Pixel Density(or is it dpi)
-		//Frame buffer Size
-		uint32_t physicalWidth = 0;
-		uint32_t physicalHeight = 0;
+		Extend2D logical{};
+		Extend2D framebuffer{};
 	};
+
+
 
 	struct EngineConfiguration
 	{
 
-		TheEngine::RenderingAPI renderingAPI;
+		TheEngine::RenderingAPI renderingAPI{ RenderingAPI::VULKAN_1_3};
 
-		//This is the ;ogical pixels not frame buffer size
-		int windowWidth;
-		int windowHeight;
+		
+		Extend2D logicalWindowExtend{};
 
 	
 		std::string windowName;

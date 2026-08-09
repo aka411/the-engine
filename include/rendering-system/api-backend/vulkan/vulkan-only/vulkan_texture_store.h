@@ -49,7 +49,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 		VulkanTextureStore(VulkanContext& vulkanContext, VulkanSamplerManager& vulkanSamplerManager);
 
-		TextureHandle createNewTexture(TextureCreateInfo& textureCreateInfo, std::vector<TextureMetadata>& textureRegistry);
+		TextureHandle createNewTexture(const TextureCreateInfo& textureCreateInfo, std::vector<TextureMetadata>& textureRegistry);
 		void destroyTexture(const TextureHandle& textureHandle, std::vector<TextureMetadata>& textureRegistry);
 
 		
