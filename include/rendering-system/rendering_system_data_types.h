@@ -15,8 +15,7 @@ namespace TheEngine::RenderingSystem
 		glm::mat4 view;
 	};
 
-	//Note : Two Mesh node can have same transform but different material etc 
-	//how about buckets of draw call by vertex format , index format , material type and then id
+
 	struct DrawCall
 	{
 
@@ -24,9 +23,6 @@ namespace TheEngine::RenderingSystem
 
 		size_t vertexCount;
 		size_t indexCount;
-
-		//size_t vertexDataSizeInBytes;
-		//size_t indexDataSizeInBytes;
 
 		size_t vertexOffsetInBuffer;
 		size_t indexOffsetInBuffer;
@@ -54,6 +50,17 @@ namespace TheEngine::RenderingSystem
 
 	};
 
+
+
+
+
+	//User Data passed to each pass
+
+	struct UserPassData
+	{
+		void* arg{ nullptr };
+
+	};
 
 
 }

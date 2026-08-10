@@ -37,12 +37,13 @@ namespace TheEngine::RenderingSystem
 
 		IPresentationSystem& m_presentationSystem;
 
-
+	private:
 		ShaderSystem m_shaderSystem;
 	
 		PipelineSystem m_pipelineSystem;
 
-		std::unique_ptr <DrawCallBucket> m_drawCallBucket;
+
+	private:
 
 		RenderGraph m_renderGraph;
 
@@ -64,8 +65,8 @@ namespace TheEngine::RenderingSystem
 
 
 		//TODO : might need vector of buckets
-		void submitDrawCallBucket(DrawCallBucket&& drawCallbucket);
-		void startRender(const Camera& camera);
+
+		void startRender(const UserPassData userPassData);
 
 		
 		void setWindowExtend(const WindowExtent& windowExtend);

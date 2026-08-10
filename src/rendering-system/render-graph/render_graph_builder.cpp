@@ -18,7 +18,7 @@ namespace TheEngine::RenderingSystem
 
     TextureHandle RenderGraphBuilder::createTexture(const std::string& name, TextureCreateInfo& textureCreateInfo)
     {
-        TextureHandle textureHandle = m_renderDevice.getTextureManager().createNewTexture(textureCreateInfo);
+        TextureHandle textureHandle = m_renderDevice.getTextureManager().createTexture(textureCreateInfo);
 
         m_textureResources.insert({ name,textureHandle });
 
@@ -41,10 +41,7 @@ namespace TheEngine::RenderingSystem
     }
 
 
-    void deleteTexture(const TextureHandle textureHandle)
-    {
 
-    }
 
 
 }
