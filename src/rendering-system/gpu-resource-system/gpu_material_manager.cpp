@@ -87,13 +87,14 @@ namespace TheEngine::RenderingSystem
 
 	}
 
+	
 	uint64_t GPUMaterialManager::getBindlessTextureHandle(const TextureHandle& textureHandle) const
 	{
 		TextureMetadata textureMetadata = m_textureManager.getTextureMetadata(textureHandle);
 		assert(textureMetadata.isBindless && "Texture is not bindless, cannot get bindless handle");
 		return textureMetadata.bindlessHandle;
 	}
-
+	
 	BufferHandle GPUMaterialManager::getBufferHandleForMaterial(const ShadingModel& shadingModel) const
 	{
 

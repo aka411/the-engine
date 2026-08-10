@@ -11,14 +11,9 @@ namespace TheEngine
 		auto& textureSystem = m_assetSystem.getTextureSystem();
 
 
-		auto whiteTexInfo = textureSystem.createDefaultTexture(255, 255, 255, 255); // Albedo, Occlusion, Metallic/Rough
-		auto blackTexInfo = textureSystem.createDefaultTexture(0, 0, 0, 255);       // Emissive
-		auto flatNormInfo = textureSystem.createDefaultTexture(128, 128, 255, 255); // Normal Map (0.5, 0.5, 1.0)
-
-
-		TheEngine::RenderingSystem::TextureHandle defaultWhite = textureSystem.createNewTexture(whiteTexInfo);
-		TheEngine::RenderingSystem::TextureHandle defaultBlack = textureSystem.createNewTexture(blackTexInfo);
-		TheEngine::RenderingSystem::TextureHandle defaultNormal = textureSystem.createNewTexture(flatNormInfo);
+		TheEngine::RenderingSystem::TextureHandle defaultWhite = textureSystem.createDefaultTexture(255, 255, 255, 255); // Albedo, Occlusion, Metallic/Rough
+		TheEngine::RenderingSystem::TextureHandle defaultBlack = textureSystem.createDefaultTexture(0, 0, 0, 255);       // Emissive
+		TheEngine::RenderingSystem::TextureHandle defaultNormal = textureSystem.createDefaultTexture(128, 128, 255, 255); // Normal Map (0.5, 0.5, 1.0)
 
 
 		TheEngine::AssetSystem::PBRMRCreateInfo defaultMaterialCreateInfo;

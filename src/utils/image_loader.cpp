@@ -19,7 +19,7 @@ namespace TheEngine
 	}
 
 
-	TheEngine::RenderingSystem::TextureCreateInfo ImageLoader::loadTextureFile(const TheEngine::Platform::Path& path)
+	TheEngine::RenderingSystem::TextureCreateInfo ImageLoader::loadTextureFile(const TheEngine::Platform::Path& path, Memory::MemoryBlock& memoryBlock)
 	{
 		
 	
@@ -57,7 +57,7 @@ namespace TheEngine
 		textureCreateInfo.desc.type = TextureType::TEXTURE_2D;
 
 
-		textureCreateInfo.memoryBlock = TheEngine::Memory::MemoryBlock(
+		memoryBlock = TheEngine::Memory::MemoryBlock(
 			reinterpret_cast<std::byte*>(stbiRawPixels),
 			width * height * channels
 		);

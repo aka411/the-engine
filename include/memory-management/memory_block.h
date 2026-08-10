@@ -8,8 +8,8 @@ namespace TheEngine::Memory
 	class MemoryBlock
 	{
 	private:
-		std::byte* m_data = nullptr;
-		size_t m_sizeInBytes = 0;
+		std::byte* m_data{ nullptr };
+		size_t m_size{ 0 };
 
 
 

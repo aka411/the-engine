@@ -58,12 +58,7 @@ namespace TheEngine::RenderingSystem
             return *this;
         }
 
-     
-        TextureBuilder& TextureBuilder::setMemoryBlock(Memory::MemoryBlock&& block)
-        {
-            m_Info.memoryBlock = std::move(block);
-            return *this;
-        }
+
 
         TextureBuilder& TextureBuilder::setInitialLayout(TextureLayout layout)
         {

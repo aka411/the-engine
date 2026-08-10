@@ -73,7 +73,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 
 
-    TextureHandle VulkanTextureStore::createNewTexture(TextureCreateInfo& textureCreateInfo, std::vector<TextureMetadata>& textureRegistry)
+    TextureHandle VulkanTextureStore::createNewTexture(const TextureCreateInfo& textureCreateInfo, std::vector<TextureMetadata>& textureRegistry)
     {
 
         const TextureDescription& desc = textureCreateInfo.desc;

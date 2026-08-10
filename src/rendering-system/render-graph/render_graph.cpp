@@ -8,9 +8,10 @@ namespace TheEngine::RenderingSystem
 
 
 
-	RenderGraph::RenderGraph(IRenderDevice& renderDevice, const RenderPassSetupContext& renderPassSetupContext) :
+	RenderGraph::RenderGraph(IRenderDevice& renderDevice, const RenderPassSetupContext& renderPassSetupContext, GPUResourceSystem& gpuResourceSystem) :
 		m_renderGraphBuilder(renderDevice),
-		m_renderPassSetupContext(renderPassSetupContext)
+		m_renderPassSetupContext(renderPassSetupContext),
+		m_gpuResourceResolver(gpuResourceSystem)
 	{
 
 
@@ -55,7 +56,7 @@ namespace TheEngine::RenderingSystem
 		
 		for (auto& node : m_renderGraphNodes)
 		{
-			node->execute(renderPassExecuteContext);
+			node->execute(renderPassExecuteContext,m_gpuResourceResolver);
 		}
 
 
@@ -66,11 +67,12 @@ namespace TheEngine::RenderingSystem
 	void RenderGraph::onWindowResize(const WindowExtent& windowExtend)
 	{
 		m_currenWindowExtend = windowExtend;
-		m_renderPassSetupContext.windowExtent = windowExtend; 
-		for (auto& node : m_renderGraphNodes)
-		{
-			node->onResize(windowExtend,m_renderGraphBuilder);
-		}
+		m_renderPassSetupContext.windowExtent = windowExtend;
+
+		//assert(m_textureResources.size() == m_textureResourcesMapping.size());
+
+		//delete old 
+		//create new based  on new sizes 
 
 	}
 

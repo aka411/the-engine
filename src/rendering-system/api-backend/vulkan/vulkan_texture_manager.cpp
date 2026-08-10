@@ -29,28 +29,32 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 		//TODO : IMPLEMENT THIS
 	}
 
-    TextureHandle VulkanTextureManager::createNewTexture(TextureCreateInfo& textureCreateInfo)
+	TextureHandle VulkanTextureManager::createTexture(const TextureCreateInfo& info)
+	{
+		const TextureHandle textureHandle = m_vulkanTextureStore.createNewTexture(info, m_textureRegistry);
+
+		return textureHandle;
+	}
+
+	 TextureHandle VulkanTextureManager::createTexture(const TextureCreateInfo& info, TheEngine::Memory::MemoryBlock&& initialData)
 	{
 
-
-		const TextureHandle textureHandle = m_vulkanTextureStore.createNewTexture(textureCreateInfo,m_textureRegistry);
-
-		VkImage vkImage = m_vulkanTextureStore.getVulkanTexture(textureHandle).vkImage;
-
+		 const TextureHandle textureHandle = createTexture(info);
        
-        if (textureCreateInfo.memoryBlock.getData() != nullptr)
+        if (initialData.getData() != nullptr)
         {
-            ImageTransferRequest transferRequest(std::move(textureCreateInfo.memoryBlock), textureCreateInfo.desc);
+            ImageTransferRequest transferRequest(std::move(initialData), info.desc);
      
-
+			VkImage vkImage = m_vulkanTextureStore.getVulkanTexture(textureHandle).vkImage;
             this->m_vulkanTransferManager.transferToImage(std::move(transferRequest), vkImage);
         }
 
-   
-
         return textureHandle;
-
 	}
+
+
+
+
 
 	void VulkanTextureManager::destroyTexture(const TextureHandle& textureHandle)
 	{

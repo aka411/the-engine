@@ -15,7 +15,7 @@ namespace TheEngine
 
 	private:
 
-		//use pimpl?
+
 		TheEngine::Platform::Platform m_platform;
 		TheEngine::RenderingSystem::RenderingSystem m_renderingSystem;
 		TheEngine::AssetSystem::AssetSystem m_assetSystem;

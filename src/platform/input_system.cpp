@@ -114,9 +114,7 @@ namespace TheEngine::Platform
 
 	void InputSystem::resetKeyState()
 	{
-
 		memset(&m_keyStates[0], false, 512);
-
 
 	}
 }

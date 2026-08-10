@@ -30,7 +30,9 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 		virtual ~VulkanTextureManager() override;
 
-		virtual TextureHandle createNewTexture(TextureCreateInfo& textureCreateInfo) override;
+
+		virtual TextureHandle createTexture(const TextureCreateInfo& info) override;
+		virtual TextureHandle createTexture(const TextureCreateInfo& info, TheEngine::Memory::MemoryBlock&& initialData) override;
 
 		virtual void destroyTexture(const TextureHandle& textureHandle) override;
 
