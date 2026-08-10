@@ -59,10 +59,14 @@ namespace TheEngine
 
 		initializeMaterials();
 	
+		m_renderingSystem.registerOnEventBus(m_eventBus);
+
+
 		WindowExtent windowExtent = m_platform.getWindowSystem().getWindowExtent();
 		m_renderingSystem.setWindowExtend(windowExtent);
 
 	}
+
 
 	Engine::~Engine()
 	{
@@ -77,7 +81,6 @@ namespace TheEngine
 		return m_platform;
 
 	}
-
 
 
 

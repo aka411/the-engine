@@ -6,6 +6,8 @@
 #include <rendering-system/rendering_system.h>
 #include <audio-system/audio_system.h>
 
+#include <utils/event-bus/event_bus.h>
+
 namespace TheEngine
 {
 
@@ -22,7 +24,12 @@ namespace TheEngine
 
 		TheEngine::AudioSystem::AudioSystem m_audioSystem;
 
+		EventBus m_eventBus;
+
+	private:
+
 		void initializeMaterials();
+
 	public:
 
 		Engine(const EngineConfiguration& engineConfiguration);

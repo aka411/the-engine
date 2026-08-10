@@ -10,6 +10,8 @@
 #include <rendering-system/rhi/i_pipeline_manager.h>
 #include <rendering-system/rhi/framebuffer.h>
 
+#include <utils/event-bus/event_bus.h>
+
 namespace TheEngine::RenderingSystem
 {
 
@@ -32,6 +34,20 @@ namespace TheEngine::RenderingSystem
 		m_resizePending = false;
 	}
 
+
+	void RenderingSystem::registerOnEventBus(EventBus& bus)
+	{
+
+		m_eventBusConnection = bus.subscribe(EngineEventType::WINDOW_RESIZE, [this](const EngineEvent& event)
+			{
+			
+			
+		
+				this->setWindowExtend(event.windowResizeEvent.extend);
+			});
+
+
+	}
 
 	RenderingSystem::RenderingSystem(std::unique_ptr<IRenderDevice>&& renderDevice, TheEngine::Platform::FileSystem& filesystem,const WindowExtent& windowExtent) :
 

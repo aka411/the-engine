@@ -5,6 +5,7 @@
 #include <rendering-system/shader_system.h>
 #include <rendering-system/pipeline_system.h>
 #include <rendering-system/render-graph/render_graph.h>
+#include <utils/event-bus/event_bus_connection.h>
 
 
 
@@ -14,6 +15,10 @@ namespace TheEngine::Platform
 }
 
 
+namespace TheEngine
+{
+	class EventBus;
+}
 
 
 namespace TheEngine::RenderingSystem
@@ -55,16 +60,19 @@ namespace TheEngine::RenderingSystem
 		bool hasResized() const;
 		void acknowledgeResize();
 
+		EventBusConnection m_eventBusConnection;
+
 	public:
 
 
 		RenderingSystem(std::unique_ptr<IRenderDevice>&& renderDevice, TheEngine::Platform::FileSystem& filesystem, const WindowExtent& windowExtent);
 		~RenderingSystem();
 
+		void registerOnEventBus(EventBus& bus);
+
 		GPUResourceSystem& getGPUResourceSystem();
 
 
-		//TODO : might need vector of buckets
 
 		void startRender(const UserPassData userPassData);
 
@@ -74,7 +82,7 @@ namespace TheEngine::RenderingSystem
 
 
 		RenderGraph& getRenderGraph();
-		//void addPass(const std::string& name, SetupFunc setupFunc);
+	
 
 
 	};
