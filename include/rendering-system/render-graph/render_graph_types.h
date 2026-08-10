@@ -9,8 +9,6 @@
 namespace TheEngine::RenderingSystem
 {
 
-
-
     class RenderGraphBuilder;
     class PipelineSystem;
     class ShaderSystem;
@@ -18,13 +16,16 @@ namespace TheEngine::RenderingSystem
 
     class ICommandBuffer ;
     class GPUResourceSystem;
-    class DrawCallBucket;
+
+
+
 
     struct RenderPassSetupContext
     {
    
         PipelineSystem& pipelineSystem;
         ShaderSystem& shaderSystem;
+
         WindowExtent windowExtent;
     };
 
@@ -32,10 +33,8 @@ namespace TheEngine::RenderingSystem
     struct RenderPassExecuteContext
     {
         ICommandBuffer& cmd;
-        GPUResourceSystem& gpuResourceSystem;
-        const DrawCallBucket& drawCallBucket; // The data to actually render
-        Camera camera;
-        WindowExtent windowExtend;
+        UserPassData userPassData{};
+        WindowExtent windowExtend{};
     };
 
 
@@ -47,100 +46,17 @@ namespace TheEngine::RenderingSystem
 	using SetupFunc = std::function<ExecuteFunc(RenderPassSetupContext&, RenderGraphBuilder&)>;
 
 
-
-
-    /*
-    struct RenderGraphNode
+    enum class ResizingMode
     {
-        std::string m_name;
-        uint32_t m_index; // position in the global list
-
-        // Dependency Tracking
-       // std::vector<> m_inputs;
-       // std::vector<> m_outputs;
-
-
-        // Execution Logic
-
-        SetupFunc setupFunc;
-        ExecuteFunc m_executeFunc;
-
-
+        ABSOLUTE,
+        RELATIVE
     };
-    */
 
-
-    struct RenderReadWriteTargets
+    struct ResizeParameters
     {
-        RenderTargetFormat renderTargetFormat{};
-        TextureHandle textureHandle{};
+        ResizingMode resizingMode{ ResizingMode::ABSOLUTE};
+        float relativeMultiplier{ 1.0f };
     };
 
-
-
-
-
-    /*
-     auto execFunc = [](RenderGraphBuilder& renderGraphBuilder)
-         {
-
-
-
-
-             return [=](ICommandBuffer& commandBuffer)
-                 {
-                     //The Execute function
-
-
-
-                 };
-
-         };
-
-         */
-
-
-
-    /*
-    
-    namespace TheEngine::RenderingSystem {
-
-    class IRenderPass {
-    public:
-        virtual ~IRenderPass() = default;
-
-        // The Setup phase
-        virtual void Setup(RenderPassSetupContext& ctx, RenderGraphBuilder& builder) = 0;
-
-        // The Execute phase:
-        virtual void Execute(RenderPassExecuteContext& ctx) = 0;
-        
-       
-        virtual std::string GetName() const = 0;
-    };
-}
-
-
-
-class IRenderNode
-{
-private:
-
-
-public:
-
-virtual void setUp(RenderPassSetupContext& ctx, RenderGraphBuilder& builder) = 0;
-virtual void execute(RenderPassExecuteContext& ctx) = 0;
-
-virtual void onResize(const WindowExtent& extent) = 0;
-       
-virtual std::string GetName() const = 0;
-
-}
-
-
-
-
-*/
 
 }

@@ -7,8 +7,8 @@
 
 #include <rendering-system/render-graph/render_graph_types.h>
 #include <rendering-system/render-graph/render_graph_builder.h>
-#include  <rendering-system/render-graph/i_render_graph_node.h>
-
+#include <rendering-system/render-graph/i_render_graph_node.h>
+#include <rendering-system/render-graph/gpu_resource_resolver.h>
 
 
 namespace TheEngine::RenderingSystem
@@ -30,16 +30,21 @@ namespace TheEngine::RenderingSystem
     
 		std::vector<std::unique_ptr<IRenderGraphNode>> m_renderGraphNodes;
 
+    private:
+
         RenderGraphBuilder m_renderGraphBuilder;
 
         RenderPassSetupContext m_renderPassSetupContext;
       
-        WindowExtent m_currenWindowExtend;
+        WindowExtent m_currenWindowExtend;//REMOVE
 
+    private:
+
+        GPUResourceResolver m_gpuResourceResolver;
 
 	public:
 
-		RenderGraph(IRenderDevice& renderDevice, const RenderPassSetupContext& renderPassSetupContext);
+		RenderGraph(IRenderDevice& renderDevice, const RenderPassSetupContext& renderPassSetupContext,GPUResourceSystem& gpuResourceSystem);
 
 
 
@@ -47,7 +52,6 @@ namespace TheEngine::RenderingSystem
 
 
 
-        //These methods below should be hidden
         void compile();
 
         void execute(RenderPassExecuteContext& renderPassExecuteContext);
