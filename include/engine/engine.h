@@ -32,6 +32,8 @@ namespace TheEngine
 
 	private:
 
+		void runInternalSystems();
+
 	public:
 
 		Engine(const EngineConfiguration& engineConfiguration);
