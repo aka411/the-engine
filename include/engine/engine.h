@@ -28,7 +28,11 @@ namespace TheEngine
 
 	private:
 
-		void initializeMaterials();
+		void initializeMaterials();//Need to remove later
+
+	private:
+
+		void runInternalSystems();
 
 	public:
 

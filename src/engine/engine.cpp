@@ -48,6 +48,19 @@ namespace TheEngine
 
 	}
 
+	void Engine::runInternalSystems()
+	{
+		EngineEvent event;
+		while (m_platform.getInputSystem().pollEvent(event))
+		{
+			m_eventBus.publish(event);
+		}
+
+
+
+	}
+
+
 
 	Engine::Engine(const EngineConfiguration& engineConfiguration) :
 		m_platform(engineConfiguration),
