@@ -48,17 +48,18 @@ namespace TheEngine::Platform
 				//SDL_GetWindowSizeInPixels(window, &width, &height);
 				int physicalW, physicalH;
 				//outEvent.windowResizeEvent.extend.framebuffer.width
-
+				outEvent.windowResizeEvent.extend.framebuffer.width = sdlEvent.window.data1;//This is logical
+				outEvent.windowResizeEvent.extend.framebuffer.height = sdlEvent.window.data2;
 				return true;
 			}
 			break;
 
-			case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
-			{
-				assert(false && "SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED not handled");
-				return true;
-			}
-			break;
+			//case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+			//{
+			//	assert(false && "SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED not handled");
+			//	return true;
+			//}
+			//break;
 
 			case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
 			{
