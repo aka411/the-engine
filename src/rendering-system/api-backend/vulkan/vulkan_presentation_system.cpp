@@ -21,17 +21,9 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 
 
-	void VulkanPresentationSystem::handleWindowResize()
+	void VulkanPresentationSystem::resizeWindow(const WindowExtent& extent)
 	{
-
-
-
-		m_vulkanSwapchainManager.recreateSwapchain(m_windowExtent.framebuffer.width, m_windowExtent.framebuffer.height);
-		m_isWindowResized = false;
-
-		//The calling order of other methods will take care of synchronisations
-
-
+		m_vulkanSwapchainManager.recreateSwapchain(extent.framebuffer.width, extent.framebuffer.height);
 	}
 
 
@@ -80,14 +72,8 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 		vkResetFences(logicalDevice, 1, &m_frames[m_currentFrame].inFlightFence);
 
 
-		//IMPORTANT : HANDLE SWAPCHAIN RECREATION ETC 
-		// BEFORE AQUIRE AND QUEUE SUBMIT ELSE imageAvailableSem WILL POINT 
-		// TO STALE DATA CAUSING READ VIOLATION OR CRASH IN DRIVER
-		if (m_isWindowResized)
-		{
-			handleWindowResize();//----------------> (1)
 
-		}
+
 
 
 		VkResult acquireResult = vkAcquireNextImageKHR(
@@ -144,13 +130,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 	}
 
 
-	void VulkanPresentationSystem::setWindowSize(const WindowExtent& windowExtent)
-	{
 
-		m_isWindowResized = true;
-		m_windowExtent = windowExtent;
-
-	}
 
 	void VulkanPresentationSystem::submitRenderCommandBuffer(ICommandBuffer& commandBuffer)
 	{

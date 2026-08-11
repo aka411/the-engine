@@ -36,11 +36,15 @@ namespace TheEngine::RenderingSystem
 
         RenderPassSetupContext m_renderPassSetupContext;
       
-        WindowExtent m_currenWindowExtend;//REMOVE
 
     private:
 
         GPUResourceResolver m_gpuResourceResolver;
+
+    protected:
+
+        friend class RenderingSystem;
+        void onWindowResize(const WindowExtent& extent);
 
 	public:
 
@@ -50,15 +54,11 @@ namespace TheEngine::RenderingSystem
 
         void addPass(std::unique_ptr<IRenderGraphNode>&& renderGraphNode);
 
-
-
         void compile();
 
         void execute(RenderPassExecuteContext& renderPassExecuteContext);
 
-        void onWindowResize(const WindowExtent& windowExtend);
-
-
+ 
 
 
     };

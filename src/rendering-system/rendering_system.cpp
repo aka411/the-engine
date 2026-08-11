@@ -16,23 +16,13 @@ namespace TheEngine::RenderingSystem
 {
 
 
-
-
-	bool RenderingSystem::hasResized() const 
-	{ 
-		return m_resizePending; 
-	}
-
 	WindowExtent RenderingSystem::getExtent() const
 	{ 
 		return m_windowExtent; 
 	}
 
 
-	void RenderingSystem::acknowledgeResize() 
-	{ 
-		m_resizePending = false;
-	}
+
 
 
 	void RenderingSystem::registerOnEventBus(EventBus& bus)
@@ -40,12 +30,21 @@ namespace TheEngine::RenderingSystem
 
 		m_eventBusConnection = bus.subscribe(EngineEventType::WINDOW_RESIZE, [this](const EngineEvent& event)
 			{
-			
-				this->setWindowExtend(event.windowResizeEvent.extend);
+				this->resizeWindow(event.windowResizeEvent.extend);
 			});
 
 
 	}
+
+
+
+	void RenderingSystem::resizeWindow(const WindowExtent& extent)
+	{
+		m_presentationSystem.resizeWindow(extent);
+		m_windowExtent = extent;
+		m_renderGraph.onWindowResize(extent);
+	}
+
 
 	RenderingSystem::RenderingSystem(std::unique_ptr<IRenderDevice>&& renderDevice, TheEngine::Platform::FileSystem& filesystem,const WindowExtent& windowExtent) :
 
@@ -88,13 +87,6 @@ namespace TheEngine::RenderingSystem
 		
 		m_renderDevice->getTransferManager().flush();
 
-		if (m_resizePending)
-		{
-			m_presentationSystem.setWindowSize(m_windowExtent);
-			m_renderGraph.onWindowResize(m_windowExtent);
-
-			acknowledgeResize();
-		}
 
 		m_presentationSystem.startFrame();
 
@@ -133,14 +125,6 @@ namespace TheEngine::RenderingSystem
 		m_presentationSystem.endFrame();
 
 	}
-
-	void RenderingSystem::setWindowExtend(const WindowExtent& windowExtend)
-	{
-		
-		m_resizePending = true;
-		m_windowExtent = windowExtend;
-	}
-
 
 
 	RenderGraph& RenderingSystem::getRenderGraph()

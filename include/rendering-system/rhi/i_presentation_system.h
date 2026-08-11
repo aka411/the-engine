@@ -27,7 +27,7 @@ namespace TheEngine::RenderingSystem
 		virtual ICommandBuffer& getRenderCommandBuffer() = 0;
 
 
-		virtual void setWindowSize(const WindowExtent& windowExtent) = 0;
+		virtual void resizeWindow(const WindowExtent& extent) = 0;
 
 			//Implcity know which frame its from 
 		virtual void submitRenderCommandBuffer(ICommandBuffer& commandBuffer) = 0;
