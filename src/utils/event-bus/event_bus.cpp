@@ -20,6 +20,7 @@ namespace TheEngine
 			{
 				assert(false && "Dummy CallBack called");
 			};
+
 		auto it = m_subscribers.find(eventType);
 		if (it != m_subscribers.end())
 		{

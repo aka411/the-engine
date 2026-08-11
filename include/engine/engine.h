@@ -11,9 +11,12 @@
 namespace TheEngine
 {
 
-
+	class Application;
 	class Engine
 	{
+	private:
+
+		EventBus m_eventBus{};//Has to been destroyed at last
 
 	private:
 
@@ -24,21 +27,23 @@ namespace TheEngine
 
 		TheEngine::AudioSystem::AudioSystem m_audioSystem;
 
-		EventBus m_eventBus;
+
+
+		EventBusConnection m_eventBusConnection{};
+
+		bool m_engineRunning{ false };
 
 	private:
 
 		void initializeMaterials();//Need to remove later
 
-	private:
-
-		void runInternalSystems();
-
+		void engineShutDown(const EngineEvent& event);
 	public:
 
 		Engine(const EngineConfiguration& engineConfiguration);
 		~Engine();
 
+		void run(Application& app);
 
 		TheEngine::Platform::Platform& getPlatform();
 
@@ -48,7 +53,7 @@ namespace TheEngine
 
 
 
-
+		bool isEngineRunning() const;
 
 
 
