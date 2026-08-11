@@ -41,8 +41,6 @@ namespace TheEngine::RenderingSystem
 		m_eventBusConnection = bus.subscribe(EngineEventType::WINDOW_RESIZE, [this](const EngineEvent& event)
 			{
 			
-			
-		
 				this->setWindowExtend(event.windowResizeEvent.extend);
 			});
 
