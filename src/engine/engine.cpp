@@ -1,5 +1,6 @@
 #include <engine/engine.h>
 #include <rendering-system/rhi/i_render_device.h>
+#include <engine/application.h>
 
 namespace TheEngine
 {
@@ -48,18 +49,10 @@ namespace TheEngine
 
 	}
 
-	void Engine::runInternalSystems()
+	void Engine::engineShutDown(const EngineEvent& event)
 	{
-		EngineEvent event;
-		while (m_platform.getInputSystem().pollEvent(event))
-		{
-			m_eventBus.publish(event);
-		}
-
-
-
+		m_engineRunning = false;
 	}
-
 
 
 	Engine::Engine(const EngineConfiguration& engineConfiguration) :
@@ -74,9 +67,25 @@ namespace TheEngine
 	
 		m_renderingSystem.registerOnEventBus(m_eventBus);
 
+		m_eventBusConnection = m_eventBus.subscribe(EngineEventType::WINDOW_CLOSE, [this](const EngineEvent& event)
+			{
+				this->engineShutDown(event);
+			});
 
 		WindowExtent windowExtent = m_platform.getWindowSystem().getWindowExtent();
 		m_renderingSystem.setWindowExtend(windowExtent);
+
+		m_engineRunning = true;
+	}
+
+	void Engine::run(Application& app)
+	{
+		EngineEvent event;
+		while (m_platform.getInputSystem().pollEvent(event))
+		{
+			m_eventBus.publish(event);
+			app.onEvent(event);
+		}
 
 	}
 
@@ -117,5 +126,8 @@ namespace TheEngine
 	}
 
 
-
+	bool Engine::isEngineRunning() const
+	{
+		return m_engineRunning;
+	}
 }
