@@ -59,7 +59,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 		//N semaphores per N frame for queue Submit
 		//N semaphores for queue submit to present
-
+	private:
 
 		Frame m_frames[NUMBER_OF_FRAMES_IN_FLIGHT];
 
@@ -67,12 +67,6 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 		uint32_t m_currentAcquiredImageIndex = 0;
 
-		bool m_isWindowResized = false;
-
-		WindowExtent m_windowExtent;
-
-
-		void handleWindowResize();
 
 	public:
 
@@ -86,12 +80,11 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 		virtual ICommandBuffer& getRenderCommandBuffer() override;
 
+		virtual void resizeWindow(const WindowExtent& extent) override;
 
 	    //Vulkan Specific Method
 		VulkanImageViewCombined getVulkanImageViewCombinedSwapchain(const int frameIndex);
 
-
-		virtual void setWindowSize(const WindowExtent& windowExtent) override;
 
 		//Implcity know which frame its from 
 		virtual void submitRenderCommandBuffer(ICommandBuffer& commandBuffer) override;

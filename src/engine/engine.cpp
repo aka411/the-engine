@@ -73,7 +73,11 @@ namespace TheEngine
 			});
 
 		WindowExtent windowExtent = m_platform.getWindowSystem().getWindowExtent();
-		m_renderingSystem.setWindowExtend(windowExtent);
+		//m_renderingSystem.(windowExtent);
+		EngineEvent event;
+		event.engineEventType = EngineEventType::WINDOW_RESIZE;
+		event.windowResizeEvent.extend = windowExtent;
+		m_eventBus.publish(event);
 
 		m_engineRunning = true;
 	}

@@ -55,12 +55,12 @@ namespace TheEngine::RenderingSystem
 
 
 		WindowExtent m_windowExtent;
-		bool m_resizePending = false;
-
-		bool hasResized() const;
-		void acknowledgeResize();
 
 		EventBusConnection m_eventBusConnection;
+
+	private:
+
+		void resizeWindow(const WindowExtent& extent);
 
 	public:
 
@@ -77,7 +77,6 @@ namespace TheEngine::RenderingSystem
 		void startRender(const UserPassData userPassData);
 
 		
-		void setWindowExtend(const WindowExtent& windowExtend);
 		WindowExtent getExtent() const;
 
 

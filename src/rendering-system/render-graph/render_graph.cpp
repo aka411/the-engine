@@ -5,7 +5,17 @@
 namespace TheEngine::RenderingSystem
 {
 
+	void RenderGraph::onWindowResize(const WindowExtent& extent)
+	{
+		
+		m_renderPassSetupContext.windowExtent = extent;
 
+		//assert(m_textureResources.size() == m_textureResourcesMapping.size());
+
+		//delete old 
+		//create new based  on new sizes 
+
+	}
 
 
 	RenderGraph::RenderGraph(IRenderDevice& renderDevice, const RenderPassSetupContext& renderPassSetupContext, GPUResourceSystem& gpuResourceSystem) :
@@ -62,19 +72,5 @@ namespace TheEngine::RenderingSystem
 
 
 	}
-
-
-	void RenderGraph::onWindowResize(const WindowExtent& windowExtend)
-	{
-		m_currenWindowExtend = windowExtend;
-		m_renderPassSetupContext.windowExtent = windowExtend;
-
-		//assert(m_textureResources.size() == m_textureResourcesMapping.size());
-
-		//delete old 
-		//create new based  on new sizes 
-
-	}
-
 
 }
