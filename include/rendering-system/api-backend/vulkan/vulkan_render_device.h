@@ -4,13 +4,11 @@
 #include <VkBootstrap.h>
 
 #include <rendering-system/rhi/i_render_device.h>
-#include <rendering-system/api-backend/vulkan/vulkan-only/vulkan_texture_store.h>
 #include <rendering-system/api-backend/vulkan/vulkan-only/vulkan_context.h>
 
 namespace TheEngine::RenderingSystem::VulkanBackend
 {
 	class VulkanSwapchainManager;
-	class VulkanTextureStore;
 	class VulkanResourceResolver;
 
 	class VulkanPresentationSystem;
@@ -49,7 +47,6 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 		std::unique_ptr<VulkanDescriptorSetManager> m_vulkanDescriptorSetManager;
 		
 		//This store was made to solve a dependecy issue with VulkanResourceResolver
-		std::unique_ptr<VulkanTextureStore> m_vulkanTextureStore;
 		std::unique_ptr<VulkanResourceResolver> m_vulkanResourceResolver;
 
 		std::unique_ptr<VulkanQueueManager> m_vulkanQueueManager;

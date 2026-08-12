@@ -1,7 +1,7 @@
 #pragma once
-#include <rendering-system/api-backend/vulkan/vulkan-only/vulkan_texture_store.h>
 #include <rendering-system/api-backend/vulkan/vulkan_buffer_manager.h>
 #include <rendering-system/api-backend/vulkan/vulkan_pipeline_manager.h>
+#include <rendering-system/api-backend/vulkan/vulkan_texture_system_data_types.h>
 
 namespace TheEngine::RenderingSystem::VulkanBackend
 {
@@ -10,14 +10,14 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 	class VulkanBufferManager;
 	class VulkanPipelineManager;
 	class VulkanSwapchainManager;
-
+	class VulkanTextureManager;
 
 	class VulkanResourceResolver
 	{
 	private:
 
 		VulkanSwapchainManager& m_vulkanSwapchainManager;
-		VulkanTextureStore& m_vulkanTextureStore;
+		VulkanTextureManager& m_vulkanTextureManager;
 		VulkanBufferManager& m_vulkanBufferManager;
 		VulkanPipelineManager& m_vulkanPipelineManager;
 		
@@ -25,7 +25,9 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 	public:
 
-		VulkanResourceResolver(VulkanSwapchainManager& vulkanSwapchainManager, VulkanTextureStore& vulkanTextureStore,
+		VulkanResourceResolver(
+			VulkanSwapchainManager& vulkanSwapchainManager, 
+			VulkanTextureManager& vulkanTextureManager,
 			VulkanBufferManager& m_vulkanBufferManager,
 			VulkanPipelineManager& m_vulkanPipelineManager);
 

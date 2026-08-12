@@ -174,8 +174,10 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 		m_vulkanContext.vmaAllocator = m_vmaAllocator;
 
 
+		//WARNING : Initialisation Order Matters , if rearranged without looking at each others dependency will cause problems
+
 		m_samplerManager = std::make_unique<VulkanSamplerManager>(m_vulkanContext);
-		m_vulkanTextureStore = std::make_unique<VulkanTextureStore>(m_vulkanContext,static_cast<VulkanSamplerManager&>(*m_samplerManager));
+
 	
 
 
@@ -187,16 +189,20 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 		m_vulkanSwapchainManager = std::make_unique<VulkanSwapchainManager>(m_vulkanContext);
 		m_pipelineManager = std::make_unique<VulkanPipelineManager>(m_vulkanContext, *m_vulkanDescriptorSetManager, static_cast<VulkanShaderManager&>(*m_shaderManager));
-		m_vulkanResourceResolver = std::make_unique<VulkanResourceResolver>(*m_vulkanSwapchainManager,*m_vulkanTextureStore, static_cast<VulkanBufferManager&>(*m_bufferManager), static_cast<VulkanPipelineManager&>(*m_pipelineManager));
-
+		m_textureManager = std::make_unique<VulkanTextureManager>(m_vulkanContext, static_cast<VulkanSamplerManager&>(*m_samplerManager));
+		m_vulkanResourceResolver = std::make_unique<VulkanResourceResolver>(*m_vulkanSwapchainManager,static_cast<VulkanTextureManager&>(*m_textureManager), static_cast<VulkanBufferManager&>(*m_bufferManager), static_cast<VulkanPipelineManager&>(*m_pipelineManager));
 
 		m_vulkanCommandBufferManager = std::make_unique<VulkanCommandBufferManager>(m_vulkanContext, *m_vulkanQueueManager, *m_vulkanResourceResolver,*m_vulkanDescriptorSetManager);
+		m_transferManager = std::make_unique<VulkanTransferManager>(m_vulkanContext, *m_vulkanCommandBufferManager, static_cast<VulkanBufferManager&>(*m_bufferManager));
+
+		//Done to solve a dependency issue invlolving VulkanResourceResolver
+		static_cast<VulkanTextureManager*>(m_textureManager.get())->setVulkanTransferManager(static_cast<VulkanTransferManager&>(*m_transferManager));
+
 		m_presentationSystem = std::make_unique<VulkanPresentationSystem>(m_vulkanContext, *m_vulkanSwapchainManager, *m_vulkanCommandBufferManager);
 
 
 
-		m_transferManager = std::make_unique<VulkanTransferManager>(m_vulkanContext, *m_vulkanCommandBufferManager, static_cast<VulkanBufferManager&>(*m_bufferManager));
-		m_textureManager = std::make_unique<VulkanTextureManager>(*m_vulkanTextureStore, static_cast<VulkanTransferManager&>(*m_transferManager));
+
 
 	}
 

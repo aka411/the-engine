@@ -1,6 +1,6 @@
 #include <rendering-system/api-backend/vulkan/vulkan-only/vulkan_resource_resolver.h>
 #include <rendering-system/api-backend/vulkan/vulkan-only/vulkan_swapchain_manager.h>
-
+#include <rendering-system/api-backend/vulkan/vulkan_texture_manager.h>
 
 namespace TheEngine::RenderingSystem::VulkanBackend
 {
@@ -9,12 +9,12 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 	VulkanResourceResolver::VulkanResourceResolver(
 		VulkanSwapchainManager& vulkanSwapchainManager,
-		VulkanTextureStore& vulkanTextureStore,
+		VulkanTextureManager& vulkanTextureManager,
 		VulkanBufferManager& vulkanBufferManager,
 		VulkanPipelineManager& vulkanPipelineManager) :
 
 		m_vulkanSwapchainManager(vulkanSwapchainManager),
-		m_vulkanTextureStore(vulkanTextureStore),
+		m_vulkanTextureManager(vulkanTextureManager),
 		m_vulkanBufferManager(vulkanBufferManager),
 		m_vulkanPipelineManager(vulkanPipelineManager)
 
@@ -27,7 +27,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 	const VulkanTexture VulkanResourceResolver::getVulkanTexture(const TextureHandle& textureHandle)
 	{
-
+		
 		if (textureHandle == SWAP_CHAIN_IMAGE_TEXTURE_HANDLE)
 		{
 			//I need to come up with a better way
@@ -35,7 +35,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 			return VulkanTexture{ .vkImage = vulkanImageViewCombined.image, .vkImageView = vulkanImageViewCombined.imageView};
 		}
 
-		return m_vulkanTextureStore.getVulkanTexture(textureHandle);
+		return m_vulkanTextureManager.getVulkanTexture(textureHandle);
 	}
 
 	const VulkanBufferInfo VulkanResourceResolver::getVulkanBufferInfo(const BufferHandle& bufferHandle)
@@ -51,7 +51,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 	VkDescriptorSet VulkanResourceResolver::getBindlessImageVkDescriptorSet()
 	{
-		return m_vulkanTextureStore.getBindlessImageVkDescriptorSet();
+		return m_vulkanTextureManager.getBindlessImageVkDescriptorSet();
 	}
 
 }

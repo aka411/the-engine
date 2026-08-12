@@ -9,7 +9,7 @@ namespace TheEngine::RenderingSystem
 
 
 	constexpr uint64_t INVALID_RESOURCE_ID = std::numeric_limits<uint64_t>::max();
-
+	constexpr uint64_t SPECIAL_VALID_RESOURCE_ID = INVALID_RESOURCE_ID - 1;
 
 
 	template <typename Tag>
@@ -39,8 +39,8 @@ namespace TheEngine::RenderingSystem
 
 
 
-	constexpr uint64_t SWAP_CHAIN_IMAGE_TEXTURE_ID = 0;
-	const TextureHandle SWAP_CHAIN_IMAGE_TEXTURE_HANDLE{ SWAP_CHAIN_IMAGE_TEXTURE_ID };
+
+	const TextureHandle SWAP_CHAIN_IMAGE_TEXTURE_HANDLE{ SPECIAL_VALID_RESOURCE_ID };
 
 
 

@@ -1,11 +1,22 @@
 #pragma once
 #include <volk.h>
+#include <vk_mem_alloc.h>
+#include <rendering-system/rhi/data-structures/gpu_texture_data_structures.h>
 
 namespace TheEngine::RenderingSystem::VulkanBackend
 {
 
 
 
+	struct VulkanTexture
+	{
+		TextureCreateInfo createinfo{};
+
+		VkImage vkImage;
+		VkImageView vkImageView;
+		VmaAllocation vmaAllocation;
+
+	};
 
 	struct VulkanImageViewCombined
 	{

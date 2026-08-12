@@ -318,7 +318,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 		auto& dst = getBarrierValue(dstLayout);
 
 		// Retrieve the actual Vulkan texture object
-		const auto& texture = m_vulkanResourceResolver.getVulkanTexture(texturehandle);
+		const auto texture = m_vulkanResourceResolver.getVulkanTexture(texturehandle);
 
 		VkImageMemoryBarrier2 barrier{};
 		barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
@@ -339,12 +339,12 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 
 		VkImageAspectFlags aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		if (isDepthFormat(texture.metaData.desc.format))
+		if (isDepthFormat(texture.createinfo.desc.format))
 		{
 			aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
 		
-			if (hasStencilComponent(texture.metaData.desc.format))
+			if (hasStencilComponent(texture.createinfo.desc.format))
 			{
 				aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
 			}
