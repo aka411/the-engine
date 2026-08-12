@@ -8,8 +8,9 @@ namespace TheEngine::RenderingSystem
 
 
 
-	GPUResourceResolver::GPUResourceResolver(GPUResourceSystem& gpuResourceSystem):
-		m_gpuResourceSystem(gpuResourceSystem)
+	GPUResourceResolver::GPUResourceResolver(GPUResourceSystem& gpuResourceSystem, RenderGraphResources& renderGraphResources):
+		m_gpuResourceSystem(gpuResourceSystem),
+		m_renderGraphResources(renderGraphResources)
 	{
 
 	}
@@ -35,5 +36,17 @@ namespace TheEngine::RenderingSystem
 
 	}
 */
+
+	const TextureHandle GPUResourceResolver::getTextureHandle(const std::string& name) const
+	{
+		return m_renderGraphResources.getTextureHandle(name);
+	}
+
+	const TextureHandle GPUResourceResolver::getTextureHandle(const VirtualTextureId virtualTextureId) const
+	{
+		return m_renderGraphResources.getTextureHandle(virtualTextureId);
+	}
+
+
 
 }

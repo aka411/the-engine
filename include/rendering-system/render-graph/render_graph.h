@@ -1,8 +1,4 @@
 #pragma once
-#include <vector>
-#include <string>
-#include <memory>
-
 
 
 #include <rendering-system/render-graph/render_graph_types.h>
@@ -11,19 +7,26 @@
 #include <rendering-system/render-graph/gpu_resource_resolver.h>
 
 
+
 namespace TheEngine::RenderingSystem
 {
 
 
     class IRenderDevice;
+    class ITextureManager;
 
     struct RenderPassSetupContext;
     struct RenderPassExecuteContext;
 
 
+
 	class RenderGraph
 	{
 
+    private:
+
+        ITextureManager& m_textureManager;
+        RenderGraphResources m_renderGraphResources;
 
 	private:
 
@@ -35,7 +38,6 @@ namespace TheEngine::RenderingSystem
         RenderGraphBuilder m_renderGraphBuilder;
 
         RenderPassSetupContext m_renderPassSetupContext;
-      
 
     private:
 

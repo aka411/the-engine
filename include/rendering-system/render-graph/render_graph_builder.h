@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
-#include <unordered_map>
-#include <rendering-system/engine_handles.h>
+
+
 #include <rendering-system/rhi/data-structures/gpu_texture_data_structures.h>
-#include <map>
+#include <rendering-system/render-graph/render_graph_types.h>
 
 
 namespace TheEngine::RenderingSystem
@@ -20,26 +20,20 @@ namespace TheEngine::RenderingSystem
 
         IRenderDevice& m_renderDevice;
 
-        std::unordered_map<std::string, TextureHandle> m_textureResources;
-       // std::unordered_map<TextureHandle, std::string> m_textureResourcesMapping;
-        // std::map<uint64_t, TextureHandle> m_textureBufferResource;
-
-         //FRAME DATA
-
-
+        RenderGraphResources& m_renderGraphResources;
 
     public:
 
-        RenderGraphBuilder(IRenderDevice& renderDevice);
+        RenderGraphBuilder(IRenderDevice& renderDevice, RenderGraphResources& renderGraphResources);
 
 
 
-        TextureHandle createTexture(const std::string& name, TextureCreateInfo& textureCreateInfo);
+        void createTexture(const std::string& name, TextureCreateInfo& textureCreateInfo, const ResizeParameters& resizeParameters);
 
-        TextureHandle readTexture(const std::string& name);//string based look up
-        TextureHandle writeTexture(const std::string& name);
+        VirtualTextureId readTexture(const std::string& name);
+        VirtualTextureId writeTexture(const std::string& name);
 
-        TextureHandle writeSwapChainImage();
+       // VirtualTextureId writeSwapChainImage();
 
 
 
