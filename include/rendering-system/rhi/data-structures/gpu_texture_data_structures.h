@@ -126,7 +126,7 @@ namespace TheEngine::RenderingSystem
 
 
 
-
+/*
 	// The Metadata (Persistent)
 	struct TextureMetadata
 	{
@@ -138,7 +138,7 @@ namespace TheEngine::RenderingSystem
 		bool isBindless = false;
 		uint64_t bindlessHandle = 0;
 	};
-
+	*/
 
 
 }
