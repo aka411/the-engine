@@ -61,7 +61,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 
 		//TODO : IMPLEMENT THIS
-
+		assert(false && "Need to write code to destroy texture");
 
 	}
 

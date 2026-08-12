@@ -60,7 +60,7 @@ A uint8_t would suffice
 		UV_1 = 1 << 4,
 		TANGENT = 1 << 5,
 		WEIGHTS = 1 << 6,//A vec4 most times
-		JOINTS = 1 << 7//  I have seen it be uint16 or uint32 i think
+		JOINTS = 1 << 7//  I have seen it be uint16 or uint32
 	};
 
 
@@ -89,7 +89,7 @@ A uint8_t would suffice
 		STANDARD_2_5D = static_cast<uint16_t>(VertexAttributeBits::POSITION | VertexAttributeBits::NORMAL | VertexAttributeBits::UV_0),
 		//POSITION_ONLY
 
-		//yeah color or colour
+	
 		STANDARD_2D_COLOUR = static_cast<uint16_t>(VertexAttributeBits::POSITION | VertexAttributeBits::COLOR)
 
 	};
@@ -100,14 +100,6 @@ A uint8_t would suffice
 		UINT16,
 		UINT32
 	};
-
-
-
-
-
-
-
-
 
 
 
@@ -157,9 +149,6 @@ A uint8_t would suffice
 
 
 
-
-	//How about a mesh Id
-
 	using MeshId = uint64_t;
 
 	struct MeshInfo
@@ -181,31 +170,6 @@ A uint8_t would suffice
 		size_t indexOffsetInBuffer;
 
 	};
-
-
-
-	/*
-	Buffer A(Position) : vec3 positions for all meshes in the game.
-
-	Buffer B(Attributes) : Normals, UVs, and Tangents for all meshes.
-
-	Buffer C(Indices) : All uint32_t or uint16_t index data.
-
-
-	struct DrawCall 
-	{
-	//For all vertex data , we will also have a verteformat 
-	uint32_t vertexOffset; // Offset in the Position Stream
-	uint32_t attributeOffset; // Offset in the UV/Normal Stream
-
-	uint32_t indexOffset;  // Offset in the Global Index Buffer
-	uint32_t indexCount;
-	// ... 
-};
-
-*/
-
-
 
 
 }

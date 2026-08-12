@@ -6,6 +6,11 @@
 #include <string>
 #include <rendering-system/rendering_system_data_types.h>
 
+
+#include <rendering-system/engine_handles.h>
+#include <unordered_map>
+#include <vector>
+
 namespace TheEngine::RenderingSystem
 {
 
@@ -49,14 +54,57 @@ namespace TheEngine::RenderingSystem
     enum class ResizingMode
     {
         ABSOLUTE,
-        RELATIVE
+        RELATIVE_FRAMEBUFFER,
+        MATCH_FRAMEBUFFER
     };
 
     struct ResizeParameters
     {
-        ResizingMode resizingMode{ ResizingMode::ABSOLUTE};
+        ResizingMode resizingMode{ ResizingMode::MATCH_FRAMEBUFFER };
         float relativeMultiplier{ 1.0f };
     };
+
+    struct RenderGraphTextureCreateInfo
+    {
+        ResizeParameters resizeParameters{};
+        TextureCreateInfo textureCreateInfo{};
+    };
+
+
+    template<typename Tag>
+    struct VirtualResourceHandle
+    {
+        size_t id{ 0 };
+    };
+
+    using VirtualTextureId = VirtualResourceHandle<struct VirtualTextureTag>;
+
+
+
+
+
+
+    struct RenderGraphResources
+    {
+        std::unordered_map<std::string, VirtualTextureId> textureResources;
+        //Index is virtual handle
+        std::vector<RenderGraphTextureCreateInfo> textureCreateInfos;
+        std::vector<TextureHandle> textureHandles;
+
+        TextureHandle getTextureHandle(const VirtualTextureId virtualTextureId) const
+        {
+            assert(virtualTextureId.id < textureHandles.size());
+            return textureHandles[virtualTextureId.id];
+        }
+
+        TextureHandle getTextureHandle(const std::string& name) const
+        {
+            const auto& vd = textureResources.at(name);
+            return getTextureHandle(vd);
+        }
+
+    };
+
 
 
 }
