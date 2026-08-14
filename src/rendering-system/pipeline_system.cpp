@@ -106,4 +106,10 @@ namespace TheEngine::RenderingSystem
 		return m_renderDevice.getPipelineManager().createPipeline(pipelineBuilder.getPipelineName(), pipelineBuilder.getPipelineStateCreateInfo());
 	}
 
+	PipelineHandle PipelineSystem::getPipelineHandle(const std::string& name) const
+	{
+		return m_renderDevice.getPipelineManager().getPipelineHandle(name);
+	}
+
+
 }

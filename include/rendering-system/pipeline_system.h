@@ -44,6 +44,8 @@ namespace TheEngine::RenderingSystem
 
 
 		PipelineHandle buildPipeline(const PipelineBuilder& pipelineBuilder);
+		PipelineHandle getPipelineHandle(const std::string& name) const;
+
 
 	};
 
