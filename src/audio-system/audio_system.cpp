@@ -2,8 +2,8 @@
 #include <math.h>
 
 #include <audio-system/audio_system.h>
-#include <platform/file_system.h>
-#include <platform/path.h>
+#include <platform/file-system/file_system.h>
+#include <platform/file-system/path.h>
 #include <cassert>
 #include <algorithm>
 
@@ -20,27 +20,30 @@ namespace TheEngine::AudioSystem
 
 		std::lock_guard<std::mutex> lock(audioSystem->m_vfsMutex);
 
-		TheEngine::Platform::Path path = TheEngine::Platform::Path::fromVFSString(pFilePath);
-		auto it = audioSystem->m_openAudioFileAssets.find(path.getVFSString());
+		const TheEngine::Platform::Path& path = reinterpret_cast<const TheEngine::Platform::Path&>(pFilePath);
+
+		assert(path.getRelativePath().data()[path.getRelativePath().size()] == '\0' && "Malformed String_view path");
+
+		auto it = audioSystem->m_openAudioFileAssets.find(path.getRelativePath().data());
 
 		if (it == audioSystem->m_openAudioFileAssets.end())
 		{
 
 
-			auto file =TheEngine::Platform::File(audioSystem->m_fileSystem.open(path));
+			auto file = TheEngine::Platform::File(audioSystem->m_fileSystem.open(path));
 
-			if (!file.isValid())
+			if (!file.size() != 0)
 			{
 				return MA_NO_DATA_AVAILABLE;
 			}
 
-			auto audioFileAsset = std::make_unique<AudioFileAsset>(std::move(file),1, path.getVFSString());
+			auto audioFileAsset = std::make_unique<AudioFileAsset>(std::move(file),1, path);
 
 			auto audioFileState = std::make_unique<AudioFileState>(0, audioFileAsset.get());
 
 
 		
-			audioSystem->m_openAudioFileAssets.insert({ path.getVFSString(),std::move(audioFileAsset)});
+			audioSystem->m_openAudioFileAssets.insert({ path.getRelativePath().data(),std::move(audioFileAsset)});
 
 			*pFile = audioFileState.get();
 
@@ -93,7 +96,7 @@ namespace TheEngine::AudioSystem
 			audioFileAsset->referenceCount--;
 			if (audioFileAsset->referenceCount == 0)
 			{
-				audioSystem->m_openAudioFileAssets.erase(audioFileAsset->vfsPath);
+				audioSystem->m_openAudioFileAssets.erase(audioFileAsset->path.getRelativePath().data());
 			}
 
 			audioSystem->m_audioFileStates.erase(it);
@@ -288,10 +291,9 @@ namespace TheEngine::AudioSystem
 		auto internalSource = std::make_unique<InternalAudioSource>();
 
 
-		// The Resource Manager will check its cache first
 		ma_result result = ma_resource_manager_data_source_init(
 			&m_resourceManager,
-			path.getVFSString().c_str(),
+			reinterpret_cast<const char*>(&path),//hacky ,hack hack
 			MA_RESOURCE_MANAGER_DATA_SOURCE_FLAG_STREAM,
 			nullptr,
 			&internalSource->dataSource
