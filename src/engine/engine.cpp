@@ -58,7 +58,7 @@ namespace TheEngine
 	Engine::Engine(const EngineConfiguration& engineConfiguration) :
 		m_platform(engineConfiguration),
 		
-		m_renderingSystem(std::move(m_platform.getWindowSystem().getRenderDevice()), m_platform.getFileSystem(),m_platform.getWindowSystem().getWindowExtent()),//
+		m_renderingSystem(m_platform.getWindowSystem().getRenderDevice(), m_platform.getFileSystem(),m_platform.getWindowSystem().getWindowExtent()),
 		m_assetSystem(m_platform, m_renderingSystem.getGPUResourceSystem()),// currently uses fileSystem
 		m_audioSystem(m_platform.getFileSystem())
 	{
