@@ -1,7 +1,7 @@
 #pragma once
-#include "input_system.h"
-#include "file_system.h"
-#include "window_system.h"
+#include <platform/window-system/window_system.h>
+#include <platform/file-system/file_system.h>
+#include <platform/input-system/input_system.h>
 
 
 namespace TheEngine
@@ -22,10 +22,10 @@ namespace TheEngine::Platform
 
     private:
 
-        WindowSystem m_windowSystem;//Mostly for engines internal use
+        WindowSystem m_windowSystem;
 
-        InputSystem m_inputSystem;//Exposed to outside world
-        FileSystem m_fileSystem;//Exposed to outside world
+        InputSystem m_inputSystem;
+        FileSystem m_fileSystem;
 
     public:
 
