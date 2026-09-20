@@ -66,7 +66,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 				if (queueFamily.queueFlags & toVkQueueFlags(TheEngine::RenderingSystem::VulkanBackend::QueueType::GRAPHICS) & toVkQueueFlags(queueType))
 				{
 					VkBool32 presentSupport = false;
-					vkGetPhysicalDeviceSurfaceSupportKHR(m_vulkanContext.vkPhysicalDevice, i, m_vulkanContext.vkSurfaceKHR, &presentSupport);
+					vkGetPhysicalDeviceSurfaceSupportKHR(m_vulkanContext.vkPhysicalDevice, i, m_vulkanContext.getVkSurfaceKHR(), &presentSupport);
 					if (!presentSupport)
 					{
 						continue;

@@ -24,16 +24,16 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 
 
-		VkSurfaceKHR m_surface;
+		VkSurfaceKHR m_vkSurfaceKHR{};
 
 
-		vkb::Instance m_instance;
-		vkb::PhysicalDevice m_physicalDevice;
-		vkb::Device m_logicalDevice;
+		vkb::Instance m_instance{};
+		vkb::PhysicalDevice m_physicalDevice{};
+		vkb::Device m_logicalDevice{};
 
-		VmaAllocator m_vmaAllocator;
+		VmaAllocator m_vmaAllocator{};
 
-		VulkanContext m_vulkanContext;
+		VulkanContext m_vulkanContext{};
 
 
 
@@ -46,7 +46,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 		std::unique_ptr<VulkanDescriptorSetManager> m_vulkanDescriptorSetManager;
 		
-		//This store was made to solve a dependecy issue with VulkanResourceResolver
+
 		std::unique_ptr<VulkanResourceResolver> m_vulkanResourceResolver;
 
 		std::unique_ptr<VulkanQueueManager> m_vulkanQueueManager;
@@ -58,7 +58,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 	public:
 
-		VulkanRenderDevice(VkSurfaceKHR surface, vkb::Instance instance);
+		VulkanRenderDevice(VkSurfaceKHR vkSurfaceKHR, vkb::Instance instance);
 		virtual ~VulkanRenderDevice() override;
 
 
@@ -70,11 +70,13 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 		const VkDevice& getLogicalDeviceHandle() const { return m_logicalDevice.device; }
 		const VkPhysicalDevice& getPhysicalDeviceHandle() const { return m_physicalDevice.physical_device; }
 		const VkInstance& getInstance() const { return m_instance.instance; }
-		const VkSurfaceKHR& getSurface() const { return m_surface; }
+		const VkSurfaceKHR& getSurface() const { return m_vkSurfaceKHR; }
 		
 
 		VulkanContext getVulkanContext() { return m_vulkanContext; };
 		VmaAllocator& getVMAAllocator() { return m_vmaAllocator; }
+
+		void setVkSurfaceKHR(const VkSurfaceKHR vkSurfaceKHR);
 
 	};
 

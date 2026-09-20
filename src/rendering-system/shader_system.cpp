@@ -1,6 +1,6 @@
 #include <rendering-system/shader_system.h>
 #include <rendering-system/rhi/i_shader_manager.h>
-#include <platform/file_system.h>
+#include <platform/file-system/file_system.h>
 
 
 namespace TheEngine::RenderingSystem
@@ -34,7 +34,7 @@ namespace TheEngine::RenderingSystem
 			for (const auto& [shaderType, filePath] : createInfoFromFile.shaderSourceFilePaths)
 			{
 				auto file = m_fileSystem.open(filePath);
-				assert(file.isValid() && "Shader file is not valid");
+
 				std::string shaderCode(reinterpret_cast<const char*>(file.begin()), file.size());
 
 				createInfo.shaderSourceCodes[shaderType] = shaderCode;
