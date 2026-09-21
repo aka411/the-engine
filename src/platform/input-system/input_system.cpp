@@ -26,6 +26,8 @@ namespace TheEngine::Platform
 
 		m_inputSystem = std::make_unique<AndroidInputSystem>();
 
+#elif PLATFORM_TEST
+		//Do nothing
 #else
 	#error("No Platform Defined")
 #endif

@@ -18,6 +18,8 @@ namespace TheEngine
 	
 		virtual ~Application() = default;
 
+		virtual EngineConfiguration getEngineConfiguration() = 0;
+
 		virtual void onInit(Engine& engine)
 		{
 			m_engine = &engine;
@@ -29,4 +31,14 @@ namespace TheEngine
 
 
 	};
+}
+
+
+
+
+namespace TheEngine
+{
+
+	Application* createApplication();
+
 }

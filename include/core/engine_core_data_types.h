@@ -3,8 +3,22 @@
 #include <string>
 #include <array>
 
+
+#ifdef PLATFORM_ANDROID
+struct android_app;
+#endif
+
 namespace TheEngine
 {
+
+	enum class OS
+	{
+		SYS_WINDOWS,
+		SYS_LINUX,
+		SYS_ANDROID,
+		SYS_UNKNOWN
+	};
+
 	enum class RenderingAPI
 	{
 
@@ -37,14 +51,13 @@ namespace TheEngine
 		Extend2D logicalWindowExtend{};
 
 	
-		std::string windowName;
+		std::string windowName{};
 
 
 
-		std::array<std::string, 3> mountPaths;
-
-		//Window mode maybe
-		//maybe even number of swapchains
+#ifdef PLATFORM_ANDROID
+		android_app* androidApp{ nullptr };
+#endif
 	};
 
 

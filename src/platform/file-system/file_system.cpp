@@ -1,6 +1,6 @@
 #include <platform/file-system/file_system.h>
 #include <cassert>
-#include <engine/engine_core_data_types.h>
+#include <core/engine_core_data_types.h>
 #include <platform/file-system/path.h>
 
 
@@ -19,6 +19,8 @@
 
 #include <platform/file-system/backend/android_file_system.h>
 
+#elif PLATFORM_TEST
+//Do nothing
 #else
 	#error("No Platform")
 #endif
@@ -47,6 +49,8 @@ namespace TheEngine::Platform
 
 		m_fileSystem = std::make_unique<AndroidFileSystem>(engineConfiguration);
 
+#elif PLATFORM_TEST
+		//Do nothing
 #else
 	#error("No Platform")
 #endif
