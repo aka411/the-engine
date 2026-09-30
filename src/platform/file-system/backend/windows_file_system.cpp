@@ -18,6 +18,7 @@ namespace TheEngine::Platform
 		m_pathBuffer.clear();
 
 		m_pathBuffer.append(m_baseAssetFolderPath);
+		m_pathBuffer.append("/");
 		m_pathBuffer.append(path.getRelativePath());
 
 		HANDLE fileHandle = INVALID_HANDLE_VALUE;
