@@ -26,7 +26,7 @@ namespace TheEngine::Platform
 		m_sdlWindow = SDL_CreateWindow(
 			"TheEngine(Vulkan 1.3)",
 			engineConfiguration.logicalWindowExtend.width, engineConfiguration.logicalWindowExtend.height,
-			SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN
+			SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN | SDL_WINDOW_HIGH_PIXEL_DENSITY
 		);
 
 
