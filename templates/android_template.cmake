@@ -5,10 +5,10 @@ cmake_minimum_required(VERSION 3.17)
 function(the_engine_configure_android_template APP_TARGET)
 
     set(ANDROID_TEMPLATE_DIR "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/android")
-    set(ANDROID_CONFIGURED_TEMPLATE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+    set(ANDROID_CONFIGURED_TEMPLATE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
 
-    if(EXISTS ANDROID_TEMPLATE_DIR)
-        message(FATEL_ERROR "${ANDROID_TEMPLATE_DIR} already exists aborting android template generation")
+    if(EXISTS "${ANDROID_CONFIGURED_TEMPLATE_DIR}")
+        message(FATAL_ERROR "${ANDROID_CONFIGURED_TEMPLATE_DIR} already exists aborting android template generation")
         return()
     endif()
 
@@ -17,10 +17,7 @@ function(the_engine_configure_android_template APP_TARGET)
 
     set(oneValueArgs  ANDROID_APP_DISPLAY_NAME ANDROID_PACKAGE_NAME)
 
-
-    cmake_parse_arguments(ARG
-        "${oneValueArgs}"
-    )
+    cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
 
 
 
@@ -79,7 +76,7 @@ function(the_engine_configure_android_template APP_TARGET)
         endif()
 
 
-        set(OUT_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/android/${FILE_PATH}")
+        set(OUT_FILE_PATH "${ANDROID_CONFIGURED_TEMPLATE_DIR}/${FILE_PATH}")
 
         # Skip text replacement for binary and asset files to prevent corruption
         if(FILE_PATH MATCHES "\\.(jar|png|jpg|webp|zip|jks|keystore|so)$")
