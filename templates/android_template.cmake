@@ -8,7 +8,7 @@ function(the_engine_configure_android_template APP_TARGET)
     set(ANDROID_CONFIGURED_TEMPLATE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
 
     if(EXISTS "${ANDROID_CONFIGURED_TEMPLATE_DIR}")
-        message(FATAL_ERROR "${ANDROID_CONFIGURED_TEMPLATE_DIR} already exists aborting android template generation")
+        message(STATUS "${ANDROID_CONFIGURED_TEMPLATE_DIR} already exists aborting android template generation")
         return()
     endif()
 
