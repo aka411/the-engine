@@ -32,7 +32,7 @@ namespace TheEngine::AudioSystem
 
 			auto file = TheEngine::Platform::File(audioSystem->m_fileSystem.open(path));
 
-			if (!file.size() != 0)
+			if (file.size() == 0)
 			{
 				return MA_NO_DATA_AVAILABLE;
 			}
