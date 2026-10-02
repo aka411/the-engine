@@ -1,4 +1,5 @@
 #include <platform/file-system/file.h>
+#include <cstring>
 #include <assert.h>
 
 namespace TheEngine::Platform

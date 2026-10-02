@@ -17,18 +17,23 @@ namespace TheEngine::Platform
 	{
 
 
-		assert(false && "Implement mapFile() in LinuxFileSystem");
 
 		constexpr int INVALID_LINUX_FILE_DESCRIPTOR = -1;
 
 		int fileDescriptor = INVALID_LINUX_FILE_DESCRIPTOR;
 
-
 		void* mappedPtrLinux = nullptr;
 		ssize_t fileSizeLinux = -1;
 
 
-		fileDescriptor = ::open(path.getPhysicalPath().c_str(), O_RDONLY);
+		m_pathBuffer.clear();
+
+		m_pathBuffer.append(m_baseAssetFolderPath);
+		m_pathBuffer.append("/");
+		m_pathBuffer.append(path.getRelativePath());
+
+
+		fileDescriptor = ::open(m_pathBuffer.data(), O_RDONLY);
 		if (fileDescriptor == INVALID_LINUX_FILE_DESCRIPTOR)
 		{
 			assert(false && "Unable to open file");
@@ -36,7 +41,7 @@ namespace TheEngine::Platform
 
 
 		struct stat file_stat;
-		if (::fstat(handle.fileDescriptor, &file_stat) == -1)
+		if (::fstat(fileDescriptor, &file_stat) == -1)
 		{
 			assert(false && "Error: unable to get file size");
 		}
@@ -65,17 +70,23 @@ namespace TheEngine::Platform
 
 
 
-		File file{};
+		File file = File::createFromPointer(reinterpret_cast<std::byte*>(mappedPtrLinux), fileSizeLinux);
 		::munmap(mappedPtrLinux, fileSizeLinux);
 
 		return file;
 
 	}
 
+	LinuxFileSystem::LinuxFileSystem(std::string_view baseAssetFolderPath)
+	{
+		m_baseAssetFolderPath = baseAssetFolderPath;
+	}
+
+
 	File LinuxFileSystem::open(const Path& path)
 	{
-		assert(false && "Implement open() in LinuxFileSystem");
-		return File{};
+		//assert(false && "Implement open() in LinuxFileSystem");
+		return  mapFile(path);
 	}
 
 

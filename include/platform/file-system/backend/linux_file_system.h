@@ -16,6 +16,7 @@ namespace TheEngine::Platform
 	public:
 
 		LinuxFileSystem(std::string_view baseAssetFolderPath);
+
 		virtual File open(const Path& path) override;
 		virtual size_t getFileSize(const Path& path) override;
 	};
