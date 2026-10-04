@@ -8,8 +8,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 file(GLOB_RECURSE APP_STUB_SOURCES
-    "*.cpp"
-    "*.h" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h" 
 )
 
 #Temp 
