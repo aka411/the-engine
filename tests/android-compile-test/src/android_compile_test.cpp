@@ -28,3 +28,11 @@
 
 
 	};
+
+	TheEngine::Application* TheEngine::createApplication()
+	{
+
+		CompileTestStub* compileTestStub = new CompileTestStub();
+
+		return compileTestStub;
+	}
