@@ -20,7 +20,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'gradle'
+
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
@@ -33,10 +33,7 @@ jobs:
       - name: Configure CMake and Generate Android Project files
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DTHE_ENGINE_BUILD_TESTS=ON -DTHE_ENGINE_ANDROID_TEST=ON
 
-
-      - name: Change folder to generated Android project folder
-        run: cd tests/compile/android/
-
-      - name: Build the Project
+      - name: Build the Android Project
+        working-directory: ./build/tests/compile/android/
         run: ./gradlew --no-daemon build
 
