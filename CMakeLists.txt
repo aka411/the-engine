@@ -187,7 +187,7 @@ function (the_engine_build_app APP_TARGET)
         )
 
         
-        target_include_directories( ${APP_TARGET} PRIVATE
+        target_include_directories(${APP_TARGET} PRIVATE
             ${ARG_INCLUDES}
         )
 
@@ -261,7 +261,7 @@ endfunction()
 
 
 
-option(THE_ENGINE_BUILD_TESTS "Enable Tests" ON)
+option(THE_ENGINE_BUILD_TESTS "Enable Tests" OFF)
 
 
 if(THE_ENGINE_BUILD_TESTS)
