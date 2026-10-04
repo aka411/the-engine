@@ -12,7 +12,7 @@
 	public:
 
 
-		CompileTestStub();
+		CompileTestStub() = default;
 
 		virtual TheEngine::EngineConfiguration getEngineConfiguration() override 
 		{
