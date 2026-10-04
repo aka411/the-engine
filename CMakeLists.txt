@@ -13,76 +13,75 @@ include(FetchContent)
 
 #set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 
-file(GLOB_RECURSE ENGINE_SOURCES
-    "src/*.cpp"
-    "src/*.h" 
-    "src/*.hpp"
-    "include/*.h"
-)
+
+function(the_engine_get_the_engine_library TheEngineOut)
 
 
-file(GLOB_RECURSE EXCLUDE_SOURCES 
-"src/rendering-system/api-backend/opengl/*"
-"include/rendering-system/api-backend/opengl/*"
-
-)
-
-list(REMOVE_ITEM ENGINE_SOURCES ${EXCLUDE_SOURCES})
-
-if (ANDROID)
-    list(FILTER ENGINE_SOURCES EXCLUDE REGEX "(windows|linux|desktop)_")
-else()
-    if (WIN32)
-        list(FILTER ENGINE_SOURCES EXCLUDE REGEX "(linux|android)_")
-    elseif (UNIX)
-        list(FILTER ENGINE_SOURCES EXCLUDE REGEX "(windows|android)_")
+    if(TARGET TheEngine)
+        set(${TheEngineOut} TheEngine PARENT_SCOPE)
+        return()
     endif()
-endif()
+
+    file(GLOB_RECURSE ENGINE_SOURCES
+        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/src/*.cpp"
+        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/src/*.h" 
+        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/src/*.hpp"
+        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/include/*.h"
+    )
+
+
+    file(GLOB_RECURSE EXCLUDE_SOURCES 
+        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/src/rendering-system/api-backend/opengl/*"
+        "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/include/rendering-system/api-backend/opengl/*"
+
+    )
+
+    list(REMOVE_ITEM ENGINE_SOURCES ${EXCLUDE_SOURCES})
+
+    if (ANDROID)
+        list(FILTER ENGINE_SOURCES EXCLUDE REGEX "(windows|linux|desktop)_")
+    else()
+        if (WIN32)
+            list(FILTER ENGINE_SOURCES EXCLUDE REGEX "(linux|android)_")
+        elseif (UNIX)
+            list(FILTER ENGINE_SOURCES EXCLUDE REGEX "(windows|android)_")
+        endif()
+    endif()
+
+
+    add_library(TheEngine STATIC
+        ${ENGINE_SOURCES}
+    )
+
+
+    target_include_directories(TheEngine 
+
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_FUNCTION_LIST_DIR}/include>"
+    PRIVATE
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_FUNCTION_LIST_DIR}/src>"
+    )
 
 
 
+    add_subdirectory("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/external" "${CMAKE_CURRENT_BINARY_DIR}/external")
 
+    target_link_libraries(TheEngine PUBLIC
 
+      common-lib
 
+      VulkanDeps
+      #OpenGLDeps
+    )
 
-add_library(TheEngine STATIC
+    set(${TheEngineOut} ${TheEngine} PARENT_SCOPE)
 
-${ENGINE_SOURCES}
-
-)
-
-
-
-
-
-
-
-
-
-target_include_directories(TheEngine 
-
-PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-PRIVATE
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src>"
-)
-
-
-
-add_subdirectory(external)
-
-target_link_libraries(TheEngine PUBLIC
-
-  common-lib
-
-  VulkanDeps
-  #OpenGLDeps
-)
+endfunction()
 
 
 
@@ -123,7 +122,7 @@ function (the_engine_generate_android_template)
 
     set(ANDROID_WRAPPER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
 
-    if(EXISTS "${ANDROID_WRAPPER_DIR}/app/build.gradle")
+    if(EXISTS "${ANDROID_WRAPPER_DIR}" AND EXISTS "${ANDROID_WRAPPER_DIR}/app/build.gradle")
         message(STATUS "Skipping Android Template Generation to prevent Overwrite")
         return()
     endif()
@@ -180,12 +179,12 @@ function (the_engine_build_app)
 
     if(NOT DEFINED ARG_INCLUDES)
         message(WARNING "Includes not given for compilation, using current directory")
-        set(ARG_INCLUDES "${CMAKE_CURRENT_LIST_DIR}")
+        set(ARG_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}")
     endif()
 
 
     if(NOT DEFINED ARG_APP_NAME)
-        message(FATEL_ERROR "APP_NAME not given, aborting")
+        message(FATAL_ERROR "APP_NAME not given, aborting")
         return()
     endif()
 
@@ -193,7 +192,7 @@ function (the_engine_build_app)
 
     if (ANDROID)
 
-
+        the_engine_get_the_engine_library(TheEngine)
         add_library(APP_TARGET SHARED
            ${ARG_SOURCES}
         )
@@ -202,11 +201,11 @@ function (the_engine_build_app)
             OUTPUT_NAME "${ARG_APP_NAME}"
         )
 
-        target_include_directories(${APP_TARGET} PRIVATE
+        target_include_directories(APP_TARGET PRIVATE
             ${ARG_INCLUDES}
         )
 
-
+        
 
         find_package(game-activity REQUIRED CONFIG)
 
@@ -214,7 +213,7 @@ function (the_engine_build_app)
         set(CMAKE_SHARED_LINKER_FLAGS
             "${CMAKE_SHARED_LINKER_FLAGS} -u Java_com_google_androidgamesdk_GameActivity_initializeNativeCode")
 
-        target_compile_definitions(${APP_TARGET} PRIVATE PLATFORM_ANDROID)
+        target_compile_definitions(APP_TARGET PRIVATE PLATFORM_ANDROID)
         target_compile_definitions(TheEngine  PUBLIC
 
         PLATFORM_ANDROID
@@ -231,20 +230,20 @@ function (the_engine_build_app)
             dl
         )
 
-        target_link_libraries( ${APP_TARGET} PRIVATE
+        target_link_libraries(APP_TARGET PRIVATE
             TheEngine
             ${ARG_LIBRARIES}
         )
 
 
 
-        set_target_properties(${APP_TARGET} PROPERTIES
+        set_target_properties(APP_TARGET PROPERTIES
             LINK_FLAGS "-u Java_com_google_androidgamesdk_GameActivity_initializeNativeCode"
         )
 
     elseif(NOT COMPILE_ONLY_FOR_ANDROID)
         
-
+        the_engine_get_the_engine_library(TheEngine)
         add_executable(APP_TARGET
             ${ARG_SOURCES}
         )
@@ -254,7 +253,7 @@ function (the_engine_build_app)
         )
 
 
-        target_compile_definitions(${APP_TARGET}  PUBLIC PLATFORM_PC)
+        target_compile_definitions(APP_TARGET  PUBLIC PLATFORM_PC)
         target_compile_definitions(TheEngine  PUBLIC PLATFORM_PC)
 
 
@@ -264,16 +263,16 @@ function (the_engine_build_app)
              "${CMAKE_CURRENT_BINARY_DIR}" # The asset file path config file will be in binary dir
         )
 
-        target_include_directories( ${APP_TARGET} PRIVATE
+        target_include_directories(APP_TARGET PRIVATE
             ${ARG_INCLUDES}
         )
 
-        target_link_libraries( ${APP_TARGET} PRIVATE
+        target_link_libraries(APP_TARGET PRIVATE
             TheEngine
         )
 
         if(ARG_LIBRARIES)
-            target_link_libraries( ${APP_TARGET} PRIVATE
+            target_link_libraries(APP_TARGET PRIVATE
                 ${ARG_LIBRARIES}
             )
         endif()
@@ -290,6 +289,8 @@ option(THE_ENGINE_BUILD_TESTS "Enable Tests" OFF)
 
 if(THE_ENGINE_BUILD_TESTS)
     message(STATUS "Building Tests")
+
+    the_engine_get_the_engine_library(TheEngine)
     target_compile_definitions(TheEngine PRIVATE PLATFORM_TEST)
     enable_testing()
     add_subdirectory(tests)
