@@ -289,10 +289,6 @@ option(THE_ENGINE_BUILD_TESTS "Enable Tests" OFF)
 
 if(THE_ENGINE_BUILD_TESTS)
     message(STATUS "Building Tests")
-
-    the_engine_get_the_engine_library(TheEngine)
-    target_compile_definitions(TheEngine PRIVATE PLATFORM_TEST)
-    enable_testing()
     add_subdirectory(tests)
 else()
     message(STATUS "Tests Not Built")

@@ -37,5 +37,5 @@ jobs:
 
 
       - name: Build the Android Project
-        working-directory: ./build/tests/compile/android/
+        working-directory: ./build/android-compile-test/compile/android/
         run: ./gradlew --no-daemon build
