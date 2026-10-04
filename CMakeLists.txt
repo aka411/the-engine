@@ -90,7 +90,7 @@ target_link_libraries(TheEngine PUBLIC
 
 
 
-function(process_assets target)
+function(process_assets)
 
     if (ANDROID)
 
@@ -115,78 +115,93 @@ endfunction()
 
 
 
+function (the_engine_generate_android_template)
+
+    if(ANDROID)
+        return()
+    endif()
+
+    set(ANDROID_WRAPPER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+
+    if(EXISTS "${ANDROID_WRAPPER_DIR}/app/build.gradle")
+        message(STATUS "Skipping Android Template Generation to prevent Overwrite")
+        return()
+    endif()
 
 
 
-function (the_engine_build_app APP_TARGET)
 
+    include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/templates/android_template.cmake")
 
-
-    set(options  GENERATE_ANDROID_TEMPlATE)
     set(oneValueArgs   APP_NAME ANDROID_PACKAGE_NAME)
+
+    cmake_parse_arguments(ARG
+        "" "${oneValueArgs}" ""
+        ${ARGN}
+    )
+
+
+
+    if(NOT DEFINED ARG_APP_NAME)
+         message(FATAL_ERROR "APP_NAME not specifed, cannot generate android template")
+    endif()
+    if(NOT DEFINED ARG_ANDROID_PACKAGE_NAME)
+         message(FATAL_ERROR "ANDROID_PACKAGE_NAME not specifed, cannot generate android template")
+    endif()
+
+    message(STATUS "Generating Android Template")
+
+    the_engine_configure_android_template(
+        ANDROID_APP_DISPLAY_NAME "${ARG_APP_NAME}" 
+        ANDROID_PACKAGE_NAME "${ARG_ANDROID_PACKAGE_NAME}")
+
+endfunction()
+
+
+
+
+
+function (the_engine_build_app)
+
+
+    set(options COMPILE_ONLY_FOR_ANDROID)
+    set(oneValueArgs   APP_NAME)
     set(multiValueArgs  SOURCES INCLUDES LIBRARIES)
 
     cmake_parse_arguments(ARG
-        "${options}" "${oneValueArgs}" "${multiValueArgs}"
+        "" "${oneValueArgs}" "${multiValueArgs}"
         ${ARGN}
     )
 
     if(NOT DEFINED ARG_SOURCES)
-        message(FATAL_ERROR "Sources not given for ${APP_TARGET}")
+        message(FATAL_ERROR "Sources not given for compilation")
     endif()
 
-    # mm
+
     if(NOT DEFINED ARG_INCLUDES)
-        message(WARNING "Includes not given for ${APP_TARGET}")
+        message(WARNING "Includes not given for compilation, using current directory")
         set(ARG_INCLUDES "${CMAKE_CURRENT_LIST_DIR}")
     endif()
 
-    if(NOT DEFINED ARG_LIBRARIES)
-        message(WARNING "Includes not given for ${APP_TARGET}, falling back to ${CMAKE_CURRENT_LIST_DIR}")
-        set(ARG_LIBRARIES "${CMAKE_CURRENT_LIST_DIR}")
-    endif()
 
     if(NOT DEFINED ARG_APP_NAME)
-        set(ARG_APP_NAME "${APP_TARGET}")
+        message(FATEL_ERROR "APP_NAME not given, aborting")
+        return()
     endif()
 
 
-    if(ARG_GENERATE_ANDROID_TEMPlATE)
-
-        include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/templates/android_template.cmake")
-
-        set(ANDROID_WRAPPER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-
-        if(NOT EXISTS "${ANDROID_WRAPPER_DIR}/app/build.gradle")
-
-            message(STATUS "Generating Android Template")
-
-
-            if(NOT DEFINED ARG_ANDROID_PACKAGE_NAME)
-                message(FATAL_ERROR "ANDROID_PACKAGE_NAME not given")
-                #set(ARG_ANDROID_PACKAGE_NAME "com.example.myapp")#Fix
-            endif()
-
-
-            the_engine_configure_android_template(
-                ${APP_TARGET} 
-                ANDROID_APP_DISPLAY_NAME "${ARG_APP_NAME}" 
-                ANDROID_PACKAGE_NAME "${ARG_ANDROID_PACKAGE_NAME}")
-        endif()
-    endif()
-
-
-
-
-    message(STATUS "Building app target: ${APP_TARGET}")
 
     if (ANDROID)
 
-        add_library(${APP_TARGET} SHARED
+
+        add_library(APP_TARGET SHARED
            ${ARG_SOURCES}
         )
 
-        
+        set_target_properties(APP_TARGET PROPERTIES
+            OUTPUT_NAME "${ARG_APP_NAME}"
+        )
+
         target_include_directories(${APP_TARGET} PRIVATE
             ${ARG_INCLUDES}
         )
@@ -227,20 +242,23 @@ function (the_engine_build_app APP_TARGET)
             LINK_FLAGS "-u Java_com_google_androidgamesdk_GameActivity_initializeNativeCode"
         )
 
-    else()
+    elseif(NOT COMPILE_ONLY_FOR_ANDROID)
         
 
-    
-
-        add_executable(${APP_TARGET}
+        add_executable(APP_TARGET
             ${ARG_SOURCES}
         )
+    
+        set_target_properties(APP_TARGET PROPERTIES
+            OUTPUT_NAME "${ARG_APP_NAME}"
+        )
+
 
         target_compile_definitions(${APP_TARGET}  PUBLIC PLATFORM_PC)
         target_compile_definitions(TheEngine  PUBLIC PLATFORM_PC)
 
 
-        process_assets(${APP_TARGET})
+        process_assets()
 
         target_include_directories(TheEngine PRIVATE 
              "${CMAKE_CURRENT_BINARY_DIR}" # The asset file path config file will be in binary dir
@@ -249,12 +267,18 @@ function (the_engine_build_app APP_TARGET)
         target_include_directories( ${APP_TARGET} PRIVATE
             ${ARG_INCLUDES}
         )
+
         target_link_libraries( ${APP_TARGET} PRIVATE
             TheEngine
-            ${ARG_LIBRARIES}
         )
 
-
+        if(ARG_LIBRARIES)
+            target_link_libraries( ${APP_TARGET} PRIVATE
+                ${ARG_LIBRARIES}
+            )
+        endif()
+    else()
+        message(STATUS "Settings are set such that it will only compile for android")
     endif()
 endfunction()
 

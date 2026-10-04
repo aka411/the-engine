@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 
 
 
-function(the_engine_configure_android_template APP_TARGET)
+function(the_engine_configure_android_template)
 
     set(ANDROID_TEMPLATE_DIR "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/android")
     set(ANDROID_CONFIGURED_TEMPLATE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")

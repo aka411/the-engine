@@ -12,15 +12,17 @@ file(GLOB_RECURSE APP_STUB_SOURCES
     "*.h" 
 )
 
-
+the_engine_generate_android_template(
+    APP_NAME "Android Compile Test Stub"
+    ANDROID_PACKAGE_NAME "com.test.Stub"
+)
 
 
 the_engine_build_app(AndroidCompileTestStub
 
 APP_NAME "Android Compile Test Stub"
-ANDROID_PACKAGE_NAME "com.test.Stub"
 
-GENERATE_ANDROID_TEMPlATE ON
+COMPILE_ONLY_FOR_ANDROID ON
 
 SOURCES
     ${APP_STUB_SOURCES}
