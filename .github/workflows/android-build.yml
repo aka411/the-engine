@@ -36,6 +36,9 @@ jobs:
         run: cmake -B build -DCOMPILE_ONLY_FOR_ANDROID=ON -DTHE_ENGINE_BUILD_TESTS=ON -DTHE_ENGINE_ANDROID_TEST=ON
 
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./tests/android-compile-test/android/gradlew
+
       - name: Build the Android Project
         working-directory: ./tests/android-compile-test/android/
         run: ./gradlew --no-daemon build
