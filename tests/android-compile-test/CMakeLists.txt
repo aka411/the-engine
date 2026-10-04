@@ -12,6 +12,11 @@ file(GLOB_RECURSE APP_STUB_SOURCES
     "*.h" 
 )
 
+#Temp 
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../CMakeLists.txt")
+
+
+
 the_engine_generate_android_template(
     APP_NAME "Android Compile Test Stub"
     ANDROID_PACKAGE_NAME "com.test.Stub"
