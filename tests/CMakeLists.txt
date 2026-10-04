@@ -19,21 +19,15 @@ FetchContent_MakeAvailable(googletest)
 
 
 
-if(THE_ENGINE_ANDROID_TEST)
+the_engine_get_the_engine_library(TheEngine)
+target_compile_definitions(TheEngine PRIVATE PLATFORM_TEST)
+enable_testing()
 
-    add_subdirectory(android-compile-test)
 
-
-elseif()
-
-    the_engine_get_the_engine_library(TheEngine)
-    target_compile_definitions(TheEngine PRIVATE PLATFORM_TEST)
-    enable_testing()
-    add_subdirectory(compile)
+add_subdirectory(compile)
 
 #  subdirectory for unit tests
 #add_subdirectory(unit)
 #  subdirectory for integration tests
 #add_subdirectory(integration)
 
-endif()
