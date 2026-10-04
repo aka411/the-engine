@@ -28,10 +28,10 @@ jobs:
 
       - name: Install Android NDK
         run: |
-          sdkmanager --install "ndk;29.0.14206865"" 
+          sdkmanager --install "ndk;29.0.14206865"
 
       - name: Configure CMake and Generate Android Project files
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DTHE_ENGINE_BUILD_TESTS = ON -DTHE_ENGINE_ANDROID_TEST = ON
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DTHE_ENGINE_BUILD_TESTS=ON -DTHE_ENGINE_ANDROID_TEST=ON
 
 
       - name: Change folder to generated Android project folder
