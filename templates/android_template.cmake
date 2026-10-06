@@ -51,7 +51,7 @@ function(the_engine_configure_android_template)
     file(GLOB_RECURSE TEMPLATE_FILES  RELATIVE "${ANDROID_TEMPLATE_DIR}/" "${ANDROID_TEMPLATE_DIR}/*")
 
 
-    set(ANDROID_APP_SHARED_LIBRARY "${APP_TARGET}")
+    set(ANDROID_APP_SHARED_LIBRARY "${ANDROID_APP_DISPLAY_NAME_NORMAL}")
 
     set(CMAKE_AT_ESCAPE "@")# To fix issue with android:theme="@CMAKE_AT_ESCAPE@style/Theme.@ANDROID_APP_NAME@"> in AndroidManifest.xml
     set(THE_ENGINE_APP_ASSETS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/assets/")
