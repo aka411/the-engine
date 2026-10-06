@@ -9,13 +9,22 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 	struct VulkanContext
 	{
-		VkDevice vkDevice;
-		VkPhysicalDevice vkPhysicalDevice;
-		VkInstance vkInstance;
-		VkSurfaceKHR vkSurfaceKHR;
+		VkDevice vkDevice{};
+		VkPhysicalDevice vkPhysicalDevice{};
+		VkInstance vkInstance{};
 
-		VmaAllocator vmaAllocator;
-		vkb::Device vkbDevice;
+		VkSurfaceKHR* vkSurfaceKHR{nullptr};
+
+		vkb::Device vkbDevice{};
+		VmaAllocator vmaAllocator{};
+
+
+		VkSurfaceKHR getVkSurfaceKHR() const
+		{
+			assert(vkSurfaceKHR != nullptr);
+			return *vkSurfaceKHR;
+		}
+
 	};
 
 }

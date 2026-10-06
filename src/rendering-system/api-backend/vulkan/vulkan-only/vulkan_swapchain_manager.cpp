@@ -33,7 +33,8 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 		
 		VkSwapchainCreateInfoKHR createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		createInfo.surface = m_vulkanContext.vkSurfaceKHR;
+
+		createInfo.surface = m_vulkanContext.getVkSurfaceKHR();
 
 		createInfo.minImageCount = imageCount; 
 		createInfo.imageFormat = VK_FORMAT_R8G8B8A8_SRGB; //TODO : Dont hardcode this

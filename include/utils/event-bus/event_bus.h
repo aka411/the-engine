@@ -2,7 +2,7 @@
 #include <functional>
 #include <unordered_map>
 #include <vector>
-#include <platform/data-structures/input_system_data_structures.h>
+#include <platform/input-system/data-structures/input_system_data_structures.h>
 #include <limits>
 #include <utils/event-bus/event_bus_connection.h>
 #include <assert.h>

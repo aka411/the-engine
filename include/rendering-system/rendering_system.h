@@ -36,13 +36,14 @@ namespace TheEngine::RenderingSystem
 	private:
 
 
-		std::unique_ptr<IRenderDevice> m_renderDevice;
+		IRenderDevice& m_renderDevice;
 
 		std::unique_ptr<GPUResourceSystem>  m_gpuResourceSystem;
 
 		IPresentationSystem& m_presentationSystem;
 
 	private:
+
 		ShaderSystem m_shaderSystem;
 	
 		PipelineSystem m_pipelineSystem;
@@ -52,10 +53,7 @@ namespace TheEngine::RenderingSystem
 
 		RenderGraph m_renderGraph;
 
-
-
 		WindowExtent m_windowExtent;
-
 		EventBusConnection m_eventBusConnection;
 
 	private:
@@ -65,7 +63,7 @@ namespace TheEngine::RenderingSystem
 	public:
 
 
-		RenderingSystem(std::unique_ptr<IRenderDevice>&& renderDevice, TheEngine::Platform::FileSystem& filesystem, const WindowExtent& windowExtent);
+		RenderingSystem(IRenderDevice& renderDevice, TheEngine::Platform::FileSystem& filesystem, const WindowExtent& windowExtent);
 		~RenderingSystem();
 
 		void registerOnEventBus(EventBus& bus);

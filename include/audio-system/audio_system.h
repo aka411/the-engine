@@ -7,7 +7,8 @@
 #include <stack>
 #include <unordered_map>
 #include <mutex>
-#include <platform/file.h>
+#include <platform/file-system/file.h>
+#include <platform/file-system/path.h>
 
 
 namespace TheEngine::Platform
@@ -97,7 +98,7 @@ namespace TheEngine::AudioSystem
 		{
 			TheEngine::Platform::File file;
 			int referenceCount = 0;
-			std::string vfsPath;
+			Platform::Path path{};
 		};
 
 

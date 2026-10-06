@@ -25,7 +25,7 @@
 namespace TheEngine::RenderingSystem::VulkanBackend
 {
 
-	VulkanRenderDevice::VulkanRenderDevice(VkSurfaceKHR surface, vkb::Instance instance) :
+	VulkanRenderDevice::VulkanRenderDevice(VkSurfaceKHR vkSurfaceKHR, vkb::Instance instance) :
 		IRenderDevice(RenderingAPI::VULKAN_1_3)
 		
 	{
@@ -33,10 +33,10 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 
 
 		m_instance = instance;
-		m_surface = surface;
+		m_vkSurfaceKHR = vkSurfaceKHR;
 
 	
-		vkb::PhysicalDeviceSelector physicalDeviceSelector{ m_instance, m_surface };
+		vkb::PhysicalDeviceSelector physicalDeviceSelector{ m_instance, m_vkSurfaceKHR };
 
 
 
@@ -44,11 +44,11 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 		physicalDeviceSelector.prefer_gpu_device_type(vkb::PreferredDeviceType::discrete);
 		physicalDeviceSelector.allow_any_gpu_device_type(true);
 		physicalDeviceSelector.require_present(true);
-		physicalDeviceSelector.set_surface(m_surface);
+		physicalDeviceSelector.set_surface(m_vkSurfaceKHR);
 
 		physicalDeviceSelector.add_required_extension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-		physicalDeviceSelector.add_required_extension(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
-		physicalDeviceSelector.add_required_extension(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
+		//physicalDeviceSelector.add_required_extension(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
+		//physicalDeviceSelector.add_required_extension(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
 		physicalDeviceSelector.add_required_extension(VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME);
 
 
@@ -170,7 +170,7 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 		m_vulkanContext.vkDevice = m_logicalDevice.device;
 		m_vulkanContext.vkInstance = m_instance.instance;
 		m_vulkanContext.vkPhysicalDevice = m_physicalDevice.physical_device;
-		m_vulkanContext.vkSurfaceKHR = m_surface;
+		m_vulkanContext.vkSurfaceKHR = &m_vkSurfaceKHR;
 		m_vulkanContext.vmaAllocator = m_vmaAllocator;
 
 
@@ -201,10 +201,8 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 		m_presentationSystem = std::make_unique<VulkanPresentationSystem>(m_vulkanContext, *m_vulkanSwapchainManager, *m_vulkanCommandBufferManager);
 
 
-
-
-
 	}
+
 
 
 	VulkanRenderDevice::~VulkanRenderDevice()
@@ -218,6 +216,10 @@ namespace TheEngine::RenderingSystem::VulkanBackend
 		m_vulkanDescriptorSetManager->setCurrentFrame(frameIndex);
 
 	}
-	
+
+	void VulkanRenderDevice::setVkSurfaceKHR(const VkSurfaceKHR vkSurfaceKHR)
+	{
+		m_vkSurfaceKHR = vkSurfaceKHR;
+	}
 
 }

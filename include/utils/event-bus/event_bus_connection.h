@@ -1,6 +1,6 @@
 #pragma once
 #include <limits>
-#include <platform/data-structures/input_system_data_structures.h>
+#include <platform/input-system/data-structures/input_system_data_structures.h>
 
 
 namespace TheEngine

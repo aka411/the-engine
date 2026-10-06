@@ -54,6 +54,7 @@
 *.exr   binary
 *.dds   binary
 
+*.webp  binary
 *.webm  binary
 *.mp4   binary
 

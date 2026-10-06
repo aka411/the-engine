@@ -14,13 +14,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      #- name: Install Android dependencies
+
       - name: Set up JDK 17
         uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'gradle'
+
+
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
@@ -30,13 +31,15 @@ jobs:
         run: |
           sdkmanager --install "ndk;29.0.14206865"
 
+
       - name: Configure CMake and Generate Android Project files
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DTHE_ENGINE_BUILD_TESTS=ON -DTHE_ENGINE_ANDROID_TEST=ON
+        working-directory: ./tests/android-compile-test/
+        run: cmake -B build -DCOMPILE_ONLY_FOR_ANDROID=ON -DTHE_ENGINE_BUILD_TESTS=OFF
 
 
-      - name: Change folder to generated Android project folder
-        run: cd tests/compile/android/
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./tests/android-compile-test/android/gradlew
 
-      - name: Build the Project
+      - name: Build the Android Project
+        working-directory: ./tests/android-compile-test/android/
         run: ./gradlew --no-daemon build
-

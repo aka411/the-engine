@@ -1,7 +1,7 @@
 #pragma once
 #include <rendering-system/engine_handles.h>
 #include <cstdint>
-#include <engine/engine_core_data_types.h>
+#include <core/engine_core_data_types.h>
 #include <rendering-system/rhi/data-structures/gpu_texture_data_structures.h>
 
 

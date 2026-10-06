@@ -1,5 +1,5 @@
 #include <rendering-system/pipeline_system.h>
-#include <platform/file_system.h>
+#include <platform/file-system/file_system.h>
 #include <nlohmann/json.hpp>
 #include <rendering-system/pipeline_json_loader.h>
 #include <rendering-system/rhi/i_render_device.h>
@@ -13,10 +13,13 @@ namespace TheEngine::RenderingSystem
 	{
 
 
+		//auto json = nlohmann::json::parse(
+		//	reinterpret_cast<const uint8_t*>(byteData),
+		//	reinterpret_cast<const uint8_t*>(byteData + size));
 		auto json = nlohmann::json::parse(
-			reinterpret_cast<const uint8_t*>(byteData),
-			reinterpret_cast<const uint8_t*>(byteData + size));
-
+			reinterpret_cast<const char*>(byteData),
+			reinterpret_cast<const char*>(byteData + size)
+		);
 
 
 		PipelineStateConfig pipelineStateConfig;
@@ -48,9 +51,7 @@ namespace TheEngine::RenderingSystem
 	{
 		auto file = m_fileSystem.open(configPath);
 
-		assert(file.isValid() && "PipelineConfig file is not valid");
-
-		return getPipelineStateConfigFromJson(file.begin(), file.size());
+		return getPipelineStateConfigFromJson(file.data(), file.size());
 	}
 
 
@@ -59,12 +60,13 @@ namespace TheEngine::RenderingSystem
 
 		auto file = m_fileSystem.open(vertexLayoutPath);
 
-		assert(file.isValid() && "VertexLayout file not valid");
-
+		//auto json = nlohmann::json::parse(
+		//	reinterpret_cast<const uint8_t*>(file.begin()),
+		//	reinterpret_cast<const uint8_t*>(file.end()));
 		auto json = nlohmann::json::parse(
-			reinterpret_cast<const uint8_t*>(file.begin()),
-			reinterpret_cast<const uint8_t*>(file.end()));
-
+			reinterpret_cast<const char*>(file.begin()),
+			reinterpret_cast<const char*>(file.end())
+		);
 
 		VertexLayout vertexLayout;
 
@@ -84,12 +86,15 @@ namespace TheEngine::RenderingSystem
 
 		auto file = m_fileSystem.open(renderOutputConfigurationPath);
 
-		assert(file.isValid() && "RenderOutputConfiguration file is not valid");
-
+		/*
 		auto json = nlohmann::json::parse(
 			reinterpret_cast<const uint8_t*>(file.begin()),
 			reinterpret_cast<const uint8_t*>(file.end()));
-
+*/
+		auto json = nlohmann::json::parse(
+			reinterpret_cast<const char*>(file.begin()),
+			reinterpret_cast<const char*>(file.end())
+		);
 
 		RenderOutputConfiguration renderOutputConfiguration;
 

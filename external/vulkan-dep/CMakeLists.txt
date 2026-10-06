@@ -4,7 +4,7 @@
 include(FetchContent)
 
 
-
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 FetchContent_Declare(
   volk
@@ -16,6 +16,11 @@ FetchContent_Declare(
 set(VULKAN_HEADERS_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vulkan-headers" CACHE PATH "" FORCE)
 FetchContent_MakeAvailable(volk)
 
+if (ANDROID)
+    if (TARGET volk)
+        target_compile_definitions(volk PUBLIC VK_USE_PLATFORM_ANDROID_KHR)
+    endif()
+endif()
 
 
 
@@ -29,7 +34,7 @@ FetchContent_Declare(
 )
 set(VK_BOOTSTRAP_VULKAN_HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vulkan-headers/include" CACHE PATH "" FORCE)
 FetchContent_MakeAvailable(VulkanBootstrap)
-
+set_target_properties(vk-bootstrap PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 FetchContent_Declare(
   VMA
@@ -62,43 +67,14 @@ FetchContent_MakeAvailable(spirv-reflect)
 
 
 
-# SHADERC
-set(SHADERC_LIB_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/libshaderc/prebuilt-libs")
-if(WIN32)
-    set(SHADERC_PLATFORM "win64")
-	set(SHADERC_SHARED_FILE_NAME "shaderc_shared.dll")
-    if(MSVC)
-	    set(SHADERC_SHARED_IMPORT_FILE "import-library/msvc/shaderc_shared.lib")
-    elseif(MINGW)
-	    set(SHADERC_SHARED_IMPORT_FILE "import-library/mingw/shaderc_shared.a")
-    else()
 
-        message(FATAL_ERROR "Unsupported compiler for prebuilt shaderc")
+FetchContent_Declare(
+  shaderc-prebuilt-lib
+  GIT_REPOSITORY https://github.com/aka411/the-engine-prebuilt-deps.git
+  GIT_TAG        ec3ce4278a6173065e7602222ba6de0cc42e0cd5
 
-    endif()
-
-elseif(LINUX)
-
-    set(SHADERC_PLATFORM "linux64")
-    set(SHADERC_SHARED_FILE_NAME "libshaderc_shared.so.1")
-    set(SHADERC_IMPLIB_PATH "")
-
-else()
-
-    message(FATAL_ERROR "Platform not supported.")
-
-endif()    
-
-
-add_library(shaderc_shared SHARED IMPORTED)
-
-set_target_properties(shaderc_shared PROPERTIES
-    IMPORTED_LOCATION "${SHADERC_LIB_ROOT_PATH}/${SHADERC_PLATFORM}/${SHADERC_SHARED_FILE_NAME}"
-    IMPORTED_IMPLIB "${SHADERC_LIB_ROOT_PATH}/${SHADERC_PLATFORM}/${SHADERC_SHARED_IMPORT_FILE}"
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/libshaderc/include"
 )
-
-
+FetchContent_MakeAvailable(shaderc-prebuilt-lib)
 
 
 
@@ -110,7 +86,7 @@ target_link_libraries(VulkanDeps INTERFACE
   vk-bootstrap
   VulkanMemoryAllocator
 
-  shaderc_shared
+  shaderc::shaderc_shared
 
   spirv-reflect-static
 

@@ -46,14 +46,14 @@ namespace TheEngine::RenderingSystem
 	}
 
 
-	RenderingSystem::RenderingSystem(std::unique_ptr<IRenderDevice>&& renderDevice, TheEngine::Platform::FileSystem& filesystem,const WindowExtent& windowExtent) :
+	RenderingSystem::RenderingSystem(IRenderDevice& renderDevice, TheEngine::Platform::FileSystem& filesystem,const WindowExtent& windowExtent) :
 
-		m_renderDevice(std::move(renderDevice)),
-		m_shaderSystem(filesystem, m_renderDevice->getShaderManager()),
-		m_pipelineSystem(*m_renderDevice,filesystem, m_shaderSystem),
-	    m_presentationSystem(m_renderDevice->getPresentationSystem()),
-		m_gpuResourceSystem( std::make_unique<GPUResourceSystem>(*m_renderDevice)),
-		m_renderGraph(*m_renderDevice, RenderPassSetupContext{ .pipelineSystem = m_pipelineSystem ,.shaderSystem = m_shaderSystem,.windowExtent = windowExtent },*m_gpuResourceSystem)
+		m_renderDevice(renderDevice),
+		m_shaderSystem(filesystem, m_renderDevice.getShaderManager()),
+		m_pipelineSystem(m_renderDevice,filesystem, m_shaderSystem),
+	    m_presentationSystem(m_renderDevice.getPresentationSystem()),
+		m_gpuResourceSystem( std::make_unique<GPUResourceSystem>(m_renderDevice)),
+		m_renderGraph(m_renderDevice, RenderPassSetupContext{ .pipelineSystem = m_pipelineSystem ,.shaderSystem = m_shaderSystem,.windowExtent = windowExtent },*m_gpuResourceSystem)
 	{
 
 		
@@ -85,7 +85,7 @@ namespace TheEngine::RenderingSystem
 
 
 		
-		m_renderDevice->getTransferManager().flush();
+		m_renderDevice.getTransferManager().flush();
 
 
 		m_presentationSystem.startFrame();
@@ -94,7 +94,7 @@ namespace TheEngine::RenderingSystem
 
 		// tell the device (and its internal managers) to prepare for this frame
 		//very important
-		m_renderDevice->beginFrame(frameIndex);
+		m_renderDevice.beginFrame(frameIndex);
 		
 
 
