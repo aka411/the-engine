@@ -78,6 +78,19 @@ namespace TheEngine::Platform
 			}
 			break;
 
+			case SDL_EVENT_MOUSE_BUTTON_DOWN:
+			{
+				outEvent.engineEventType = EngineEventType::MOUSE_BUTTON_PRESSED;
+				outEvent.mouseMoveEvent.x = static_cast<float>(sdlEvent.motion.x);
+				outEvent.mouseMoveEvent.y = static_cast<float>(sdlEvent.motion.y);
+				outEvent.mouseMoveEvent.xRel = static_cast<float>(sdlEvent.motion.xrel);
+				outEvent.mouseMoveEvent.yRel = static_cast<float>(sdlEvent.motion.yrel);
+				return true;
+
+			}
+			break;
+
+
 
 
 			case SDL_EVENT_MOUSE_MOTION:
