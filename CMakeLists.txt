@@ -168,7 +168,7 @@ function (the_engine_build_app)
     set(multiValueArgs  SOURCES INCLUDES LIBRARIES)
 
     cmake_parse_arguments(ARG
-        "" "${oneValueArgs}" "${multiValueArgs}"
+        "${options}" "${oneValueArgs}" "${multiValueArgs}"
         ${ARGN}
     )
 
