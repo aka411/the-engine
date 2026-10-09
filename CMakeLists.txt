@@ -241,7 +241,7 @@ function (the_engine_build_app)
             LINK_FLAGS "-u Java_com_google_androidgamesdk_GameActivity_initializeNativeCode"
         )
 
-    elseif(NOT COMPILE_ONLY_FOR_ANDROID)
+    elseif(NOT ARG_COMPILE_ONLY_FOR_ANDROID)
         
         the_engine_get_the_engine_library(TheEngine)
         add_executable(APP_TARGET
