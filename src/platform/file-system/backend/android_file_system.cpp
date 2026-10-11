@@ -30,6 +30,9 @@ namespace TheEngine::Platform
 
 		assert(androidAsset != nullptr);
 		const void* dataPtr = AAsset_getBuffer(androidAsset);
+		//Returns NULL on failure.
+		assert(dataPtr != nullptr && "Failed to get pointer to androidAsset");
+
 		const size_t size = AAsset_getLength64(androidAsset);
 		File file = File::createFromPointer(static_cast<const std::byte*>(dataPtr), size);
 	
