@@ -19,9 +19,8 @@ namespace TheEngine::Platform
 
 
 		constexpr int INVALID_LINUX_FILE_DESCRIPTOR = -1;
-
 		int fileDescriptor = INVALID_LINUX_FILE_DESCRIPTOR;
-
+		
 		void* mappedPtrLinux = nullptr;
 		ssize_t fileSizeLinux = -1;
 
@@ -43,6 +42,7 @@ namespace TheEngine::Platform
 		struct stat file_stat;
 		if (::fstat(fileDescriptor, &file_stat) == -1)
 		{
+			::close(fileDescriptor);
 			assert(false && "Error: unable to get file size");
 		}
 		fileSizeLinux = file_stat.st_size;
@@ -71,7 +71,9 @@ namespace TheEngine::Platform
 
 
 		File file = File::createFromPointer(reinterpret_cast<std::byte*>(mappedPtrLinux), fileSizeLinux);
+
 		::munmap(mappedPtrLinux, fileSizeLinux);
+		::close(fileDescriptor);
 
 		return file;
 

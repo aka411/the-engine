@@ -13,8 +13,7 @@ namespace TheEngine::Platform
 	File WindowsFileSystem::mapFile(const Path& path)
 	{
 
-		//assert(false && "Implement mapFile() in WindowsFileSystem");
-		//m_pathBuffer = path.getRelativePath() + m_baseAssetFolderPath;
+
 		m_pathBuffer.clear();
 
 		m_pathBuffer.append(m_baseAssetFolderPath);
@@ -43,6 +42,7 @@ namespace TheEngine::Platform
 		LARGE_INTEGER fileSizeWindows;
 		if (!GetFileSizeEx(fileHandle, &fileSizeWindows))
 		{
+			CloseHandle(fileHandle);
 			throw std::runtime_error("Unable to get file size");
 		}
 
@@ -60,6 +60,7 @@ namespace TheEngine::Platform
 
 		if (fileMappingHandle == NULL)
 		{
+			CloseHandle(fileHandle);
 			throw std::runtime_error("Unable to map file");
 		}
 
@@ -77,9 +78,12 @@ namespace TheEngine::Platform
 
 		const int64_t fileSize = fileSizeWindows.QuadPart;
 		//static_cast<size_t>(fileSize)
+
 		File file = File::createFromPointer(reinterpret_cast<std::byte*>(mappedPtrWindows), fileSize);
 		
 		UnmapViewOfFile(mappedPtrWindows);
+		CloseHandle(fileMappingHandle);
+		CloseHandle(fileHandle);
 
 		return file;
 	}
