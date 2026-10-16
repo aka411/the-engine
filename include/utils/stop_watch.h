@@ -7,8 +7,8 @@ namespace TheEngine
 	class StopWatch
 	{
 	private:
-
-		std::chrono::microseconds m_prevTimeMicroSecond{};
+		//Note: using steady_clock as it is monotonic, high_resolution clock may or may not be, 
+		std::chrono::time_point<std::chrono::steady_clock> m_prevTimePointSteadyClock;
 
 	public:
 
