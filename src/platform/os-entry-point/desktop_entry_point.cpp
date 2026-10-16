@@ -1,5 +1,6 @@
 #include<core/engine.h>
 #include<core/application.h>
+#include <utils/stop_watch.h>
 
 int main(int argc, char** argv)
 {
@@ -13,12 +14,16 @@ int main(int argc, char** argv)
 
 	app->onInit(engine);
 
+	TheEngine::StopWatch stopWatch{};
+
+	stopWatch.start();
+
 	while (engine.isEngineRunning())
 	{
 		engine.run(*app);
-		app->onUpdate(0.001f);
+		app->onUpdate(stopWatch.setOriginNowAndGetDeltaTimeInMs());
 	}
-
+	stopWatch.stop();
 
 	delete app;
 	return 0;

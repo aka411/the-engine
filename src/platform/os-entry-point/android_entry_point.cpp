@@ -9,6 +9,7 @@
 
 #include <platform/input-system/backend/android_input_system.h>
 #include <platform/window-system/backend/android_vulkan_window.h>
+#include <utils/stop_watch.h>
 
 
 
@@ -67,7 +68,7 @@
 		}
 
 
-
+		TheEngine::StopWatch stopWatch{};
 
 		void handle_cmd(android_app* pApp, int32_t cmd) 
 		{
@@ -95,6 +96,7 @@
 
 					app->onInit(*engineContext->engine);
 
+					stopWatch.start();
 
 				}
 				else
@@ -159,6 +161,9 @@
 			android_app_set_motion_event_filter(pApp, motion_event_filter_func);
 
 
+
+
+
 			do {
 	
 				bool done = false;
@@ -215,10 +220,11 @@
                     {
                         continue;
                     }
+
 					pEngineContext->engine->run(*pEngineContext->app);
 
 					//TODO : 
-					pEngineContext->app->onUpdate(0.001f);
+					pEngineContext->app->onUpdate(stopWatch.setOriginNowAndGetDeltaTimeInMs());
 				
 				}
 			} while (!pApp->destroyRequested);
